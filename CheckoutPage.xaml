@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="appP.A.CheckoutPage"
+             Title="Finalizar Compra"
+             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="20">
+
+            <Label Text="1. ¿A dónde enviamos?" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+
+            <Frame CornerRadius="15" Padding="15" BorderColor="LightGray">
+                <VerticalStackLayout Spacing="15">
+                    <Label Text="Selecciona una de tus direcciones guardadas:" FontSize="13" TextColor="Gray" />
+
+                    <Picker x:Name="SavedAddressesPicker" 
+                            Title="Mis direcciones" 
+                            SelectedIndexChanged="OnSavedAddressChanged" />
+
+                    <Button Text="➕ GESTIONAR DIRECCIONES EN MI PERFIL" 
+                            BackgroundColor="Transparent" 
+                            TextColor="{StaticResource Primary}" 
+                            FontSize="12" 
+                            Clicked="OnGoToProfileClicked"/>
+
+                    <BoxView HeightRequest="1" Color="LightGray" />
+
+                    <Label x:Name="DireccionSeleccionadaLabel" 
+                           Text="Ninguna dirección seleccionada" 
+                           FontSize="14" FontAttributes="Bold" HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame CornerRadius="15" Padding="0" HeightRequest="200" IsClippedToBounds="True" BorderColor="LightGray">
+                <WebView x:Name="MapView" Source="https://www.openstreetmap.org/export/embed.html?bbox=-99.2,19.3,-99.1,19.5&amp;layer=mapnik" />
+            </Frame>
+
+            <Label Text="2. Método de Pago" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+            <Picker x:Name="PaymentPicker" Title="Elige cómo pagar">
+                <Picker.Items>
+                    <x:String>💳 Tarjeta de Crédito/Débito</x:String>
+                    <x:String>📱 Mercado Pago</x:String>
+                    <x:String>💵 Pago en OXXO</x:String>
+                    <x:String>🚚 Pago contra entrega</x:String>
+                </Picker.Items>
+            </Picker>
+
+            <Frame CornerRadius="15" Padding="25" BackgroundColor="#121212">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="RESUMEN DE PAGO" TextColor="White" FontAttributes="Bold" HorizontalOptions="Center" />
+                    <Label x:Name="DeliveryDateLabel" TextColor="#4CAF50" FontAttributes="Bold" HorizontalOptions="Center" />
+
+                    <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto" RowSpacing="8">
+                        <Label Grid.Row="0" Text="Productos:" TextColor="White" />
+                        <Label Grid.Row="0" Grid.Column="1" x:Name="SubtotalLabel" TextColor="White" HorizontalOptions="End" />
+                        <Label Grid.Row="1" Text="IVA (16%):" TextColor="White" />
+                        <Label Grid.Row="1" Grid.Column="1" x:Name="IvaLabel" TextColor="White" HorizontalOptions="End" />
+                        <Label Grid.Row="2" Text="Tarifa:" TextColor="White" />
+                        <Label Grid.Row="2" Grid.Column="1" x:Name="TarifaLabel" TextColor="White" HorizontalOptions="End" />
+                        <Label Grid.Row="3" Text="Envío:" TextColor="White" />
+                        <Label Grid.Row="3" Grid.Column="1" x:Name="ShippingLabel" TextColor="#4CAF50" HorizontalOptions="End" FontAttributes="Bold" />
+                        <BoxView Grid.Row="4" Grid.ColumnSpan="2" HeightRequest="1" Color="Gray" Margin="0,10" />
+                        <Label Grid.Row="5" Text="TOTAL:" FontSize="22" FontAttributes="Bold" TextColor="White" />
+                        <Label Grid.Row="5" Grid.Column="1" x:Name="TotalLabel" FontSize="24" FontAttributes="Bold" TextColor="#FFD700" HorizontalOptions="End" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Button Text="PAGAR AHORA" 
+                    BackgroundColor="{StaticResource Primary}" 
+                    TextColor="White" 
+                    HeightRequest="60" 
+                    CornerRadius="30" 
+                    FontAttributes="Bold" 
+                    Clicked="OnConfirmOrderClicked" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:appP.A.Models"
+             x:Class="appP.A.AlmacenAdminPage"
+             Title="Control de Almacén"
+             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <VerticalStackLayout Grid.Row="0" Padding="20" Spacing="10" BackgroundColor="#004D40">
+            <Label Text="Inventario General" FontSize="22" FontAttributes="Bold" TextColor="White" />
+            <Label Text="Gestiona las cantidades disponibles de todos los productos." FontSize="14" TextColor="WhiteSmoke" />
+
+            <Frame CornerRadius="10" Padding="0" HasShadow="False" BackgroundColor="White" BorderColor="Transparent">
+                <SearchBar x:Name="SearchBox" 
+                           Placeholder="Buscar producto por nombre..." 
+                           TextChanged="OnSearchTextChanged" 
+                           BackgroundColor="Transparent" />
+            </Frame>
+
+            <Frame CornerRadius="10" Padding="0" HasShadow="False" BackgroundColor="White" BorderColor="Transparent">
+                <Picker x:Name="CategoriaPicker" 
+                        Title="Filtrar por categoría" 
+                        SelectedIndexChanged="OnCategoriaChanged" 
+                        TextColor="Black" 
+                        TitleColor="Gray" 
+                        Margin="15,5" />
+            </Frame>
+        </VerticalStackLayout>
+
+        <CollectionView Grid.Row="1" x:Name="ProductosList" Margin="15" ItemsSource="{Binding ProductosFiltrados}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Producto">
+                    <Frame CornerRadius="10" Margin="0,5" Padding="10" HasShadow="False" BorderColor="LightGray"
+                           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
+                        <Grid ColumnDefinitions="Auto, *, Auto">
+
+                            <Image Source="{Binding Imagen}" WidthRequest="60" HeightRequest="60" Aspect="AspectFit"/>
+
+                            <VerticalStackLayout Grid.Column="1" Margin="15,0" VerticalOptions="Center">
+                                <Label Text="{Binding Nombre}" FontSize="16" FontAttributes="Bold" />
+                                <Label Text="{Binding Categoria}" TextColor="Gray" FontSize="12" />
+                                <Label Text="{Binding Stock, StringFormat='En almacén: {0} piezas'}" TextColor="DarkGreen" FontAttributes="Bold" Margin="0,5,0,0"/>
+                            </VerticalStackLayout>
+
+                            <HorizontalStackLayout Grid.Column="2" VerticalOptions="Center" Spacing="8">
+                                <Button Text="-" WidthRequest="35" HeightRequest="35" Padding="0" CornerRadius="17"
+                                        BackgroundColor="DarkRed" TextColor="White" FontAttributes="Bold"
+                                        CommandParameter="{Binding .}" Clicked="OnRestarStock" />
+
+                                <Button Text="+" WidthRequest="35" HeightRequest="35" Padding="0" CornerRadius="17"
+                                        BackgroundColor="#2E7D32" TextColor="White" FontAttributes="Bold"
+                                        CommandParameter="{Binding .}" Clicked="OnSumarStock" />
+
+                                <Button Text="Editar" HeightRequest="35" CornerRadius="8" Padding="10,0"
+                                        BackgroundColor="#FF8F00" TextColor="White" FontAttributes="Bold"
+                                        CommandParameter="{Binding .}" Clicked="OnEditarStock" />
+                            </HorizontalStackLayout>
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

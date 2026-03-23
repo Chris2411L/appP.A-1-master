@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:appP.A.Models"
+             x:Class="appP.A.MisComprasPage"
+             Title="Mi Perfil"
+             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <Grid RowDefinitions="Auto, *">
+
+        <Grid Grid.Row="0" ColumnDefinitions="*, *" ColumnSpacing="15" Padding="20">
+            <Frame x:Name="TabDireccionesFrame" Grid.Column="0" CornerRadius="20" Padding="0" HasShadow="True" BorderColor="Transparent" BackgroundColor="#8A2BE2">
+                <Button Text="📍&#10;DIRECCIONES" TextColor="White" FontAttributes="Bold" FontSize="16" HeightRequest="120" BackgroundColor="Transparent" Clicked="OnTabDireccionesClicked"/>
+            </Frame>
+
+            <Frame x:Name="TabComprasFrame" Grid.Column="1" CornerRadius="20" Padding="0" HasShadow="True" BorderColor="Transparent" BackgroundColor="Gray">
+                <Button Text="🛍️&#10;MIS PEDIDOS" TextColor="White" FontAttributes="Bold" FontSize="16" HeightRequest="120" BackgroundColor="Transparent" Clicked="OnTabComprasClicked"/>
+            </Frame>
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="20">
+
+                <VerticalStackLayout x:Name="SeccionDirecciones" IsVisible="True" Spacing="15">
+                    <Frame CornerRadius="15" Padding="15" BorderColor="LightGray" HasShadow="False">
+                        <VerticalStackLayout Spacing="10">
+                            <Grid ColumnDefinitions="*, Auto" ColumnSpacing="10">
+                                <Picker x:Name="SavedAddressesPicker" Title="Elegir dirección" SelectedIndexChanged="OnSavedAddressChanged" Grid.Column="0"/>
+                                <Button Text="🗑️" BackgroundColor="Transparent" TextColor="Red" Clicked="OnDeleteAddressClicked" Grid.Column="1" WidthRequest="50" FontSize="20"/>
+                            </Grid>
+
+                            <BoxView HeightRequest="1" Color="LightGray" Margin="0,5"/>
+
+                            <Entry x:Name="NombreDireccionEntry" Placeholder="Nombre (Ej: Mi Casa)" FontAttributes="Bold"/>
+
+                            <Grid ColumnDefinitions="*, *" RowDefinitions="Auto, Auto, Auto" RowSpacing="12" ColumnSpacing="12">
+                                <Entry x:Name="CPEntry" Grid.Row="0" Grid.Column="0" Placeholder="C.P." Keyboard="Numeric" MaxLength="5" TextChanged="OnCPTextChanged"/>
+                                <Entry x:Name="CiudadEntry" Grid.Row="0" Grid.Column="1" Placeholder="Ciudad" IsEnabled="False"/>
+                                <Entry x:Name="ColoniaEntry" Grid.Row="1" Grid.ColumnSpan="2" Placeholder="Colonia"/>
+                                <Entry x:Name="CalleEntry" Grid.Row="2" Grid.Column="0" Placeholder="Calle"/>
+                                <Entry x:Name="NumeroEntry" Grid.Row="2" Grid.Column="1" Placeholder="Número"/>
+                            </Grid>
+
+                            <Button Text="💾 GUARDAR CAMBIOS" BackgroundColor="#8A2BE2" TextColor="White" FontAttributes="Bold" HeightRequest="55" CornerRadius="28" Clicked="OnSaveAddressClicked"/>
+                        </VerticalStackLayout>
+                    </Frame>
+
+                    <Frame CornerRadius="15" Padding="0" HeightRequest="250" IsClippedToBounds="True" BorderColor="LightGray">
+                        <WebView x:Name="MapView" Source="https://www.openstreetmap.org/export/embed.html?bbox=-99.2,19.3,-99.1,19.5&amp;layer=mapnik" />
+                    </Frame>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout x:Name="SeccionCompras" IsVisible="False" Spacing="15">
+                    <CollectionView x:Name="OrdenesList" SelectionMode="Single" SelectionChanged="OnOrdenSelected">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Orden">
+                                <Frame CornerRadius="15" Margin="0,8" Padding="18" BorderColor="LightGray" HasShadow="True">
+                                    <Grid ColumnDefinitions="*, Auto">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <Label Text="{Binding Fecha, StringFormat='{0:dd MMM, yyyy}'}" FontAttributes="Bold" FontSize="16"/>
+                                            <Label Text="{Binding MetodoPago}" FontSize="13" TextColor="Gray"/>
+                                        </VerticalStackLayout>
+                                        <VerticalStackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center">
+                                            <Label Text="{Binding Total, StringFormat='{0:C2}'}" FontAttributes="Bold" TextColor="DarkGreen" FontSize="20"/>
+                                            <Label Text="Detalles >" FontSize="12" TextColor="#8A2BE2" HorizontalOptions="End"/>
+                                        </VerticalStackLayout>
+                                    </Grid>
+                                </Frame>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:appP.A.Models"
+             x:Class="appP.A.UsuariosAdminPage"
+             Title="Control de Usuarios"
+             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <VerticalStackLayout Grid.Row="0" Padding="20" Spacing="5" BackgroundColor="DarkRed">
+            <Label Text="Panel de Administración" FontSize="22" FontAttributes="Bold" TextColor="White" />
+            <Label Text="Gestiona los usuarios registrados en tu tienda." FontSize="14" TextColor="WhiteSmoke" />
+        </VerticalStackLayout>
+
+        <RefreshView Grid.Row="1" x:Name="UsersRefreshView" Refreshing="OnRefreshing">
+
+            <CollectionView x:Name="UsersCollectionView" Margin="15">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:User">
+
+                        <Frame CornerRadius="10" Margin="0,5" Padding="15" HasShadow="False"
+                               BorderColor="LightGray"
+                               BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
+                            <Grid ColumnDefinitions="*, Auto">
+
+                                <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
+                                    <Label Text="{Binding Username}" FontSize="18" FontAttributes="Bold" />
+                                    <Label Text="{Binding Id, StringFormat='ID de Cliente: {0}'}" FontSize="12" TextColor="Gray" />
+                                </VerticalStackLayout>
+
+                                <Button Grid.Column="1" 
+                                        Text="Eliminar" 
+                                        BackgroundColor="DarkRed" 
+                                        TextColor="White"
+                                        CornerRadius="8"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnDeleteUserClicked" />
+                            </Grid>
+                        </Frame>
+
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+
+                <CollectionView.EmptyView>
+                    <Label Text="No hay usuarios registrados aún." 
+                           HorizontalOptions="Center" VerticalOptions="Center" 
+                           TextColor="Gray" FontSize="16" Margin="0,50,0,0"/>
+                </CollectionView.EmptyView>
+            </CollectionView>
+
+        </RefreshView>
+    </Grid>
+</ContentPage>

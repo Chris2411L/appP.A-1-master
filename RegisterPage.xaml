@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="appP.A.RegisterPage"
+             Title="Crear Cuenta"
+             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+
+            <Image Source="nontonio.png" HeightRequest="150" HorizontalOptions="Center" />
+
+            <Label Text="REGISTRO" Style="{StaticResource Headline}" />
+            <Label Text="Crea una cuenta para empezar a comprar" 
+                   HorizontalOptions="Center" TextColor="Gray" FontSize="14"/>
+
+            <Frame CornerRadius="15" Padding="20" HasShadow="True" 
+                   BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}"
+                   BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
+                <VerticalStackLayout Spacing="15">
+                    <Entry x:Name="UsernameEntry" Placeholder="Nombre de Usuario" Keyboard="Text" />
+                    <Entry x:Name="PasswordEntry" Placeholder="Contraseña" IsPassword="True" />
+                    <Entry x:Name="ConfirmPasswordEntry" Placeholder="Confirmar Contraseña" IsPassword="True" />
+
+                    <BoxView HeightRequest="1" Color="{StaticResource Gray200}" Margin="0,5" />
+                                <Label Text="Verificación de seguridad" FontSize="12" TextColor="Gray" />
+
+                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
+                        <Label x:Name="CaptchaLabel" Text="0 + 0 =" VerticalOptions="Center" FontAttributes="Bold" FontSize="18" />
+                        <Entry x:Name="CaptchaEntry" Placeholder="?" WidthRequest="70" Keyboard="Numeric" HorizontalTextAlignment="Center" />
+                        <Button Text="↻" Clicked="OnRefreshCaptchaClicked" BackgroundColor="Transparent" TextColor="Gray" FontSize="18" />
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Frame>
+
+            <VerticalStackLayout Spacing="12">
+                <Button Text="REGISTRARME" Clicked="OnRegisterClicked" Style="{StaticResource Button}" FontAttributes="Bold" />
+                <Button Text="Ya tengo cuenta, volver" Clicked="OnBackClicked" BackgroundColor="Transparent" TextColor="{StaticResource Primary}" />
+            </VerticalStackLayout>
+
+            <Label x:Name="MessageLabel" TextColor="Red" IsVisible="False" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
