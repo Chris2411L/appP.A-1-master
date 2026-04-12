@@ -16,8 +16,8 @@
             <VerticalStackLayout Padding="15" Spacing="10">
 
                 <VerticalStackLayout x:Name="EmptyState" IsVisible="False" Padding="30" Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
-                    <Label Text="Tu carrito está vacío" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" TextColor="Gray"/>
-                    <Label Text="Agrega productos desde la tienda para verlos aquí." FontSize="14" TextColor="Silver" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                    <Label Text="Tu carrito está vacío" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{StaticResource Gray500}"/>
+                    <Label Text="Agrega productos desde la tienda para verlos aquí." FontSize="14" TextColor="{StaticResource Gray400}" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
                     <Button Text="Ir a Comprar" BackgroundColor="{StaticResource Primary}" TextColor="White" CornerRadius="20" Margin="0,15,0,0" Clicked="OnSeguirComprandoClicked" />
                 </VerticalStackLayout>
 
@@ -32,12 +32,12 @@
                                     <Image Source="{Binding Imagen}" HeightRequest="70" WidthRequest="70" Aspect="AspectFit" Grid.RowSpan="2" Margin="0,0,10,0"/>
 
                                     <Label Grid.Column="1" Grid.Row="0" Text="{Binding Nombre}" FontSize="16" FontAttributes="Bold" VerticalOptions="End"/>
-                                    <Label Grid.Column="1" Grid.Row="1" Text="{Binding Precio, StringFormat='${0:F2}'}" FontSize="14" TextColor="Green" VerticalOptions="Start"/>
+                                    <Label Grid.Column="1" Grid.Row="1" Text="{Binding Precio, StringFormat='${0:F2}'}" FontSize="14" TextColor="{StaticResource Success}" VerticalOptions="Start"/>
 
                                     <VerticalStackLayout Grid.Column="2" Grid.RowSpan="2" VerticalOptions="Center" Spacing="5">
                                         <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
                                             <Button Text="-" WidthRequest="35" HeightRequest="35" Padding="0" 
-                                                    BackgroundColor="LightGray" TextColor="Black" FontAttributes="Bold" CornerRadius="17"
+                                                    BackgroundColor="{StaticResource Gray200}" TextColor="{StaticResource Gray900}" FontAttributes="Bold" CornerRadius="17"
                                                     CommandParameter="{Binding .}" Clicked="OnReducirCantidadClicked"/>
 
                                             <Label Text="{Binding Cantidad}" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
@@ -47,7 +47,7 @@
                                                     CommandParameter="{Binding .}" Clicked="OnAumentarCantidadClicked"/>
                                         </HorizontalStackLayout>
 
-                                        <Button Text="Quitar" BackgroundColor="Transparent" TextColor="DarkRed" FontSize="12" Padding="0" HeightRequest="25"
+                                        <Button Text="Quitar" BackgroundColor="Transparent" TextColor="{StaticResource Danger}" FontSize="12" Padding="0" HeightRequest="25"
                                                 HorizontalOptions="End" CommandParameter="{Binding .}" Clicked="OnEliminarProductoClicked" />
                                     </VerticalStackLayout>
                                 </Grid>
@@ -62,7 +62,7 @@
                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
             <VerticalStackLayout Spacing="15">
                 <Grid ColumnDefinitions="*,Auto">
-                    <Label Text="Total a pagar:" FontSize="18" TextColor="Gray" VerticalOptions="Center" />
+                    <Label Text="Total a pagar:" FontSize="18" TextColor="{StaticResource Gray500}" VerticalOptions="Center" />
                     <Label Grid.Column="1" Text="{Binding Total, StringFormat='${0:F2}'}" FontSize="24" FontAttributes="Bold" HorizontalOptions="End" TextColor="{StaticResource Primary}" />
                 </Grid>
 
