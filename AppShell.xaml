@@ -27,4 +27,8 @@
             Icon="nontonio.png"
             ContentTemplate="{DataTemplate local:MisComprasPage}" />
     </TabBar>
+
+    <ShellContent
+        Title="Inicio"
+        ContentTemplate="{DataTemplate local:MainPage}" />
 </Shell>

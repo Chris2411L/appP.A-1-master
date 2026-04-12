@@ -31,6 +31,10 @@
                                     <Label Text="📦" FontSize="38" HorizontalOptions="Center"/>
                                     <Label Text="{Binding Nombre}" TextColor="White" FontAttributes="Bold" FontSize="17" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
                                     <Label Text="Toca para abrir" TextColor="{StaticResource Gray100}" FontSize="12" HorizontalOptions="Center"/>
+                                <BoxView BackgroundColor="{StaticResource Primary}" Opacity="0.9"/>
+                                <VerticalStackLayout VerticalOptions="Center" Spacing="10" Padding="10">
+                                    <Label Text="📦" FontSize="40" HorizontalOptions="Center"/>
+                                    <Label Text="{Binding Nombre}" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
                                 </VerticalStackLayout>
                             </Grid>
                         </Frame>
