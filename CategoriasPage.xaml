@@ -7,8 +7,9 @@
              BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20">
-            <Label Text="🍬 ¿Qué se te antoja?" FontSize="24" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{StaticResource Primary}"/>
+        <VerticalStackLayout Padding="18" Spacing="14">
+            <Label Text="Explora por categorías" Style="{StaticResource PageTitleStyle}"/>
+            <Label Text="Selecciona una categoría para ver productos" HorizontalOptions="Center" FontSize="13" TextColor="{StaticResource Gray500}" />
 
             <CollectionView x:Name="CategoriasList" SelectionMode="Single" SelectionChanged="OnCategoriaSelected">
                 <CollectionView.ItemsLayout>
@@ -16,8 +17,20 @@
                 </CollectionView.ItemsLayout>
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="models:Categoria">
-                        <Frame HeightRequest="160" Padding="0" CornerRadius="20" HasShadow="True" BorderColor="Transparent">
+                        <Frame HeightRequest="170" Padding="0" CornerRadius="22" HasShadow="True" BorderColor="Transparent">
                             <Grid>
+                                <BoxView>
+                                    <BoxView.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                            <GradientStop Color="{StaticResource Primary}" Offset="0.0"/>
+                                            <GradientStop Color="{StaticResource Tertiary}" Offset="1.0"/>
+                                        </LinearGradientBrush>
+                                    </BoxView.Background>
+                                </BoxView>
+                                <VerticalStackLayout VerticalOptions="Center" Spacing="12" Padding="12">
+                                    <Label Text="📦" FontSize="38" HorizontalOptions="Center"/>
+                                    <Label Text="{Binding Nombre}" TextColor="White" FontAttributes="Bold" FontSize="17" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
+                                    <Label Text="Toca para abrir" TextColor="{StaticResource Gray100}" FontSize="12" HorizontalOptions="Center"/>
                                 <BoxView BackgroundColor="{StaticResource Primary}" Opacity="0.9"/>
                                 <VerticalStackLayout VerticalOptions="Center" Spacing="10" Padding="10">
                                     <Label Text="📦" FontSize="40" HorizontalOptions="Center"/>

@@ -6,30 +6,36 @@
              Title="Productos"
              BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
 
-    <Grid RowDefinitions="*, Auto">
-        <CollectionView x:Name="ProductosList" Grid.Row="0" Margin="10">
+    <Grid RowDefinitions="Auto,*, Auto" Padding="12,10">
+        <VerticalStackLayout Grid.Row="0" Spacing="4" Margin="4,0,4,10">
+            <Label Text="Productos disponibles" Style="{StaticResource PageTitleStyle}" HorizontalOptions="Start"/>
+            <Label Text="Añade al carrito con un toque" FontSize="13" TextColor="{StaticResource Gray500}" />
+        </VerticalStackLayout>
+
+        <CollectionView x:Name="ProductosList" Grid.Row="1" Margin="0,4,0,0">
 
             <CollectionView.ItemsLayout>
                 <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="10" VerticalItemSpacing="10"/>
             </CollectionView.ItemsLayout>
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Producto">
+                    <Frame Padding="0" CornerRadius="20" HasShadow="True" BorderColor="{StaticResource Gray200}" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
                     <Frame Padding="0" CornerRadius="15" HasShadow="True" BorderColor="Transparent" BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray950}}">
 
                         <VerticalStackLayout Spacing="5">
 
-                            <Image Source="{Binding Imagen}" HeightRequest="120" Aspect="AspectFill" />
+                            <Image Source="{Binding Imagen}" HeightRequest="130" Aspect="AspectFill" />
 
                             <VerticalStackLayout Padding="10" Spacing="5">
                                 <Label Text="{Binding Nombre}" FontSize="14" FontAttributes="Bold" MaxLines="1"/>
                                 <Label Text="{Binding Precio, StringFormat='{0:C2}'}" FontSize="16" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
 
+                                <Button Text="Añadir al carrito" 
                                 <Button Text="Añadir +" 
                                         BackgroundColor="{StaticResource Primary}" 
                                         TextColor="White" 
                                         FontSize="12"
-                                        HeightRequest="40"
-                                        CornerRadius="10"
+                                        HeightRequest="42"
                                         Clicked="OnAgregarAlCarritoClicked" 
                                         CommandParameter="{Binding .}"/>
                             </VerticalStackLayout>
@@ -39,6 +45,8 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
+        <Button Grid.Row="2" Text="🛒 VER CARRITO" BackgroundColor="{StaticResource Primary}" TextColor="White" 
+                FontAttributes="Bold" Margin="8,14,8,6" CornerRadius="25" HeightRequest="52" 
         <Button Grid.Row="1" Text="🛒 VER CARRITO" BackgroundColor="{StaticResource Primary}" TextColor="White" 
                 FontAttributes="Bold" Margin="20" CornerRadius="25" HeightRequest="50" 
                 Clicked="OnVerCarritoClicked"/>

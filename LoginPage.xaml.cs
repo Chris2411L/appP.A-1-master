@@ -15,6 +15,13 @@ namespace appP.A
             GenerateCaptcha();
         }
 
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            this.Opacity = 0;
+            await this.FadeTo(1, 260, Easing.CubicOut);
+        }
+
         private void GenerateCaptcha()
         {
             Random rnd = new Random();
@@ -75,7 +82,7 @@ namespace appP.A
             }
             else
             {
-                ShowMessage("Usuario o contraseña incorrectos.");
+                ShowMessage("Usuario o contraseÃ±a incorrectos.");
                 GenerateCaptcha();
             }
         }

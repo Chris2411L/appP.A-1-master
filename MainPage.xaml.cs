@@ -25,6 +25,14 @@ namespace appP.A
 
             // 3. Sincronizar Stock
             try { await InventarioService.SincronizarStockAsync(); } catch { }
+
+            // 4. Animación de entrada sutil
+            this.Opacity = 0;
+            this.TranslationY = 14;
+            await Task.WhenAll(
+                this.FadeTo(1, 280, Easing.CubicOut),
+                this.TranslateTo(0, 0, 280, Easing.CubicOut)
+            );
         }
 
         // Navegación básica
