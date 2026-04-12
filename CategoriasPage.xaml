@@ -4,7 +4,7 @@
              xmlns:models="clr-namespace:appP.A.Models"
              x:Class="appP.A.CategoriasPage"
              Title="Categorías"
-             BackgroundColor="{AppThemeBinding Light=#F9F9F9, Dark=#121212}">
+             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
 
     <ScrollView>
         <VerticalStackLayout Padding="20" Spacing="20">
@@ -18,7 +18,7 @@
                     <DataTemplate x:DataType="models:Categoria">
                         <Frame HeightRequest="160" Padding="0" CornerRadius="20" HasShadow="True" BorderColor="Transparent">
                             <Grid>
-                                <BoxView BackgroundColor="#8A2BE2" Opacity="0.9"/>
+                                <BoxView BackgroundColor="{StaticResource Primary}" Opacity="0.9"/>
                                 <VerticalStackLayout VerticalOptions="Center" Spacing="10" Padding="10">
                                     <Label Text="📦" FontSize="40" HorizontalOptions="Center"/>
                                     <Label Text="{Binding Nombre}" TextColor="White" FontAttributes="Bold" FontSize="16" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>

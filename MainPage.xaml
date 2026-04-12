@@ -11,18 +11,18 @@
 
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#1A0A2A" Offset="0.1" />
-            <GradientStop Color="#2E1A4A" Offset="1.0" />
+            <GradientStop Color="{StaticResource Secondary}" Offset="0.1" />
+            <GradientStop Color="{StaticResource Gray100}" Offset="1.0" />
         </LinearGradientBrush>
     </ContentPage.Background>
 
     <ScrollView>
         <VerticalStackLayout Spacing="0">
 
-            <Frame BackgroundColor="#8A2BE2" CornerRadius="0" Padding="25" HasShadow="False" BorderColor="Transparent">
+            <Frame BackgroundColor="{StaticResource Primary}" CornerRadius="0" Padding="25" HasShadow="False" BorderColor="Transparent">
                 <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
                     <Label x:Name="WelcomeLabel" Text="¡Hola!" FontSize="28" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
-                    <Label Text="¿Qué se te antoja hoy?" FontSize="16" TextColor="WhiteSmoke" HorizontalOptions="Center"/>
+                    <Label Text="¿Qué se te antoja hoy?" FontSize="16" TextColor="{StaticResource Gray100}" HorizontalOptions="Center"/>
                 </VerticalStackLayout>
             </Frame>
 
@@ -40,7 +40,7 @@
                 </Frame>
 
                 <Button Text="🔥 ¡EMPEZAR MI ANTOJO!"
-                        BackgroundColor="#8A2BE2"
+                        BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         CornerRadius="35"
                         HeightRequest="80"
@@ -55,7 +55,7 @@
 
                 <Button x:Name="ChangeUserButton"
                         Text="Cambiar de Usuario"
-                        BackgroundColor="#333333"
+                        BackgroundColor="{StaticResource Gray600}"
                         TextColor="White"
                         CornerRadius="25"
                         HeightRequest="50"
@@ -63,11 +63,11 @@
                         IsVisible="False" />
 
                 <VerticalStackLayout x:Name="AdminPanel" Spacing="10" IsVisible="False">
-                    <BoxView HeightRequest="1" Color="Gray" Margin="0,10"/>
-                    <Label Text="Panel de Administración" TextColor="Gray" HorizontalOptions="Center"/>
+                    <BoxView HeightRequest="1" Color="{StaticResource Gray500}" Margin="0,10"/>
+                    <Label Text="Panel de Administración" TextColor="{StaticResource Gray500}" HorizontalOptions="Center"/>
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="15">
-                        <Button Text="⚙️ USUARIOS" BackgroundColor="DarkRed" Clicked="OnPanelUsuariosClicked" CornerRadius="10" />
-                        <Button Text="📦 ALMACÉN" BackgroundColor="#004D40" Clicked="OnPanelAlmacenClicked" CornerRadius="10" />
+                        <Button Text="⚙️ USUARIOS" BackgroundColor="{StaticResource Danger}" Clicked="OnPanelUsuariosClicked" CornerRadius="10" />
+                        <Button Text="📦 ALMACÉN" BackgroundColor="{StaticResource Tertiary}" Clicked="OnPanelAlmacenClicked" CornerRadius="10" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
 
