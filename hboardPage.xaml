@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="appP.A.DashboardPage"
+             Title="Dashboard"
+             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
+
+    <ScrollView>
+        <VerticalStackLayout Spacing="14" Padding="16,14,16,24">
+            <Label Text="Dashboard de decisiones"
+                   Style="{StaticResource PageTitleStyle}"/>
+            <Label Text="Resumen visual con métricas del proyecto (lectura para revisión)."
+                   FontSize="13"
+                   TextColor="{StaticResource Gray500}"/>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Frame Grid.Column="0" Padding="12" BorderColor="{StaticResource Gray200}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Órdenes" FontSize="13" TextColor="{StaticResource Gray500}"/>
+                        <Label Text="{Binding TotalOrdenes}" FontSize="24" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Column="1" Padding="12" BorderColor="{StaticResource Gray200}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Ingresos" FontSize="13" TextColor="{StaticResource Gray500}"/>
+                        <Label Text="{Binding IngresosTotales, StringFormat='{0:C2}'}" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource Primary}"/>
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                <Frame Grid.Column="0" Padding="12" BorderColor="{StaticResource Gray200}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Ticket promedio" FontSize="13" TextColor="{StaticResource Gray500}"/>
+                        <Label Text="{Binding TicketPromedio, StringFormat='{0:C2}'}" FontSize="20" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Frame>
+
+                <Frame Grid.Column="1" Padding="12" BorderColor="{StaticResource Gray200}">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="Métodos de pago" FontSize="13" TextColor="{StaticResource Gray500}"/>
+                        <Label Text="{Binding MetodosActivos}" FontSize="20" FontAttributes="Bold"/>
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <Frame Padding="14" BorderColor="{StaticResource Gray200}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Gráfica 1 · Ventas por día (últimos 7 días)"
+                           Style="{StaticResource SectionTitleStyle}"/>
+
+                    <CollectionView ItemsSource="{Binding VentasSemanales}" SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="90,*,50" Margin="0,2">
+                                    <Label Grid.Column="0" Text="{Binding Label}" FontSize="12" VerticalTextAlignment="Center"/>
+                                    <Grid Grid.Column="1" HeightRequest="14" VerticalOptions="Center">
+                                        <BoxView Color="{StaticResource Gray200}" CornerRadius="7"/>
+                                        <BoxView Color="{StaticResource Primary}" CornerRadius="7" HorizontalOptions="Start" WidthRequest="{Binding Width}"/>
+                                    </Grid>
+                                    <Label Grid.Column="2" Text="{Binding Valor, StringFormat='{0:C0}'}" FontSize="12" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Padding="14" BorderColor="{StaticResource Gray200}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="Gráfica 2 · Distribución por método de pago"
+                           Style="{StaticResource SectionTitleStyle}"/>
+
+                    <CollectionView ItemsSource="{Binding DistribucionPago}" SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ColumnDefinitions="110,*,40" Margin="0,2">
+                                    <Label Grid.Column="0" Text="{Binding Label}" FontSize="12" VerticalTextAlignment="Center"/>
+                                    <Grid Grid.Column="1" HeightRequest="12" VerticalOptions="Center">
+                                        <BoxView Color="{StaticResource Gray200}" CornerRadius="6"/>
+                                        <BoxView Color="{Binding Color}" CornerRadius="6" HorizontalOptions="Start" WidthRequest="{Binding Width}"/>
+                                    </Grid>
+                                    <Label Grid.Column="2" Text="{Binding PorcentajeTexto}" FontSize="12" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Label Text="Nota: Página de propuesta para revisión; no está enlazada al flujo principal aún."
+                   FontSize="12"
+                   TextColor="{StaticResource Gray500}"/>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

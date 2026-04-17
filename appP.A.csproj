@@ -83,4 +83,10 @@
 		<MauiXaml Update="UsuariosAdminPage.xaml" Generator="MSBuild:Compile" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <None Update="hboardPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </None>
+	</ItemGroup>
+
 </Project>
