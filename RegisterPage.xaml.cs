@@ -12,6 +12,13 @@ namespace appP.A
             GenerateCaptcha();
         }
 
+        protected override async void OnAppearing()
+        {
+            base.OnAppearing();
+            this.Opacity = 0;
+            await this.FadeTo(1, 260, Easing.CubicOut);
+        }
+
         private void GenerateCaptcha()
         {
             Random rnd = new Random();
@@ -41,17 +48,17 @@ namespace appP.A
             var confirmPass = ConfirmPasswordEntry.Text ?? string.Empty;
             var captchaInput = CaptchaEntry.Text?.Trim() ?? string.Empty;
 
-            // 1. Validar campos vacíos
+            // 1. Validar campos vacÃ­os
             if (string.IsNullOrWhiteSpace(user) || string.IsNullOrWhiteSpace(pass))
             {
                 ShowMessage("Completa todos los campos.", Colors.Red);
                 return;
             }
 
-            // 2. Validar que las contraseñas coincidan
+            // 2. Validar que las contraseÃ±as coincidan
             if (pass != confirmPass)
             {
-                ShowMessage("Las contraseñas no coinciden.", Colors.Red);
+                ShowMessage("Las contraseÃ±as no coinciden.", Colors.Red);
                 return;
             }
 
@@ -67,7 +74,7 @@ namespace appP.A
             var (success, error) = await AuthService.RegisterAsync(user, pass);
             if (success)
             {
-                await DisplayAlert("Éxito", "Usuario registrado correctamente.", "Aceptar");
+                await DisplayAlert("Ã‰xito", "Usuario registrado correctamente.", "Aceptar");
                 await Navigation.PopAsync(); // Regresar al Login
             }
             else

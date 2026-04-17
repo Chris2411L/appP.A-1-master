@@ -2,45 +2,73 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="appP.A.MainPage"
-             Title="NONTONIO">
+             Title="NONTONIO"
+             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
 
     <ContentPage.ToolbarItems>
         <ToolbarItem Text="🛒 Carrito" Clicked="OnVerCarritoClicked" />
         <ToolbarItem Text="👤 Perfil" Clicked="OnVerPerfilClicked" />
     </ContentPage.ToolbarItems>
 
+    <ScrollView>
+        <VerticalStackLayout Spacing="16" Padding="18,14,18,24">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                <Image Source="nontonio.png" HeightRequest="52" WidthRequest="52" VerticalOptions="Center"/>
+                <VerticalStackLayout Grid.Column="1" Spacing="2">
+                    <Label x:Name="WelcomeLabel" Text="¡Hola!" Style="{StaticResource PageTitleStyle}" HorizontalOptions="Start"/>
+                    <Label Text="Tu tienda rápida y fácil de usar" FontSize="13" TextColor="{StaticResource Gray500}" />
     <ContentPage.Background>
         <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="#1A0A2A" Offset="0.1" />
-            <GradientStop Color="#2E1A4A" Offset="1.0" />
+            <GradientStop Color="{StaticResource Secondary}" Offset="0.1" />
+            <GradientStop Color="{StaticResource Gray100}" Offset="1.0" />
         </LinearGradientBrush>
     </ContentPage.Background>
 
     <ScrollView>
         <VerticalStackLayout Spacing="0">
 
-            <Frame BackgroundColor="#8A2BE2" CornerRadius="0" Padding="25" HasShadow="False" BorderColor="Transparent">
+            <Frame BackgroundColor="{StaticResource Primary}" CornerRadius="0" Padding="25" HasShadow="False" BorderColor="Transparent">
                 <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
                     <Label x:Name="WelcomeLabel" Text="¡Hola!" FontSize="28" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
-                    <Label Text="¿Qué se te antoja hoy?" FontSize="16" TextColor="WhiteSmoke" HorizontalOptions="Center"/>
+                    <Label Text="¿Qué se te antoja hoy?" FontSize="16" TextColor="{StaticResource Gray100}" HorizontalOptions="Center"/>
                 </VerticalStackLayout>
+            </Grid>
+
+            <Frame Padding="0" CornerRadius="22" HasShadow="True" BorderColor="Transparent" IsClippedToBounds="True">
+                <Grid HeightRequest="210">
+                    <Image Source="snacks.jpg.jpg" Aspect="AspectFill"/>
+                    <BoxView Opacity="0.38" Color="{StaticResource Black}" />
+                    <VerticalStackLayout Padding="20" VerticalOptions="End" Spacing="8">
+                        <Label Text="Descubre algo nuevo hoy" TextColor="White" FontSize="24" FontAttributes="Bold"/>
+                        <Label Text="Diseño renovado, compra más simple." TextColor="{StaticResource Gray100}" />
+                        <Button Text="Ver categorías"
+                                Clicked="OnVerCategoriasClicked"
+                                Style="{StaticResource SecondaryButtonStyle}" />
+                    </VerticalStackLayout>
+                </Grid>
             </Frame>
 
-            <VerticalStackLayout Padding="25" Spacing="25">
-
-                <Frame Padding="0" CornerRadius="20" HeightRequest="160" IsClippedToBounds="True" HasShadow="True" BorderColor="Transparent">
-                    <Grid>
-                        <Image Source="https://img.freepik.com/free-photo/arrangement-with-delicious-candies_23-2149051410.jpg" Aspect="AspectFill"/>
-                        <BoxView Color="#AA000000"/>
-                        <Label Text="🚀 ENVÍOS GRATIS&#10;en compras mayores a $299" 
-                               TextColor="White" FontSize="20" FontAttributes="Bold" 
-                               HorizontalOptions="Center" VerticalOptions="Center" 
-                               HorizontalTextAlignment="Center"/>
-                    </Grid>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
+                <Frame Grid.Column="0" Padding="14" BorderColor="{StaticResource Gray200}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="🚚 Entrega" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="Mismo día en productos seleccionados" FontSize="13" TextColor="{StaticResource Gray500}" />
+                    </VerticalStackLayout>
                 </Frame>
+                <Frame Grid.Column="1" Padding="14" BorderColor="{StaticResource Gray200}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="💳 Pago" Style="{StaticResource SectionTitleStyle}" />
+                        <Label Text="Opciones seguras y flexibles" FontSize="13" TextColor="{StaticResource Gray500}" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
 
+            <Button Text="🛍️ EMPEZAR A COMPRAR"
+                    HeightRequest="58"
+                    FontSize="18"
+                    Clicked="OnVerCategoriasClicked"/>
                 <Button Text="🔥 ¡EMPEZAR MI ANTOJO!"
-                        BackgroundColor="#8A2BE2"
+                        BackgroundColor="{StaticResource Primary}"
                         TextColor="White"
                         CornerRadius="35"
                         HeightRequest="80"
@@ -55,7 +83,7 @@
 
                 <Button x:Name="ChangeUserButton"
                         Text="Cambiar de Usuario"
-                        BackgroundColor="#333333"
+                        BackgroundColor="{StaticResource Gray600}"
                         TextColor="White"
                         CornerRadius="25"
                         HeightRequest="50"
@@ -63,16 +91,27 @@
                         IsVisible="False" />
 
                 <VerticalStackLayout x:Name="AdminPanel" Spacing="10" IsVisible="False">
-                    <BoxView HeightRequest="1" Color="Gray" Margin="0,10"/>
-                    <Label Text="Panel de Administración" TextColor="Gray" HorizontalOptions="Center"/>
+                    <BoxView HeightRequest="1" Color="{StaticResource Gray500}" Margin="0,10"/>
+                    <Label Text="Panel de Administración" TextColor="{StaticResource Gray500}" HorizontalOptions="Center"/>
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="15">
-                        <Button Text="⚙️ USUARIOS" BackgroundColor="DarkRed" Clicked="OnPanelUsuariosClicked" CornerRadius="10" />
-                        <Button Text="📦 ALMACÉN" BackgroundColor="#004D40" Clicked="OnPanelAlmacenClicked" CornerRadius="10" />
+                        <Button Text="⚙️ USUARIOS" BackgroundColor="{StaticResource Danger}" Clicked="OnPanelUsuariosClicked" CornerRadius="10" />
+                        <Button Text="📦 ALMACÉN" BackgroundColor="{StaticResource Tertiary}" Clicked="OnPanelAlmacenClicked" CornerRadius="10" />
                     </HorizontalStackLayout>
                 </VerticalStackLayout>
 
-                <Image Source="nontonio.png" HeightRequest="120" HorizontalOptions="Center" Margin="0,20"/>
+            <Button x:Name="ChangeUserButton"
+                    Text="Cambiar de Usuario"
+                    HeightRequest="48"
+                    Style="{StaticResource SecondaryButtonStyle}"
+                    Clicked="OnChangeUserClicked"
+                    IsVisible="False" />
 
+            <VerticalStackLayout x:Name="AdminPanel" Spacing="10" IsVisible="False">
+                <Label Text="Panel de Administración" HorizontalOptions="Center" TextColor="{StaticResource Gray500}"/>
+                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                    <Button Grid.Column="0" Text="⚙️ Usuarios" BackgroundColor="{StaticResource Danger}" Clicked="OnPanelUsuariosClicked"/>
+                    <Button Grid.Column="1" Text="📦 Almacén" BackgroundColor="{StaticResource Tertiary}" Clicked="OnPanelAlmacenClicked"/>
+                </Grid>
             </VerticalStackLayout>
         </VerticalStackLayout>
     </ScrollView>

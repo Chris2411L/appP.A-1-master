@@ -8,9 +8,9 @@
 
     <Grid RowDefinitions="Auto,*">
 
-        <VerticalStackLayout Grid.Row="0" Padding="20" Spacing="5" BackgroundColor="DarkRed">
+        <VerticalStackLayout Grid.Row="0" Padding="20" Spacing="5" BackgroundColor="{StaticResource Danger}">
             <Label Text="Panel de Administración" FontSize="22" FontAttributes="Bold" TextColor="White" />
-            <Label Text="Gestiona los usuarios registrados en tu tienda." FontSize="14" TextColor="WhiteSmoke" />
+            <Label Text="Gestiona los usuarios registrados en tu tienda." FontSize="14" TextColor="{StaticResource Gray100}" />
         </VerticalStackLayout>
 
         <RefreshView Grid.Row="1" x:Name="UsersRefreshView" Refreshing="OnRefreshing">
@@ -20,18 +20,18 @@
                     <DataTemplate x:DataType="models:User">
 
                         <Frame CornerRadius="10" Margin="0,5" Padding="15" HasShadow="False"
-                               BorderColor="LightGray"
+                               BorderColor="{StaticResource Gray200}"
                                BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
                             <Grid ColumnDefinitions="*, Auto">
 
                                 <VerticalStackLayout Grid.Column="0" VerticalOptions="Center">
                                     <Label Text="{Binding Username}" FontSize="18" FontAttributes="Bold" />
-                                    <Label Text="{Binding Id, StringFormat='ID de Cliente: {0}'}" FontSize="12" TextColor="Gray" />
+                                    <Label Text="{Binding Id, StringFormat='ID de Cliente: {0}'}" FontSize="12" TextColor="{StaticResource Gray500}" />
                                 </VerticalStackLayout>
 
                                 <Button Grid.Column="1" 
                                         Text="Eliminar" 
-                                        BackgroundColor="DarkRed" 
+                                        BackgroundColor="{StaticResource Danger}" 
                                         TextColor="White"
                                         CornerRadius="8"
                                         CommandParameter="{Binding .}"
@@ -45,7 +45,7 @@
                 <CollectionView.EmptyView>
                     <Label Text="No hay usuarios registrados aún." 
                            HorizontalOptions="Center" VerticalOptions="Center" 
-                           TextColor="Gray" FontSize="16" Margin="0,50,0,0"/>
+                           TextColor="{StaticResource Gray500}" FontSize="16" Margin="0,50,0,0"/>
                 </CollectionView.EmptyView>
             </CollectionView>
 
