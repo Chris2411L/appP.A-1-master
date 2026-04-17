@@ -1,4 +1,7 @@
-﻿namespace appP.A.Models
+﻿using System.IO;
+using Microsoft.Maui.Storage;
+
+namespace appP.A.Models
 {
     public static class AppData
     {
@@ -27,64 +30,66 @@
                     var precio = Math.Round(basePrecio + (i % 10) * paso, 2);
                     var precioAnterior = Math.Round(precio + 5.00, 2);
 
-                    // ==========================================
-                    // ENLACES REALES DE ALTA DISPONIBILIDAD
-                    // Estas imágenes cargarán siempre en tu app
-                    // ==========================================
-                    string img = v switch
+                    // Construir una query más específica para obtener imágenes alusivas desde Unsplash
+                    string GetSearchTerms(string variante, string categoria)
                     {
-                        // --- BEBIDAS ---
-                        "Cola" or "Mineral" or "Energética" => "https://images.unsplash.com/photo-1622483767028-3f66f32aef97?w=400&q=80",
-                        "Naranja" or "Limón" or "Mango" or "Durazno" => "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&q=80",
-                        "Manzana" or "Uva" or "Tamarindo" or "Jamaica" => "https://images.unsplash.com/photo-1615486171448-4fc1eb218f27?w=400&q=80",
-                        "Café Frío" or "Té Verde" or "Té Negro" or "Horchata" => "https://images.unsplash.com/photo-1497935586351-b67a49e012bf?w=400&q=80",
+                        var key = (variante ?? "").ToLowerInvariant();
+                        var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                        {
+                            // Bebidas
+                            ["cola"] = "cola soda can beverage",
+                            ["naranja"] = "orange soda bottle",
+                            ["limón"] = "lemon soda drink",
+                            ["manzana"] = "apple juice bottle",
+                            ["uva"] = "grape juice drink",
+                            ["tamarindo"] = "tamarind candy drink",
+                            ["mango"] = "mango juice drink",
+                            ["durazno"] = "peach drink",
+                            ["mineral"] = "mineral water bottle",
+                            ["energética"] = "energy drink can",
+                            ["té verde"] = "green tea bottle",
+                            ["té negro"] = "black tea bottle",
+                            ["café frío"] = "iced coffee bottle",
+                            ["horchata"] = "horchata drink",
+                            ["jamaica"] = "hibiscus drink jamaica",
 
-                        // --- SNACKS ---
-                        "Sabritas" or "Ruffles" or "Papas Adobadas" => "https://images.unsplash.com/photo-1566478989037-eec170784d0b?w=400&q=80",
-                        "Doritos" or "Takis" or "Rancheritos" or "Fritos" or "Jalapeño" => "https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=400&q=80",
-                        "Cheetos" or "Crujitos" or "Churritos" or "Queso" or "Limoncito" => "https://images.unsplash.com/photo-1613919113640-25732ec5e61f?w=400&q=80",
-                        "Totis" or "Mix Botanero" => "https://images.unsplash.com/photo-1585647347483-22b66260dfff?w=400&q=80",
+                            // Snacks
+                            ["sabritas"] = "potato chips bag",
+                            ["doritos"] = "doritos chips bag",
+                            ["ruffles"] = "ruffles chips",
+                            ["cheetos"] = "cheetos snack",
+                            ["takis"] = "takis chips",
+                            ["totis"] = "snack chips",
+                            ["fritos"] = "fritos chips",
 
-                        // --- DULCES Y GOMITAS ---
-                        "Paleta" or "Rockaleta" or "Tamborcito" => "https://images.unsplash.com/photo-1575224300306-1b8da36134ec?w=400&q=80",
-                        "Panditas" or "Gusanitos" or "Corazones" or "Surtidas" or "Gomitas" => "https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?w=400&q=80",
-                        "Pulparindo" or "Pelón" or "Lucas" or "Cachetada" or "Chamoy" or "Miguelito" => "https://images.unsplash.com/photo-1581798459219-318e76aecc7b?w=400&q=80",
-                        "Skittles" or "Jolly" or "Caramelo" or "Frutas" or "Ácidas" => "https://images.unsplash.com/photo-1574226516831-e1dff420e507?w=400&q=80",
-                        "Mazapán" or "Dulce de Leche" or "Malvavisco" => "https://images.unsplash.com/photo-1525059696034-4967a8e1dca2?w=400&q=80",
+                            // Dulces
+                            ["paleta"] = "lollipop candy",
+                            ["pulparindo"] = "pulparindo candy",
+                            ["panditas"] = "gummy bears candy",
+                            ["skittles"] = "skittles candy",
 
-                        // --- CHOCOLATES ---
-                        "Snickers" or "Milky Way" or "Carlos V" or "Crunch" or "KitKat" => "https://images.unsplash.com/photo-1623326343517-db5101a938de?w=400&q=80",
-                        "Kisses" or "Ferrero" or "Kinder" or "Bombones" => "https://images.unsplash.com/photo-1548845971-50e5ebf8d167?w=400&q=80",
-                        "Abuelita" or "Amargo 70%" => "https://images.unsplash.com/photo-1606312619070-d48b4c652a52?w=400&q=80",
-                        "Bubu Lubu" or "Gansito" or "Choco Pie" => "https://images.unsplash.com/photo-1603507119139-2475c92cb612?w=400&q=80",
+                            // Chocolates
+                            ["snickers"] = "snickers chocolate",
+                            ["kitkat"] = "kitkat chocolate",
 
-                        // --- GALLETAS ---
-                        "Oreo" or "Emperador Limón" or "Príncipe" or "Triki Trakes" => "https://images.unsplash.com/photo-1558961363-fa8fdf82db35?w=400&q=80",
-                        "Chokis" or "Chocolate" => "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&q=80",
-                        "Marías" or "Animalitos" or "Habaneras" or "Canelitas" or "Avena" => "https://images.unsplash.com/photo-1557081702-861c8f1eb308?w=400&q=80",
+                            // Pan y repostería
+                            ["concha"] = "concha pastry",
+                            ["cupcake"] = "cupcake",
+                            ["brownie"] = "brownie",
+                        };
 
-                        // --- PAN Y PASTELITOS & REPOSTERÍA ---
-                        "Concha" or "Mantecadas" or "Cuernito Dulce" or "Oreja" => "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=400&q=80",
-                        "Roles Canela" or "Pan de Elote" or "Berlín" => "https://images.unsplash.com/photo-1509365465985-25d11c17e812?w=400&q=80",
-                        "Cupcake Vainilla" or "Cupcake Choco" or "Magdalena" => "https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=400&q=80",
-                        "Cheesecake Fresa" or "Pay de Queso" or "Pay de Limón" => "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400&q=80",
-                        "Brownie" or "Tiramisú" or "Tres Leches" or "Gansito Pan" => "https://images.unsplash.com/photo-1606890737304-57a1ca8a5b62?w=400&q=80",
+                        if (map.TryGetValue(key, out var term)) return term;
+                        // fallback a una búsqueda por variante + categoría
+                        return string.IsNullOrWhiteSpace(variante) ? categoria : $"{variante} {categoria}";
+                    }
 
-                        // --- COMBOS Y OFERTAS ---
-                        "Combo Escolar" or "Combo Fiesta" or "Combo Gamer" or "Combo Premium" => "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=400&q=80",
-                        "Combo Cine" or "Combo Familia" => "https://images.unsplash.com/photo-1585647347345-81788c75dd87?w=400&q=80",
-
-                        // --- DEFAULT EN CASO DE NO COINCIDIR (Chicles, Importados, etc.) ---
-                        _ => "https://images.unsplash.com/photo-1582058091505-f87a2e55a40f?w=400&q=80"
-                    };
-
+                    var search = GetSearchTerms(v, cat.Nombre);
+                    string imgUrl = $"https://source.unsplash.com/600x600/?{Uri.EscapeDataString(search)}";
                     var rating = Math.Round(rnd.NextDouble() * 5, 1);
-
-                    var prod = new Producto(nombre, desc, precio, precioAnterior, rating, img, cat.Nombre)
+                    var prod = new Producto(nombre, desc, precio, precioAnterior, rating, imgUrl, cat.Nombre)
                     {
                         Id = _nextProductId++
                     };
-
                     cat.Productos.Add(prod);
                 }
             }

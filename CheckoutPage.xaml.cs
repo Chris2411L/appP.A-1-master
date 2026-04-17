@@ -112,8 +112,48 @@ namespace appP.A
                 Detalles = string.Join(", ", AppData.CarritoActual.Productos.Select(p => $"{p.Cantidad}x {p.Nombre}"))
             };
 
+            // Intentar geocodificar la dirección para seguimiento (OpenStreetMap Nominatim)
+            try
+            {
+                string q = Uri.EscapeDataString(orden.Direccion + ", Mexico");
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Add("User-Agent", "NontonioApp");
+                var res = await client.GetStringAsync($"https://nominatim.openstreetmap.org/search?format=json&q={q}&limit=1");
+                using var doc = JsonDocument.Parse(res);
+                var root = doc.RootElement.EnumerateArray().FirstOrDefault();
+                if (root.ValueKind != JsonValueKind.Undefined)
+                {
+                    string lat = root.GetProperty("lat").GetString();
+                    string lon = root.GetProperty("lon").GetString();
+                    orden.DestLat = double.Parse(lat, CultureInfo.InvariantCulture);
+                    orden.DestLon = double.Parse(lon, CultureInfo.InvariantCulture);
+                }
+            }
+            catch { }
+
+            // Inicializar tracking: poner repartidor en una posición cercana (simulada)
+            orden.CurrentLat = orden.DestLat + 0.01; // ~1km al norte
+            orden.CurrentLon = orden.DestLon - 0.01; // ~1km al oeste
+            orden.Status = "Preparando";
+            orden.HistoryJson = System.Text.Json.JsonSerializer.Serialize(new List<string> { $"{DateTime.Now:g}: Pedido creado" });
+            orden.EstimatedDelivery = DateTime.Now.AddMinutes(30);
+
             await OrdenesService.GuardarOrdenAsync(orden);
             await DisplayAlert("Éxito", "¡Tu pedido está en camino!", "Aceptar");
+            // Reducir stock y persistir en inventario/product service
+            foreach (var p in AppData.CarritoActual.Productos.ToList())
+            {
+                // Buscar producto en AppData por Id o nombre
+                var prod = AppData.Categorias.SelectMany(c => c.Productos).FirstOrDefault(x => x.Id == p.Id || x.Nombre == p.Nombre);
+                if (prod != null)
+                {
+                    prod.Stock = Math.Max(0, prod.Stock - p.Cantidad);
+                    // Actualizar en InventarioService y ProductService
+                    try { await InventarioService.ActualizarStockAsync(prod.Id, prod.Stock); } catch { }
+                    try { await Services.ProductService.UpdateAsync(prod); } catch { }
+                }
+            }
+
             AppData.CarritoActual.Vaciar();
             await Navigation.PopToRootAsync();
         }

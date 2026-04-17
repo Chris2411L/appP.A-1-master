@@ -10,25 +10,9 @@
     Shell.DisabledColor="{StaticResource Gray300}"
     Shell.ForegroundColor="{StaticResource Primary}">
     <TabBar>
-        <ShellContent
-            Title="Inicio"
-            Icon="nontonio.png"
-            ContentTemplate="{DataTemplate local:MainPage}" />
-        <ShellContent
-            Title="Categorías"
-            Icon="nontonio.png"
-            ContentTemplate="{DataTemplate local:CategoriasPage}" />
-        <ShellContent
-            Title="Carrito"
-            Icon="nontonio.png"
-            ContentTemplate="{DataTemplate local:CarritoPage}" />
-        <ShellContent
-            Title="Perfil"
-            Icon="nontonio.png"
-            ContentTemplate="{DataTemplate local:MisComprasPage}" />
+        <ShellContent Title="Inicio" ContentTemplate="{DataTemplate local:MainPage}" />
+        <ShellContent Title="Categorías" ContentTemplate="{DataTemplate local:CategoriasPage}" />
+        <ShellContent Title="Carrito" ContentTemplate="{DataTemplate local:CarritoPage}" />
+        <ShellContent Title="Perfil" ContentTemplate="{DataTemplate local:MisComprasPage}" />
     </TabBar>
-
-    <ShellContent
-        Title="Inicio"
-        ContentTemplate="{DataTemplate local:MainPage}" />
 </Shell>

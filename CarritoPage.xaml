@@ -7,7 +7,7 @@
              BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
 
     <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Vaciar Todo" Priority="0" Order="Primary" Clicked="OnVaciarClicked"/>
+        <ToolbarItem Text="Vaciar" Priority="0" Order="Primary" Clicked="OnVaciarClicked"/>
     </ContentPage.ToolbarItems>
 
     <Grid RowDefinitions="*, Auto">
@@ -18,7 +18,7 @@
                 <VerticalStackLayout x:Name="EmptyState" IsVisible="False" Padding="30" Spacing="10" HorizontalOptions="Center" VerticalOptions="Center">
                     <Label Text="Tu carrito está vacío" FontSize="20" FontAttributes="Bold" HorizontalOptions="Center" TextColor="{StaticResource Gray500}"/>
                     <Label Text="Agrega productos desde la tienda para verlos aquí." FontSize="14" TextColor="{StaticResource Gray400}" HorizontalOptions="Center" HorizontalTextAlignment="Center"/>
-                    <Button Text="Ir a Comprar" BackgroundColor="{StaticResource Primary}" TextColor="White" CornerRadius="20" Margin="0,15,0,0" Clicked="OnSeguirComprandoClicked" />
+                    <Button Text="Ir a Comprar" BackgroundColor="{StaticResource Primary}" TextColor="White" CornerRadius="8" Margin="0,15,0,0" Clicked="OnSeguirComprandoClicked" />
                 </VerticalStackLayout>
 
                 <CollectionView x:Name="ItemsList" ItemsSource="{Binding Productos}">
@@ -26,28 +26,28 @@
                         <DataTemplate x:DataType="models:Producto">
                             <Frame Padding="12" Margin="0,5" CornerRadius="15" HasShadow="False"
                                    BorderColor="{StaticResource Gray200}"
-                                   BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
+                                   BackgroundColor="{StaticResource White}">
 
                                 <Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto,Auto">
-                                    <Image Source="{Binding Imagen}" HeightRequest="70" WidthRequest="70" Aspect="AspectFit" Grid.RowSpan="2" Margin="0,0,10,0"/>
+                                    <Image Source="{Binding Imagen, Converter={StaticResource ImageFallbackConverter}}" HeightRequest="70" WidthRequest="70" Aspect="AspectFill" Grid.RowSpan="2" Margin="0,0,10,0"/>
 
                                     <Label Grid.Column="1" Grid.Row="0" Text="{Binding Nombre}" FontSize="16" FontAttributes="Bold" VerticalOptions="End"/>
                                     <Label Grid.Column="1" Grid.Row="1" Text="{Binding Precio, StringFormat='${0:F2}'}" FontSize="14" TextColor="{StaticResource Success}" VerticalOptions="Start"/>
 
                                     <VerticalStackLayout Grid.Column="2" Grid.RowSpan="2" VerticalOptions="Center" Spacing="5">
                                         <HorizontalStackLayout Spacing="10" HorizontalOptions="End">
-                                            <Button Text="-" WidthRequest="35" HeightRequest="35" Padding="0" 
-                                                    BackgroundColor="{StaticResource Gray200}" TextColor="{StaticResource Gray900}" FontAttributes="Bold" CornerRadius="17"
+                                            <Button Text="-" WidthRequest="36" HeightRequest="36" Padding="0" 
+                                                    BackgroundColor="{StaticResource Gray200}" TextColor="{StaticResource Gray900}" FontAttributes="Bold" CornerRadius="18"
                                                     CommandParameter="{Binding .}" Clicked="OnReducirCantidadClicked"/>
 
                                             <Label Text="{Binding Cantidad}" FontSize="16" FontAttributes="Bold" VerticalOptions="Center"/>
 
-                                            <Button Text="+" WidthRequest="35" HeightRequest="35" Padding="0" 
-                                                    BackgroundColor="{StaticResource Primary}" TextColor="White" FontAttributes="Bold" CornerRadius="17"
+                                            <Button Text="+" WidthRequest="36" HeightRequest="36" Padding="0" 
+                                                    BackgroundColor="{StaticResource Primary}" TextColor="White" FontAttributes="Bold" CornerRadius="18"
                                                     CommandParameter="{Binding .}" Clicked="OnAumentarCantidadClicked"/>
                                         </HorizontalStackLayout>
 
-                                        <Button Text="Quitar" BackgroundColor="Transparent" TextColor="{StaticResource Danger}" FontSize="12" Padding="0" HeightRequest="25"
+                                        <Button Text="Quitar" BackgroundColor="Transparent" TextColor="{StaticResource Danger}" FontSize="12" Padding="0" HeightRequest="30"
                                                 HorizontalOptions="End" CommandParameter="{Binding .}" Clicked="OnEliminarProductoClicked" />
                                     </VerticalStackLayout>
                                 </Grid>

@@ -124,11 +124,74 @@ namespace appP.A
                 {
                     p.Stock = nuevaCantidad;
                     await InventarioService.ActualizarStockAsync(p.Id, p.Stock);
+                    await ProductService.UpdateAsync(p);
                 }
                 else if (result != null)
                 {
                     await DisplayAlert("Error", "Cantidad inválida.", "OK");
                 }
+            }
+        }
+
+        // Agregar producto nuevo desde el admin
+        private async void OnAgregarProductoClicked(object sender, EventArgs e)
+        {
+            string nombre = await DisplayPromptAsync("Nuevo producto", "Nombre:");
+            if (string.IsNullOrWhiteSpace(nombre)) return;
+
+            string categoria = await DisplayPromptAsync("Nuevo producto", "Categoría:", initialValue: "");
+            if (string.IsNullOrWhiteSpace(categoria)) categoria = "Sin categoría";
+
+            string precioText = await DisplayPromptAsync("Nuevo producto", "Precio:", keyboard: Keyboard.Numeric);
+            if (!double.TryParse(precioText, out double precio)) precio = 0.0;
+
+            var prod = new Producto
+            {
+                Id = AppData.GetNextProductId(),
+                Nombre = nombre.Trim(),
+                Categoria = categoria.Trim(),
+                Precio = precio,
+                Stock = 50
+            };
+
+            // Guardar en DB
+            var admin = AuthService.GetCurrentUser() ?? "admin";
+            int newId = await ProductService.AddAsync(prod, admin);
+            prod.Id = newId;
+
+            // Añadir a AppData
+            var cat = AppData.Categorias.FirstOrDefault(c => c.Nombre == prod.Categoria);
+            if (cat == null)
+            {
+                cat = new Categoria(prod.Categoria, "");
+                AppData.Categorias.Add(cat);
+            }
+            cat.Productos.Add(prod);
+
+            // Recargar vista
+            CargarInventario();
+            await DisplayAlert("Éxito", "Producto agregado.", "OK");
+        }
+
+        private async void OnEliminarProductoClicked(object sender, EventArgs e)
+        {
+            if (sender is Button btn && btn.CommandParameter is Producto p)
+            {
+                if (!await DisplayAlert("Confirmar", $"Eliminar {p.Nombre}?", "Sí", "No")) return;
+                var admin = AuthService.GetCurrentUser() ?? "admin";
+                bool ok = await ProductService.DeleteAsync(p.Id, admin);
+                if (ok)
+                {
+                    // Eliminar de AppData
+                    foreach (var c in AppData.Categorias)
+                    {
+                        var ex = c.Productos.FirstOrDefault(x => x.Id == p.Id);
+                        if (ex != null) { c.Productos.Remove(ex); break; }
+                    }
+                    CargarInventario();
+                    await DisplayAlert("Éxito", "Producto eliminado.", "OK");
+                }
+                else await DisplayAlert("Error", "No se pudo eliminar.", "OK");
             }
         }
     }

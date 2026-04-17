@@ -11,7 +11,12 @@ namespace appP.A.Models
         public double Precio { get; set; }
         public double PrecioAnterior { get; set; }
         public double Rating { get; set; }
-        public string Imagen { get; set; } = string.Empty;
+        private string _imagen = string.Empty;
+        public string Imagen
+        {
+            get => _imagen;
+            set { _imagen = value; OnPropertyChanged(); }
+        }
         public string Categoria { get; set; } = string.Empty;
 
         // Propiedad original para el Carrito

@@ -37,12 +37,14 @@ namespace appP.A
 
         // Navegación básica
         private async void OnVerCategoriasClicked(object sender, EventArgs e) => await Navigation.PushAsync(new CategoriasPage());
+        private async void OnVerDashboardClicked(object sender, EventArgs e) => await Navigation.PushAsync(new DashboardPage());
         private async void OnVerCarritoClicked(object sender, EventArgs e) => await Navigation.PushAsync(new CarritoPage());
         private async void OnVerPerfilClicked(object sender, EventArgs e) => await Navigation.PushAsync(new MisComprasPage());
 
         // Admin
         private async void OnPanelUsuariosClicked(object sender, EventArgs e) => await Navigation.PushAsync(new UsuariosAdminPage());
         private async void OnPanelAlmacenClicked(object sender, EventArgs e) => await Navigation.PushAsync(new AlmacenAdminPage());
+        private async void OnPanelOrdenesClicked(object sender, EventArgs e) => await Navigation.PushAsync(new OrdersAdminPage());
 
         private void OnChangeUserClicked(object sender, EventArgs e)
         {

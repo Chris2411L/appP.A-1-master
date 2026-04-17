@@ -5,46 +5,38 @@
              Title="NONTONIO"
              BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
 
+    <!-- Cleaner, lighter background for a web-like look -->
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{StaticResource Secondary}" Offset="0" />
+            <GradientStop Color="{StaticResource White}" Offset="1" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
     <ContentPage.ToolbarItems>
+        <ToolbarItem Text="📊 Dashboard" Clicked="OnVerDashboardClicked" />
         <ToolbarItem Text="🛒 Carrito" Clicked="OnVerCarritoClicked" />
         <ToolbarItem Text="👤 Perfil" Clicked="OnVerPerfilClicked" />
     </ContentPage.ToolbarItems>
 
     <ScrollView>
         <VerticalStackLayout Spacing="16" Padding="18,14,18,24">
-            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                <Image Source="nontonio.png" HeightRequest="52" WidthRequest="52" VerticalOptions="Center"/>
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
+                <Image Source="nontonio.png" HeightRequest="48" WidthRequest="48" VerticalOptions="Center"/>
                 <VerticalStackLayout Grid.Column="1" Spacing="2">
                     <Label x:Name="WelcomeLabel" Text="¡Hola!" Style="{StaticResource PageTitleStyle}" HorizontalOptions="Start"/>
                     <Label Text="Tu tienda rápida y fácil de usar" FontSize="13" TextColor="{StaticResource Gray500}" />
-    <ContentPage.Background>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-            <GradientStop Color="{StaticResource Secondary}" Offset="0.1" />
-            <GradientStop Color="{StaticResource Gray100}" Offset="1.0" />
-        </LinearGradientBrush>
-    </ContentPage.Background>
-
-    <ScrollView>
-        <VerticalStackLayout Spacing="0">
-
-            <Frame BackgroundColor="{StaticResource Primary}" CornerRadius="0" Padding="25" HasShadow="False" BorderColor="Transparent">
-                <VerticalStackLayout Spacing="5" HorizontalOptions="Center">
-                    <Label x:Name="WelcomeLabel" Text="¡Hola!" FontSize="28" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center"/>
-                    <Label Text="¿Qué se te antoja hoy?" FontSize="16" TextColor="{StaticResource Gray100}" HorizontalOptions="Center"/>
                 </VerticalStackLayout>
+                <SearchBar Grid.Column="2" Placeholder="Buscar productos" HorizontalOptions="End" WidthRequest="220" />
             </Grid>
 
-            <Frame Padding="0" CornerRadius="22" HasShadow="True" BorderColor="Transparent" IsClippedToBounds="True">
-                <Grid HeightRequest="210">
-                    <Image Source="snacks.jpg.jpg" Aspect="AspectFill"/>
-                    <BoxView Opacity="0.38" Color="{StaticResource Black}" />
-                    <VerticalStackLayout Padding="20" VerticalOptions="End" Spacing="8">
-                        <Label Text="Descubre algo nuevo hoy" TextColor="White" FontSize="24" FontAttributes="Bold"/>
-                        <Label Text="Diseño renovado, compra más simple." TextColor="{StaticResource Gray100}" />
-                        <Button Text="Ver categorías"
-                                Clicked="OnVerCategoriasClicked"
-                                Style="{StaticResource SecondaryButtonStyle}" />
+            <Frame Padding="18" CornerRadius="12" HasShadow="True" BorderColor="Transparent" BackgroundColor="{StaticResource White}">
+                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="¿Qué se te antoja hoy?" FontSize="20" FontFamily="MontserratSemiBold" TextColor="{StaticResource Gray900}" />
+                        <Label Text="Explora nuestras categorías y ofertas seleccionadas" FontSize="13" TextColor="{StaticResource Gray500}" />
                     </VerticalStackLayout>
+                    <Button Text="Ver categorías" Clicked="OnVerCategoriasClicked" HorizontalOptions="End" VerticalOptions="Center" />
                 </Grid>
             </Frame>
 
@@ -63,41 +55,10 @@
                 </Frame>
             </Grid>
 
-            <Button Text="🛍️ EMPEZAR A COMPRAR"
-                    HeightRequest="58"
-                    FontSize="18"
-                    Clicked="OnVerCategoriasClicked"/>
-                <Button Text="🔥 ¡EMPEZAR MI ANTOJO!"
-                        BackgroundColor="{StaticResource Primary}"
-                        TextColor="White"
-                        CornerRadius="35"
-                        HeightRequest="80"
-                        FontSize="22"
-                        FontAttributes="Bold"
-                        Clicked="OnVerCategoriasClicked"
-                        Margin="0,10">
-                    <Button.Shadow>
-                        <Shadow Brush="Black" Offset="0,10" Radius="10" Opacity="0.4"/>
-                    </Button.Shadow>
-                </Button>
-
-                <Button x:Name="ChangeUserButton"
-                        Text="Cambiar de Usuario"
-                        BackgroundColor="{StaticResource Gray600}"
-                        TextColor="White"
-                        CornerRadius="25"
-                        HeightRequest="50"
-                        Clicked="OnChangeUserClicked"
-                        IsVisible="False" />
-
-                <VerticalStackLayout x:Name="AdminPanel" Spacing="10" IsVisible="False">
-                    <BoxView HeightRequest="1" Color="{StaticResource Gray500}" Margin="0,10"/>
-                    <Label Text="Panel de Administración" TextColor="{StaticResource Gray500}" HorizontalOptions="Center"/>
-                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="15">
-                        <Button Text="⚙️ USUARIOS" BackgroundColor="{StaticResource Danger}" Clicked="OnPanelUsuariosClicked" CornerRadius="10" />
-                        <Button Text="📦 ALMACÉN" BackgroundColor="{StaticResource Tertiary}" Clicked="OnPanelAlmacenClicked" CornerRadius="10" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
+            <HorizontalStackLayout Spacing="10">
+                <Button Text="Comenzar a Comprar" HeightRequest="56" FontSize="16" Clicked="OnVerCategoriasClicked" HorizontalOptions="FillAndExpand" />
+                <Button Text="Ofertas" HeightRequest="56" FontSize="16" BackgroundColor="{StaticResource Secondary}" TextColor="{StaticResource Gray600}" HorizontalOptions="End" />
+            </HorizontalStackLayout>
 
             <Button x:Name="ChangeUserButton"
                     Text="Cambiar de Usuario"
@@ -111,8 +72,10 @@
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
                     <Button Grid.Column="0" Text="⚙️ Usuarios" BackgroundColor="{StaticResource Danger}" Clicked="OnPanelUsuariosClicked"/>
                     <Button Grid.Column="1" Text="📦 Almacén" BackgroundColor="{StaticResource Tertiary}" Clicked="OnPanelAlmacenClicked"/>
+                    <Button Grid.Column="0" Text="📩 Órdenes" BackgroundColor="{StaticResource Primary}" Clicked="OnPanelOrdenesClicked"/>
                 </Grid>
             </VerticalStackLayout>
+
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

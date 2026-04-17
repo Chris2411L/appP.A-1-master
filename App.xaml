@@ -2,6 +2,7 @@
 <Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:appP.A"
+             xmlns:conv="clr-namespace:appP.A.Converters"
              x:Class="appP.A.App">
     <Application.Resources>
         <ResourceDictionary>
@@ -9,6 +10,14 @@
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <!-- Converter for image fallback (handles http URLs and local files) -->
+            <conv:ImageFallbackConverter x:Key="ImageFallbackConverter" />
+            <!-- Fonts used for a modern web-like look. Add these font files to Resources/Fonts. -->
+            <OnPlatform x:Key="PrimaryFontFamily" x:TypeArguments="x:String">
+                <On Platform="Android">Montserrat</On>
+                <On Platform="iOS">Montserrat</On>
+                <On Platform="WinUI">Montserrat</On>
+            </OnPlatform>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

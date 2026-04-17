@@ -56,11 +56,16 @@
                                 <Button Text="Editar" HeightRequest="35" CornerRadius="8" Padding="10,0"
                                         BackgroundColor="{StaticResource Warning}" TextColor="White" FontAttributes="Bold"
                                         CommandParameter="{Binding .}" Clicked="OnEditarStock" />
+                                <Button Text="Eliminar" HeightRequest="35" CornerRadius="8" Padding="10,0"
+                                        BackgroundColor="{StaticResource Danger}" TextColor="White" FontAttributes="Bold"
+                                        CommandParameter="{Binding .}" Clicked="OnEliminarProductoClicked" />
                             </HorizontalStackLayout>
                         </Grid>
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+
+    <Button Text="Agregar producto" Clicked="OnAgregarProductoClicked" HorizontalOptions="Center" Margin="0,8" />
     </Grid>
 </ContentPage>

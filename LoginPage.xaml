@@ -6,83 +6,54 @@
              BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
 
     <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="18">
-            <Frame Padding="0" CornerRadius="22" BorderColor="Transparent" IsClippedToBounds="True" HasShadow="True">
-                <Grid HeightRequest="180">
+        <VerticalStackLayout Padding="20" Spacing="20" HorizontalOptions="Center">
+            <!-- Hero -->
+            <Frame Padding="0" CornerRadius="12" BorderColor="Transparent" IsClippedToBounds="True" HasShadow="True" WidthRequest="720">
+                <Grid HeightRequest="140">
                     <Image Source="bebidas.jpg.jpg" Aspect="AspectFill" />
-                    <BoxView Opacity="0.35" Color="{StaticResource Black}" />
-                    <VerticalStackLayout VerticalOptions="Center" HorizontalOptions="Center" Spacing="6">
-                        <Image Source="nontonio.png" HeightRequest="70"/>
-                        <Label Text="NONTONIO" Style="{StaticResource PageTitleStyle}" TextColor="White"/>
-                        <Label Text="Inicia sesión para continuar" FontSize="13" TextColor="{StaticResource Gray100}" />
-                    </VerticalStackLayout>
+                    <BoxView Opacity="0.32" Color="{StaticResource Primary}" />
+                    <HorizontalStackLayout Padding="16" VerticalOptions="Center" HorizontalOptions="Start" Spacing="12">
+                        <Image Source="nontonio.png" HeightRequest="56" WidthRequest="56"/>
+                        <VerticalStackLayout Spacing="2">
+                            <Label Text="NONTONIO" Style="{StaticResource PageTitleStyle}" TextColor="White" />
+                            <Label Text="Inicia sesión para continuar" FontSize="13" TextColor="{StaticResource SecondaryDarkText}" />
+                        </VerticalStackLayout>
+                    </HorizontalStackLayout>
                 </Grid>
             </Frame>
-        <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
 
-            <Image Source="nontonio.png" HeightRequest="150" HorizontalOptions="Center" />
+            <!-- Card -->
+            <Frame CornerRadius="12" Padding="18" HasShadow="True" BorderColor="{StaticResource Gray200}" BackgroundColor="{StaticResource White}" WidthRequest="720">
+                <VerticalStackLayout Spacing="14">
+                    <Label Text="Acceso a tu cuenta" Style="{StaticResource SectionTitleStyle}" />
 
-            <Label Text="NONTONIO" 
-                   FontSize="28" 
-                   FontAttributes="Bold" 
-                   TextColor="{StaticResource Primary}"
-                   HorizontalOptions="Center" />
+                    <VerticalStackLayout Spacing="10">
+                        <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray200}" BackgroundColor="{StaticResource Secondary}">
+                            <Entry x:Name="UsernameEntry" Placeholder="Nombre de usuario" Keyboard="Text" BackgroundColor="Transparent" Margin="6" Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" TextColor="{StaticResource Gray900}" PlaceholderColor="{StaticResource Gray400}" />
+                        </Border>
 
-            <Label Text="Tu tienda en línea" 
-                   FontSize="14" 
-                   TextColor="{StaticResource Gray500}" 
-                   HorizontalOptions="Center" />
+                        <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray200}" BackgroundColor="{StaticResource Secondary}">
+                            <Entry x:Name="PasswordEntry" Placeholder="Contraseña" IsPassword="True" BackgroundColor="Transparent" Margin="6" Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" TextColor="{StaticResource Gray900}" PlaceholderColor="{StaticResource Gray400}" />
+                        </Border>
 
-            <Frame CornerRadius="18" Padding="18" HasShadow="False"
-                   BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}"
-                   BorderColor="{StaticResource Gray200}">
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Acceso" Style="{StaticResource SectionTitleStyle}" />
-                    <Entry x:Name="UsernameEntry" Placeholder="Nombre de usuario" Keyboard="Text" />
-                    <Entry x:Name="PasswordEntry" Placeholder="Contraseña" IsPassword="True" />
-                    <Label Text="Verificación rápida" FontSize="12" TextColor="{StaticResource Gray500}" Margin="0,6,0,0" />
-                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
-                        <Label x:Name="CaptchaLabel" Text="0 + 0 =" VerticalOptions="Center" FontSize="18" FontAttributes="Bold" />
-                        <Entry x:Name="CaptchaEntry" Grid.Column="1" Placeholder="?" WidthRequest="70" Keyboard="Numeric" HorizontalTextAlignment="Center" />
-                        <Button Grid.Column="2" Text="↻" Clicked="OnRefreshCaptchaClicked" Style="{StaticResource SecondaryButtonStyle}" Padding="10,0"/>
-                    </Grid>
+                        <Label Text="Verificación rápida" FontSize="12" TextColor="{StaticResource Gray600}" />
+                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
+                            <Label x:Name="CaptchaLabel" Text="0 + 0 =" VerticalOptions="Center" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Gray900}" />
+                            <Entry x:Name="CaptchaEntry" Grid.Column="1" Placeholder="?" WidthRequest="70" Keyboard="Numeric" HorizontalTextAlignment="Center" TextColor="{StaticResource Gray900}" />
+                            <Button Grid.Column="2" Text="↻" Clicked="OnRefreshCaptchaClicked" Style="{StaticResource SecondaryButtonStyle}" Padding="10,0" />
+                        </Grid>
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Spacing="10">
+                        <Button x:Name="LoginButton" Text="INGRESAR A LA TIENDA" Clicked="OnLoginClicked" HeightRequest="52" FontAttributes="Bold" BackgroundColor="{StaticResource Primary}" TextColor="{StaticResource White}" Pressed="OnButtonPressed" Released="OnButtonReleased" />
+                        <Button Text="Crear una cuenta" Clicked="OnRegisterClicked" Style="{StaticResource SecondaryButtonStyle}" HeightRequest="48" />
+                    </VerticalStackLayout>
+
+                    <Frame IsVisible="False" x:Name="MessageFrame" Padding="8" CornerRadius="8" BackgroundColor="{StaticResource Danger}" HasShadow="False">
+                        <Label x:Name="MessageLabel" TextColor="{StaticResource White}" HorizontalOptions="Fill" HorizontalTextAlignment="Center" />
+                    </Frame>
                 </VerticalStackLayout>
             </Frame>
-
-            <Button Text="INGRESAR A LA TIENDA" Clicked="OnLoginClicked" HeightRequest="52" />
-            <Button Text="Crear una cuenta" Clicked="OnRegisterClicked" Style="{StaticResource SecondaryButtonStyle}" HeightRequest="48" />
-            <Label x:Name="MessageLabel" TextColor="{StaticResource Danger}" IsVisible="False" HorizontalOptions="Center" />
-
-                <VerticalStackLayout Spacing="15">
-                    <Entry x:Name="UsernameEntry" Placeholder="Nombre de usuario" Keyboard="Text" />
-                    <Entry x:Name="PasswordEntry" Placeholder="Contraseña" IsPassword="True" />
-
-                    <BoxView HeightRequest="1" Color="{StaticResource Gray200}" Margin="0,10" />
-
-                    <Label Text="Seguridad: Resuelve la suma" FontSize="12" TextColor="{StaticResource Gray500}" />
-
-                    <HorizontalStackLayout Spacing="10" HorizontalOptions="Center">
-                        <Label x:Name="CaptchaLabel" Text="0 + 0 =" VerticalOptions="Center" FontSize="18" FontAttributes="Bold" />
-                        <Entry x:Name="CaptchaEntry" Placeholder="?" WidthRequest="60" Keyboard="Numeric" HorizontalTextAlignment="Center" />
-                        <Button Text="↻" Clicked="OnRefreshCaptchaClicked" BackgroundColor="Transparent" TextColor="{StaticResource Gray500}" FontSize="18" />
-                    </HorizontalStackLayout>
-                </VerticalStackLayout>
-            </Frame>
-
-            <VerticalStackLayout Spacing="10" Margin="0,10,0,0">
-                <Button Text="INGRESAR A LA TIENDA" 
-                        Clicked="OnLoginClicked" 
-                        FontAttributes="Bold" />
-
-                <Button Text="Crear una cuenta" 
-                        Clicked="OnRegisterClicked" 
-                        BackgroundColor="Transparent" 
-                        TextColor="{StaticResource Primary}" 
-                        FontAttributes="Bold" />
-            </VerticalStackLayout>
-
-            <Label x:Name="MessageLabel" TextColor="{StaticResource Danger}" IsVisible="False" HorizontalOptions="Center" />
-
         </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

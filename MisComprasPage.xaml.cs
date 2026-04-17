@@ -157,6 +157,17 @@ namespace appP.A
             if (e.CurrentSelection.FirstOrDefault() is Orden o)
             {
                 ((CollectionView)sender).SelectedItem = null;
+                // Si el pedido aún no está entregado, ofrecer ver seguimiento
+                if (o.Status != "Entregado")
+                {
+                    bool ver = await DisplayAlert("Pedido en curso", $"Estado: {o.Status}\n¿Ver seguimiento?", "Ver seguimiento", "Ver detalles");
+                    if (ver)
+                    {
+                        await Navigation.PushAsync(new OrderTrackingPage(o.Id));
+                        return;
+                    }
+                }
+
                 string ticket = $"TICKET DE COMPRA\n----------\nFecha: {o.Fecha:g}\nDestino: {o.Direccion}\nPago: {o.MetodoPago}\n----------\nArtículos:\n{o.Detalles.Replace(", ", "\n")}\n----------\nTOTAL: {o.Total:C2}";
                 await DisplayAlert("Detalles del Pedido", ticket, "OK");
             }

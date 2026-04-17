@@ -1,5 +1,8 @@
+using System;
+using System.Threading.Tasks;
 using appP.A.Models;
 using appP.A.Services;
+using Microsoft.Maui.ApplicationModel;
 
 namespace appP.A
 {
@@ -19,7 +22,23 @@ namespace appP.A
         {
             base.OnAppearing();
             this.Opacity = 0;
-            await this.FadeTo(1, 260, Easing.CubicOut);
+            await this.FadeTo(1, 320, Easing.CubicOut);
+        }
+
+        private async void OnEntryFocused(object sender, FocusEventArgs e)
+        {
+            if (sender is Entry entry)
+            {
+                await entry.ScaleTo(1.02, 120, Easing.CubicOut);
+            }
+        }
+
+        private async void OnEntryUnfocused(object sender, FocusEventArgs e)
+        {
+            if (sender is Entry entry)
+            {
+                await entry.ScaleTo(1.0, 120, Easing.CubicOut);
+            }
         }
 
         private void GenerateCaptcha()
@@ -40,7 +59,34 @@ namespace appP.A
         private void ShowMessage(string text)
         {
             MessageLabel.Text = text;
-            MessageLabel.IsVisible = true;
+            MessageFrame.IsVisible = true;
+            MessageFrame.FadeTo(1, 180);
+            // auto hide
+            _ = Task.Run(async () =>
+            {
+                await Task.Delay(3200);
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    await MessageFrame.FadeTo(0, 220);
+                    MessageFrame.IsVisible = false;
+                });
+            });
+        }
+
+        private async void OnButtonPressed(object sender, EventArgs e)
+        {
+            if (sender is Button b)
+            {
+                await b.ScaleTo(0.98, 80, Easing.CubicOut);
+            }
+        }
+
+        private async void OnButtonReleased(object sender, EventArgs e)
+        {
+            if (sender is Button b)
+            {
+                await b.ScaleTo(1.0, 120, Easing.CubicOut);
+            }
         }
 
         private async void OnLoginClicked(object sender, EventArgs e)

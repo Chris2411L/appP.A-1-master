@@ -26,6 +26,18 @@ namespace appP.A.Services
             await _db.InsertAsync(orden);
         }
 
+        public static async Task<Orden?> ObtenerOrdenPorIdAsync(int id)
+        {
+            await InitAsync();
+            return await _db.Table<Orden>().Where(o => o.Id == id).FirstOrDefaultAsync();
+        }
+
+        public static async Task ActualizarOrdenAsync(Orden orden)
+        {
+            await InitAsync();
+            await _db.UpdateAsync(orden);
+        }
+
         public static async Task<List<Orden>> ObtenerOrdenesUsuarioAsync(string usuario)
         {
             await InitAsync();
@@ -34,6 +46,12 @@ namespace appP.A.Services
                             .Where(o => o.Usuario == usuario)
                             .OrderByDescending(o => o.Fecha)
                             .ToListAsync();
+        }
+
+        public static async Task<List<Orden>> ObtenerTodasOrdenesAsync()
+        {
+            await InitAsync();
+            return await _db.Table<Orden>().OrderByDescending(o => o.Fecha).ToListAsync();
         }
     }
 }

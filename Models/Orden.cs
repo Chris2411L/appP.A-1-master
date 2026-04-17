@@ -15,5 +15,23 @@ namespace appP.A.Models
 
         // Aquí guardaremos un texto con el resumen de lo que compró (ej. "2x Sabritas, 1x Coca-Cola")
         public string Detalles { get; set; } = string.Empty;
+
+        // Nuevas propiedades para seguimiento
+        // Estado: Preparando, En camino, En reparto, Entregado
+        public string Status { get; set; } = "Preparando";
+
+        // Posición actual del repartidor
+        public double CurrentLat { get; set; }
+        public double CurrentLon { get; set; }
+
+        // Posición destino (cliente)
+        public double DestLat { get; set; }
+        public double DestLon { get; set; }
+
+        // Historial de eventos (JSON simple)
+        public string HistoryJson { get; set; } = string.Empty;
+
+        // Estimación de entrega (opcional)
+        public DateTime? EstimatedDelivery { get; set; }
     }
 }

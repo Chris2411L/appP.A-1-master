@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="appP.A.OrdersAdminPage"
+             Title="Órdenes"
+             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+
+    <StackLayout Padding="12">
+        <Label Text="Órdenes recientes" Style="{StaticResource PageTitleStyle}" />
+        <RefreshView x:Name="OrdersRefreshView" IsRefreshing="False" Refreshing="OnRefreshing">
+            <CollectionView x:Name="OrdersCollection" SelectionMode="Single" SelectionChanged="OnOrderSelected">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame CornerRadius="10" Margin="0,6" Padding="10" BorderColor="{StaticResource Gray200}">
+                            <StackLayout>
+                                <Label Text="{Binding Usuario}" FontAttributes="Bold" />
+                                <Label Text="{Binding Fecha, StringFormat='{0:g}'}" FontSize="12" TextColor="{StaticResource Gray500}" />
+                                <Label Text="{Binding Direccion}" FontSize="12" />
+                                <Label Text="{Binding Total, StringFormat='Total: {0:C2}'}" FontAttributes="Bold" HorizontalOptions="End" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
+    </StackLayout>
+</ContentPage>

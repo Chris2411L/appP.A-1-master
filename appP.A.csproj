@@ -78,6 +78,12 @@
 		<MauiXaml Update="CheckoutPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="LoginPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="MisComprasPage.xaml" Generator="MSBuild:Compile" />
+		<MauiXaml Update="OrdersAdminPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="OrderTrackingPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="ProductosPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="RegisterPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="UsuariosAdminPage.xaml" Generator="MSBuild:Compile" />
