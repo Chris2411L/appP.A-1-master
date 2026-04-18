@@ -68,7 +68,7 @@ namespace appP.A
                     double lt = double.Parse(lat, CultureInfo.InvariantCulture);
                     double ln = double.Parse(lon, CultureInfo.InvariantCulture);
                     string bbox = $"{(ln - 0.002).ToString(CultureInfo.InvariantCulture)},{(lt - 0.002).ToString(CultureInfo.InvariantCulture)},{(ln + 0.002).ToString(CultureInfo.InvariantCulture)},{(lt + 0.002).ToString(CultureInfo.InvariantCulture)}";
-                    MapView.Source = $"https://www.openstreetmap.org/export/embed.html?bbox={bbox}&layer=mapnik&marker={lat},{lon}";
+                    MapView.Source = new UrlWebViewSource { Url = $"https://www.openstreetmap.org/export/embed.html?bbox={bbox}&layer=mapnik&marker={lat},{lon}" };
                 }
             }
             catch { }
@@ -132,11 +132,63 @@ namespace appP.A
             catch { }
 
             // Inicializar tracking: poner repartidor en una posición cercana (simulada)
-            orden.CurrentLat = orden.DestLat + 0.01; // ~1km al norte
-            orden.CurrentLon = orden.DestLon - 0.01; // ~1km al oeste
+            // Choose nearest branch (sucursal) and set courier starting point relative to branch
+            // Branches across Mexico (approximate coordinates). The nearest branch will be selected.
+            var branches = new List<(double Lat, double Lon, string Name)>
+            {
+                (19.432608, -99.133209, "Sucursal CDMX - Centro"),
+                (20.659698, -103.349609, "Sucursal Guadalajara"),
+                (25.686614, -100.316113, "Sucursal Monterrey"),
+                (19.041297, -98.206200, "Sucursal Puebla"),
+                (32.514946, -117.038247, "Sucursal Tijuana"),
+                (20.967370, -89.592586, "Sucursal Mérida"),
+                (21.161908, -86.851528, "Sucursal Cancún"),
+                (21.122219, -101.677392, "Sucursal León"),
+                (20.588793, -100.389888, "Sucursal Querétaro"),
+                (19.292046, -99.653942, "Sucursal Toluca"),
+                (17.073184, -96.726585, "Sucursal Oaxaca"),
+                (19.173773, -96.134224, "Sucursal Veracruz"),
+                (28.633891, -106.069100, "Sucursal Chihuahua"),
+                (25.548383, -103.411782, "Sucursal Torreón"),
+                (21.882344, -102.282593, "Sucursal Aguascalientes"),
+                (22.156469, -100.985540, "Sucursal San Luis P."),
+                (19.703631, -101.184884, "Sucursal Morelia"),
+                (29.072967, -110.955919, "Sucursal Hermosillo"),
+                (24.809064, -107.394014, "Sucursal Culiacán"),
+                (23.249391, -106.411140, "Sucursal Mazatlán")
+            };
+
+            // Haversine distance to find nearest branch
+            static double Haversine(double lat1, double lon1, double lat2, double lon2)
+            {
+                double R = 6371; // km
+                double dLat = (lat2 - lat1) * Math.PI / 180.0;
+                double dLon = (lon2 - lon1) * Math.PI / 180.0;
+                double a = Math.Sin(dLat/2) * Math.Sin(dLat/2) + Math.Cos(lat1 * Math.PI/180.0) * Math.Cos(lat2 * Math.PI/180.0) * Math.Sin(dLon/2) * Math.Sin(dLon/2);
+                double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1-a));
+                return R * c;
+            }
+
+            var nearest = branches.OrderBy(b => Haversine(orden.DestLat, orden.DestLon, b.Lat, b.Lon)).First();
+
+            // Store branch info in order
+            orden.BranchLat = nearest.Lat;
+            orden.BranchLon = nearest.Lon;
+            orden.BranchName = nearest.Name;
+
+            // Set courier starting position near the branch (small offset)
+            orden.CurrentLat = nearest.Lat + 0.003;
+            orden.CurrentLon = nearest.Lon - 0.003;
             orden.Status = "Preparando";
-            orden.HistoryJson = System.Text.Json.JsonSerializer.Serialize(new List<string> { $"{DateTime.Now:g}: Pedido creado" });
-            orden.EstimatedDelivery = DateTime.Now.AddMinutes(30);
+            orden.HistoryJson = System.Text.Json.JsonSerializer.Serialize(new List<string> { $"{DateTime.Now:g}: Pedido creado en {nearest.Name}" });
+
+            // Estimate delivery based on straight-line distance (approximate)
+            double degToKm = 111; // rough conversion
+            double dx = (nearest.Lat - orden.DestLat) * degToKm;
+            double dy = (nearest.Lon - orden.DestLon) * degToKm * Math.Cos(orden.DestLat * Math.PI / 180);
+            double distKm = Math.Sqrt(dx * dx + dy * dy);
+            int etaMinutes = 20 + (int)(distKm * 6); // base 20min + 6 min per km
+            orden.EstimatedDelivery = DateTime.Now.AddMinutes(etaMinutes);
 
             await OrdenesService.GuardarOrdenAsync(orden);
             await DisplayAlert("Éxito", "¡Tu pedido está en camino!", "Aceptar");

@@ -50,6 +50,39 @@ namespace appP.A
             }
         }
 
+        private async void OnVerSeguimientoClicked(object sender, EventArgs e)
+        {
+            if (sender is Button b && b.CommandParameter is Orden o)
+            {
+                await Navigation.PushAsync(new OrderTrackingPage(o.Id));
+            }
+        }
+
+        // Simple list of branches (sucursales). In a real app these would come from an API or configuration.
+        private List<(double Lat, double Lon, string Name)> GetBranches()
+        {
+            return new List<(double, double, string)>
+            {
+                (19.432608, -99.133209, "Sucursal Centro"),
+                (19.427025, -99.167665, "Sucursal Condesa"),
+                (19.399219, -99.162018, "Sucursal Roma")
+            };
+        }
+
+        // Nearest branch to given coordinates
+        private (double Lat, double Lon, string Name) FindNearestBranch(double lat, double lon)
+        {
+            var branches = GetBranches();
+            (double Lat, double Lon, string Name) best = branches.First();
+            double bestDist = double.MaxValue;
+            foreach (var b in branches)
+            {
+                double d = Math.Pow(b.Lat - lat, 2) + Math.Pow(b.Lon - lon, 2);
+                if (d < bestDist) { bestDist = d; best = b; }
+            }
+            return best;
+        }
+
         private void OnSavedAddressChanged(object sender, EventArgs e)
         {
             if (SavedAddressesPicker.SelectedIndex == -1) return;
@@ -140,10 +173,45 @@ namespace appP.A
                     double ln = double.Parse(lon, CultureInfo.InvariantCulture);
 
                     string bbox = $"{(ln - 0.002).ToString(CultureInfo.InvariantCulture)},{(lt - 0.002).ToString(CultureInfo.InvariantCulture)},{(ln + 0.002).ToString(CultureInfo.InvariantCulture)},{(lt + 0.002).ToString(CultureInfo.InvariantCulture)}";
-                    MapView.Source = $"https://www.openstreetmap.org/export/embed.html?bbox={bbox}&layer=mapnik&marker={lat},{lon}";
+                    var url = $"https://www.openstreetmap.org/export/embed.html?bbox={bbox}&layer=mapnik&marker={lat},{lon}";
+                    MapView.Source = new UrlWebViewSource { Url = url };
+                    MapErrorLabel.IsVisible = false;
+                    MapFallbackImage.IsVisible = false;
                 }
             }
             catch { }
+        }
+
+        private void MapView_Navigated(object sender, WebNavigatedEventArgs e)
+        {
+            bool failed = e.Result != WebNavigationResult.Success;
+            MapErrorLabel.IsVisible = failed;
+            if (failed)
+            {
+                // If navigation failed, attempt staticmap fallback using first available data in entries
+                try
+                {
+                    double lat = 0, lon = 0;
+                    string calle = CalleEntry.Text ?? "";
+                    string num = NumeroEntry.Text ?? "";
+                    string col = ColoniaEntry.Text ?? "";
+                    string ciu = CiudadEntry.Text ?? "";
+                    string q = Uri.EscapeDataString($"{calle} {num}, {col}, {ciu}, Mexico");
+                    // synchronous quick attempt to get coords
+                    var t = client.GetStringAsync($"https://nominatim.openstreetmap.org/search?format=json&q={q}&limit=1").Result;
+                    using var doc = JsonDocument.Parse(t);
+                    var rt = doc.RootElement.EnumerateArray().FirstOrDefault();
+                    if (rt.ValueKind != JsonValueKind.Undefined)
+                    {
+                        lat = double.Parse(rt.GetProperty("lat").GetString(), CultureInfo.InvariantCulture);
+                        lon = double.Parse(rt.GetProperty("lon").GetString(), CultureInfo.InvariantCulture);
+                        string staticUrl = $"https://staticmap.openstreetmap.de/staticmap.php?center={lat.ToString(CultureInfo.InvariantCulture)},{lon.ToString(CultureInfo.InvariantCulture)}&zoom=15&size=800x360&markers={lat.ToString(CultureInfo.InvariantCulture)},{lon.ToString(CultureInfo.InvariantCulture)},red-pushpin";
+                        MapFallbackImage.Source = ImageSource.FromUri(new Uri(staticUrl));
+                        MapFallbackImage.IsVisible = true;
+                    }
+                }
+                catch { }
+            }
         }
 
         private async void CargarHistorial()

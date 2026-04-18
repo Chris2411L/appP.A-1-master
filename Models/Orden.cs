@@ -28,6 +28,11 @@ namespace appP.A.Models
         public double DestLat { get; set; }
         public double DestLon { get; set; }
 
+        // Sucursal asignada para preparar/entregar (opcional)
+        public double BranchLat { get; set; }
+        public double BranchLon { get; set; }
+        public string BranchName { get; set; } = string.Empty;
+
         // Historial de eventos (JSON simple)
         public string HistoryJson { get; set; } = string.Empty;
 

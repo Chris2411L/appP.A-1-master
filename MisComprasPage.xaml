@@ -46,7 +46,11 @@
                     </Frame>
 
                     <Frame CornerRadius="15" Padding="0" HeightRequest="250" IsClippedToBounds="True" BorderColor="{StaticResource Gray200}">
-                        <WebView x:Name="MapView" Source="https://www.openstreetmap.org/export/embed.html?bbox=-99.2,19.3,-99.1,19.5&amp;layer=mapnik" />
+                        <Grid>
+                            <WebView x:Name="MapView" Navigated="MapView_Navigated" />
+                            <Image x:Name="MapFallbackImage" IsVisible="False" Aspect="AspectFill" />
+                            <Label x:Name="MapErrorLabel" Text="No se pudo cargar el mapa." IsVisible="False" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" BackgroundColor="#66000000" Padding="12" />
+                        </Grid>
                     </Frame>
                 </VerticalStackLayout>
 
@@ -63,6 +67,7 @@
                                         <VerticalStackLayout Grid.Column="1" HorizontalOptions="End" VerticalOptions="Center">
                                             <Label Text="{Binding Total, StringFormat='{0:C2}'}" FontAttributes="Bold" TextColor="{StaticResource Success}" FontSize="20"/>
                                             <Label Text="Detalles >" FontSize="12" TextColor="{StaticResource Primary}" HorizontalOptions="End"/>
+                                            <Button Text="Ver seguimiento" FontSize="12" CornerRadius="12" BackgroundColor="{StaticResource Primary}" TextColor="White" HeightRequest="30" Clicked="OnVerSeguimientoClicked" CommandParameter="{Binding .}"/>
                                         </VerticalStackLayout>
                                     </Grid>
                                 </Frame>

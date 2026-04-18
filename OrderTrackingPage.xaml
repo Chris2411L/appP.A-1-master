@@ -5,7 +5,11 @@
              Title="Seguimiento de pedido">
   <Grid RowDefinitions="Auto,*,Auto">
     <Label x:Name="StatusLabel" Grid.Row="0" Text="Estado" FontAttributes="Bold" Padding="12" />
-    <WebView x:Name="MapView" Grid.Row="1" HeightRequest="360" />
+    <Grid Grid.Row="1" HeightRequest="360">
+      <WebView x:Name="MapView" HeightRequest="360" Navigated="MapView_Navigated" />
+      <Image x:Name="MapFallbackImage" IsVisible="False" Aspect="AspectFill" />
+      <Label x:Name="MapErrorLabel" Text="No se pudo cargar el mapa." IsVisible="False" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" BackgroundColor="#66000000" Padding="12" />
+    </Grid>
     <CollectionView x:Name="HistoryList" Grid.Row="2" HeightRequest="140">
       <CollectionView.ItemTemplate>
         <DataTemplate>

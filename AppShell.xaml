@@ -13,6 +13,7 @@
         <ShellContent Title="Inicio" ContentTemplate="{DataTemplate local:MainPage}" />
         <ShellContent Title="Categorías" ContentTemplate="{DataTemplate local:CategoriasPage}" />
         <ShellContent Title="Carrito" ContentTemplate="{DataTemplate local:CarritoPage}" />
+        <ShellContent Title="Seguimiento" ContentTemplate="{DataTemplate local:SeguimientoPage}" />
         <ShellContent Title="Perfil" ContentTemplate="{DataTemplate local:MisComprasPage}" />
     </TabBar>
 </Shell>
