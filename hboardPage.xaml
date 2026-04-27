@@ -45,44 +45,59 @@
                 </Frame>
             </Grid>
 
-            <Frame Padding="14" BorderColor="{StaticResource Gray200}">
+            <Frame Padding="14" BorderColor="{StaticResource Gray200}" IsVisible="{Binding IsAdmin}">
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Gráfica 1 · Ventas por día (últimos 7 días)"
                            Style="{StaticResource SectionTitleStyle}"/>
 
-                    <CollectionView ItemsSource="{Binding VentasSemanales}" SelectionMode="None">
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate>
-                                <Grid ColumnDefinitions="90,*,50" Margin="0,2">
-                                    <Label Grid.Column="0" Text="{Binding Label}" FontSize="12" VerticalTextAlignment="Center"/>
-                                    <Grid Grid.Column="1" HeightRequest="14" VerticalOptions="Center">
-                                        <BoxView Color="{StaticResource Gray200}" CornerRadius="7"/>
-                                        <BoxView Color="{StaticResource Primary}" CornerRadius="7" HorizontalOptions="Start" WidthRequest="{Binding Width}"/>
+                    <Grid ColumnDefinitions="*,200" ColumnSpacing="10">
+                        <GraphicsView x:Name="BarsChartView" Grid.Column="0" HeightRequest="220" HorizontalOptions="Fill" />
+
+                        <CollectionView x:Name="VentasCollectionView" Grid.Column="1" ItemsSource="{Binding VentasSemanales}" SelectionMode="Single" SelectionChanged="VentasCollectionView_SelectionChanged">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="*,Auto" Padding="6">
+                                        <Label Text="{Binding Label}" FontSize="12" VerticalTextAlignment="Center"/>
+                                        <Label Text="{Binding Valor, StringFormat='{0:C0}'}" FontSize="12" VerticalTextAlignment="Center" HorizontalTextAlignment="End"/>
                                     </Grid>
-                                    <Label Grid.Column="2" Text="{Binding Valor, StringFormat='{0:C0}'}" FontSize="12" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
-                                </Grid>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+                    </Grid>
                 </VerticalStackLayout>
             </Frame>
 
-            <Frame Padding="14" BorderColor="{StaticResource Gray200}">
+            <Frame Padding="14" BorderColor="{StaticResource Gray200}" IsVisible="{Binding IsAdmin}">
                 <VerticalStackLayout Spacing="10">
                     <Label Text="Gráfica 2 · Distribución por método de pago"
                            Style="{StaticResource SectionTitleStyle}"/>
 
-                    <CollectionView ItemsSource="{Binding DistribucionPago}" SelectionMode="None">
+                    <Grid ColumnDefinitions="200,*" ColumnSpacing="10">
+                        <CollectionView x:Name="DistribucionCollectionView" Grid.Column="0" ItemsSource="{Binding DistribucionPago}" SelectionMode="Single" SelectionChanged="DistribucionCollectionView_SelectionChanged">
+                            <CollectionView.ItemTemplate>
+                                <DataTemplate>
+                                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="6" ColumnSpacing="8">
+                                        <BoxView WidthRequest="14" HeightRequest="14" Background="{Binding Color}" VerticalOptions="Center" HorizontalOptions="Start" CornerRadius="3"/>
+                                        <Label Text="{Binding Label}" FontSize="12" VerticalTextAlignment="Center"/>
+                                        <Label Text="{Binding PorcentajeTexto}" FontSize="12" VerticalTextAlignment="Center" HorizontalTextAlignment="End"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </CollectionView.ItemTemplate>
+                        </CollectionView>
+
+                        <GraphicsView x:Name="PieChartView" Grid.Column="1" HeightRequest="180" HorizontalOptions="Center" VerticalOptions="Center" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Frame>
+
+            <Frame Padding="14" BorderColor="{StaticResource Gray200}" IsVisible="{Binding IsClient}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Resumen personal" Style="{StaticResource SectionTitleStyle}" />
+                    <Label Text="Aquí no se muestran métricas de ventas. Revisa tus órdenes recientes abajo." FontSize="13" TextColor="{StaticResource Gray500}"/>
+                    <CollectionView ItemsSource="{Binding RecentOrders}" SelectionMode="None">
                         <CollectionView.ItemTemplate>
                             <DataTemplate>
-                                <Grid ColumnDefinitions="110,*,40" Margin="0,2">
-                                    <Label Grid.Column="0" Text="{Binding Label}" FontSize="12" VerticalTextAlignment="Center"/>
-                                    <Grid Grid.Column="1" HeightRequest="12" VerticalOptions="Center">
-                                        <BoxView Color="{StaticResource Gray200}" CornerRadius="6"/>
-                                        <BoxView Color="{Binding Color}" CornerRadius="6" HorizontalOptions="Start" WidthRequest="{Binding Width}"/>
-                                    </Grid>
-                                    <Label Grid.Column="2" Text="{Binding PorcentajeTexto}" FontSize="12" HorizontalTextAlignment="End" VerticalTextAlignment="Center"/>
-                                </Grid>
+                                <Label Text="{Binding .}" Padding="6" FontSize="13"/>
                             </DataTemplate>
                         </CollectionView.ItemTemplate>
                     </CollectionView>

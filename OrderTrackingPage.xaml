@@ -2,22 +2,44 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="appP.A.OrderTrackingPage"
-             Title="Seguimiento de pedido">
-  <Grid RowDefinitions="Auto,*,Auto">
-    <Label x:Name="StatusLabel" Grid.Row="0" Text="Estado" FontAttributes="Bold" Padding="12" />
-    <Grid Grid.Row="1" HeightRequest="360">
-      <WebView x:Name="MapView" HeightRequest="360" Navigated="MapView_Navigated" />
-      <Image x:Name="MapFallbackImage" IsVisible="False" Aspect="AspectFill" />
-      <Label x:Name="MapErrorLabel" Text="No se pudo cargar el mapa." IsVisible="False" HorizontalOptions="Center" VerticalOptions="Center" TextColor="White" BackgroundColor="#66000000" Padding="12" />
-    </Grid>
-    <CollectionView x:Name="HistoryList" Grid.Row="2" HeightRequest="140">
-      <CollectionView.ItemTemplate>
-        <DataTemplate>
-          <Frame Margin="8" Padding="8">
-            <Label Text="{Binding .}" />
-          </Frame>
-        </DataTemplate>
-      </CollectionView.ItemTemplate>
-    </CollectionView>
-  </Grid>
+             Title="Seguimiento en Vivo"
+             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+	<Grid RowDefinitions="Auto,*,Auto">
+		<VerticalStackLayout Grid.Row="0" Padding="12" BackgroundColor="{StaticResource Gray100}">
+			<VerticalStackLayout>
+				<Label x:Name="StatusLabel" Text="Iniciando entrega..." FontAttributes="Bold" FontSize="18" TextColor="{StaticResource Primary}" />
+				<Label x:Name="ETALabel" Text="ETA: 3:00 min" FontSize="14" TextColor="{StaticResource Gray600}" />
+			</VerticalStackLayout>
+
+			<!-- In-app notification banner (temporal) -->
+			<Frame x:Name="NotificationBanner" IsVisible="False" Padding="10" Margin="0,8,0,0" CornerRadius="8" BackgroundColor="{StaticResource Primary}" HorizontalOptions="Fill">
+				<HorizontalStackLayout Spacing="8">
+					<Label x:Name="NotificationText" TextColor="White" FontSize="13" VerticalTextAlignment="Center" />
+					<Button Text="Ver" Clicked="OnNotificationViewClicked" BackgroundColor="Transparent" TextColor="White" HorizontalOptions="End"/>
+				</HorizontalStackLayout>
+			</Frame>
+		</VerticalStackLayout>
+
+		<Grid Grid.Row="1">
+			<WebView x:Name="MapView" Navigated="MapView_Navigated" />
+			<Image x:Name="MapFallbackImage" IsVisible="False" Aspect="AspectFill" />
+		</Grid>
+
+		<Frame Grid.Row="2" Margin="10" Padding="10" HeightRequest="200" CornerRadius="15">
+			<VerticalStackLayout>
+				<Label Text="Ruta de entrega" FontAttributes="Bold" Margin="0,0,0,5"/>
+				<CollectionView x:Name="HistoryList">
+					<CollectionView.ItemTemplate>
+						<DataTemplate>
+							<Label Text="{Binding .}" Padding="2" FontSize="12" />
+						</DataTemplate>
+					</CollectionView.ItemTemplate>
+				</CollectionView>
+
+				<HorizontalStackLayout HorizontalOptions="End" Spacing="8" Margin="0,8,0,0">
+					<Button x:Name="ConfirmDeliveryButton" Text="Confirmar entrega" IsVisible="False" Clicked="OnConfirmDeliveryClicked" />
+				</HorizontalStackLayout>
+			</VerticalStackLayout>
+		</Frame>
+	</Grid>
 </ContentPage>

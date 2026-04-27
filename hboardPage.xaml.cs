@@ -1,6 +1,9 @@
 using appP.A.Models;
 using appP.A.Services;
 using System.Collections.ObjectModel;
+using appP.A.Controls;
+using Microsoft.Maui.Graphics;
+using System.Linq;
 
 namespace appP.A;
 
@@ -16,6 +19,27 @@ public partial class DashboardPage : ContentPage
         BindingContext = ViewModel;
     }
 
+    private void DistribucionCollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var item = e.CurrentSelection?.FirstOrDefault() as ChartItem;
+        if (_pieDrawable != null)
+        {
+            _pieDrawable.SelectedLabel = item?.Label;
+            PieChartView.Invalidate();
+        }
+    }
+
+    private void VentasCollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+    {
+        var item = e.CurrentSelection?.FirstOrDefault() as ChartItem;
+        if (_barsDrawable != null)
+        {
+            _barsDrawable.SelectedLabel = item?.Label;
+            // invalidate bars view
+            BarsChartView.Invalidate();
+        }
+    }
+
     protected override async void OnAppearing()
     {
         base.OnAppearing();
@@ -24,6 +48,24 @@ public partial class DashboardPage : ContentPage
         var ordenes = await OrdenesService.ObtenerOrdenesUsuarioAsync(usuario);
 
         ViewModel.Cargar(ordenes);
+        // after data is loaded, initialize drawables
+        InitializeCharts();
+    }
+
+    private PieDrawable? _pieDrawable;
+    private BarsDrawable? _barsDrawable;
+
+    void InitializeCharts()
+    {
+        // assign observable collections directly so updates reflect
+        _pieDrawable = new PieDrawable { Items = ViewModel.DistribucionPago };
+        PieChartView.Drawable = _pieDrawable;
+
+        _barsDrawable = new BarsDrawable { Items = ViewModel.VentasSemanales };
+        BarsChartView.Drawable = _barsDrawable;
+        // refresh
+        PieChartView.Invalidate();
+        BarsChartView.Invalidate();
     }
 
     public class DashboardViewModel : System.ComponentModel.INotifyPropertyChanged
@@ -35,6 +77,10 @@ public partial class DashboardPage : ContentPage
 
         public ObservableCollection<ChartItem> VentasSemanales { get; } = new();
         public ObservableCollection<ChartItem> DistribucionPago { get; } = new();
+        public ObservableCollection<string> RecentOrders { get; } = new();
+
+        public bool IsAdmin { get; private set; }
+        public bool IsClient => !IsAdmin;
 
         public void Cargar(List<Orden> ordenes)
         {
@@ -47,6 +93,16 @@ public partial class DashboardPage : ContentPage
             OnPropertyChanged(nameof(IngresosTotales));
             OnPropertyChanged(nameof(TicketPromedio));
             OnPropertyChanged(nameof(MetodosActivos));
+
+            // determine if current user is admin using AppData flag set at login
+            IsAdmin = Models.AppData.IsAdmin;
+            OnPropertyChanged(nameof(IsAdmin));
+            OnPropertyChanged(nameof(IsClient));
+
+            // recent orders for client view
+            RecentOrders.Clear();
+            var recent = ordenes.OrderByDescending(o => o.Fecha).Take(5).Select(o => $"{o.Fecha:dd/MM} — {o.Total:C2}");
+            foreach (var r in recent) RecentOrders.Add(r);
 
             CargarVentasSemanales(ordenes);
             CargarDistribucionPago(ordenes);
@@ -138,3 +194,4 @@ public partial class DashboardPage : ContentPage
         public Color Color { get; set; } = Colors.Gray;
     }
 }
+
