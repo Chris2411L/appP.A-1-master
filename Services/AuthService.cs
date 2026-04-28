@@ -1,4 +1,4 @@
-﻿.using appP.A.Models;
+﻿using appP.A.Models;
 using SQLite;
 using System;
 using System.Security.Cryptography;
@@ -7,8 +7,6 @@ using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-// Avoid direct dependency on Microsoft.Maui.Storage to allow building in environments
-// where MAUI workloads are not installed. Use LocalApplicationData instead.
 
 namespace appP.A.Services
 {
@@ -29,25 +27,17 @@ namespace appP.A.Services
 
         public static async Task<(bool success, string error)> RegisterAsync(string username, string password)
         {
-            // Envolver TODO en un try-catch evita que la app se cierre si algo falla
             try
             {
                 await InitAsync();
 
                 if (string.IsNullOrWhiteSpace(username)) return (false, "Usuario vacío.");
                 if (string.IsNullOrWhiteSpace(password)) return (false, "Contraseña vacía.");
+
                 username = username.Trim();
 
-                if (string.Equals(username, "admin", StringComparison.OrdinalIgnoreCase))
-                    return (false, "El nombre 'admin' está reservado.");
-
-                // CORRECCIÓN ANTI-CRASH: Evitamos usar .ToLower() directamente en la base de datos.
-                // Obtenemos los usuarios y los comparamos de forma segura en memoria.
-                var todosLosUsuarios = await _db.Table<User>().ToListAsync();
-                var existingUser = todosLosUsuarios.FirstOrDefault(u =>
-                    u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
-
-                if (existingUser != null)
+                var users = await _db.Table<User>().ToListAsync();
+                if (users.Any(u => u.Username.Equals(username, StringComparison.OrdinalIgnoreCase)))
                     return (false, "El usuario ya existe.");
 
                 var newUser = new User
@@ -57,14 +47,14 @@ namespace appP.A.Services
                 };
 
                 await _db.InsertAsync(newUser);
+
                 Preferences.Set(CurrentUserKey, username);
 
                 return (true, string.Empty);
             }
             catch (Exception ex)
             {
-                // Si ocurre un fallo, la app no se cierra, sino que te avisa en rojo
-                return (false, $"Error interno: {ex.Message}");
+                return (false, ex.Message);
             }
         }
 
@@ -74,22 +64,14 @@ namespace appP.A.Services
             {
                 await InitAsync();
 
-                if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password)) return false;
-                username = username.Trim();
-
-                // CORRECCIÓN ANTI-CRASH AQUÍ TAMBIÉN
-                var todosLosUsuarios = await _db.Table<User>().ToListAsync();
-                var user = todosLosUsuarios.FirstOrDefault(u =>
+                var users = await _db.Table<User>().ToListAsync();
+                var user = users.FirstOrDefault(u =>
                     u.Username.Equals(username, StringComparison.OrdinalIgnoreCase));
 
-                if (user != null)
+                if (user != null && user.PasswordHash == Hash(password))
                 {
-                    var providedHash = Hash(password);
-                    if (user.PasswordHash == providedHash)
-                    {
-                        Preferences.Set(CurrentUserKey, user.Username);
-                        return true;
-                    }
+                    Preferences.Set(CurrentUserKey, user.Username);
+                    return true;
                 }
 
                 return false;
@@ -137,8 +119,11 @@ namespace appP.A.Services
         {
             using var sha = SHA256.Create();
             var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(input ?? string.Empty));
-            var sb = new StringBuilder(bytes.Length * 2);
-            foreach (var b in bytes) sb.Append(b.ToString("x2"));
+            var sb = new StringBuilder();
+
+            foreach (var b in bytes)
+                sb.Append(b.ToString("x2"));
+
             return sb.ToString();
         }
     }

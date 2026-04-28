@@ -3,39 +3,219 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="appP.A.RegisterPage"
              Title="Crear Cuenta"
-             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+             BackgroundColor="#070707">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="16">
-            <Image Source="nontonio.png" HeightRequest="92" HorizontalOptions="Center" Margin="0,8,0,0" />
-            <Label Text="Crear cuenta" Style="{StaticResource PageTitleStyle}" />
-            <Label Text="Regístrate en menos de un minuto" HorizontalOptions="Center" TextColor="{StaticResource Gray500}" FontSize="14"/>
+    <Grid ColumnDefinitions="*,*" RowDefinitions="*">
 
-            <Label Text="REGISTRO" Style="{StaticResource Headline}" />
-            <Label Text="Crea una cuenta para empezar a comprar" 
-                   HorizontalOptions="Center" TextColor="{StaticResource Gray500}" FontSize="14"/>
+        <!-- LADO IZQUIERDO: IMAGEN -->
+        <Grid Grid.Column="0" IsClippedToBounds="True">
+            <Image x:Name="HeroImage"
+                   Source="register.jpg"
+                   Aspect="AspectFill"/>
 
-            <Frame CornerRadius="15" Padding="20" HasShadow="True" 
-                   BorderColor="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray950}}"
-                   BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}">
-                <VerticalStackLayout Spacing="8">
-                    <Entry x:Name="UsernameEntry" Placeholder="Nombre de Usuario" Keyboard="Text" />
-                    <Entry x:Name="PasswordEntry" Placeholder="Contraseña" IsPassword="True" />
-                    <Entry x:Name="ConfirmPasswordEntry" Placeholder="Confirmar Contraseña" IsPassword="True" />
-                    <Label Text="Verificación de seguridad" FontSize="12" TextColor="{StaticResource Gray500}" Margin="0,6,0,0" />
+            <BoxView Color="#70000000"/>
 
-                    <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
-                        <Label x:Name="CaptchaLabel" Text="0 + 0 =" VerticalOptions="Center" FontAttributes="Bold" FontSize="18" />
-                        <Entry x:Name="CaptchaEntry" Grid.Column="1" Placeholder="?" WidthRequest="70" Keyboard="Numeric" HorizontalTextAlignment="Center" />
-                        <Button Grid.Column="2" Text="↻" Clicked="OnRefreshCaptchaClicked" Style="{StaticResource SecondaryButtonStyle}" Padding="10,0"/>
+            <VerticalStackLayout VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Padding="55"
+                                 Spacing="12">
+                <Label Text="Crea tu cuenta"
+                       FontSize="40"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center"/>
+
+                <Label Text="Únete a NONTONIO y compra tus productos favoritos de forma rápida, moderna y segura."
+                       FontSize="16"
+                       TextColor="#D1D5DB"
+                       HorizontalTextAlignment="Center"
+                       WidthRequest="430"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- LADO DERECHO: FORMULARIO -->
+        <Grid Grid.Column="1" BackgroundColor="#070707">
+
+            <Border x:Name="RegisterCard"
+                    WidthRequest="390"
+                    Padding="32"
+                    BackgroundColor="#111111"
+                    Stroke="#2A2A2A"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 24"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+
+                <Border.Shadow>
+                    <Shadow Brush="#99000000"
+                            Offset="0,25"
+                            Radius="70"
+                            Opacity="0.9"/>
+                </Border.Shadow>
+
+                <VerticalStackLayout Spacing="15">
+
+                    <!-- LOGO -->
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Image Source="icono_register.png"
+                               WidthRequest="58"
+                               HeightRequest="58"/>
+
+                        <Label Text="NONTONIO"
+                               FontSize="25"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalTextAlignment="Center"/>
+
+                        <Label Text="Registro de usuario"
+                               FontSize="13"
+                               TextColor="#A1A1AA"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
+
+                    <!-- USUARIO -->
+                    <Border BackgroundColor="#1C1C1E"
+                            Stroke="#2F2F32"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="14,4">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Text="👤"
+                                   FontSize="16"
+                                   VerticalOptions="Center"/>
+                            <Entry x:Name="UsernameEntry"
+                                   Grid.Column="1"
+                                   Placeholder="Nombre de usuario"
+                                   PlaceholderColor="#9CA3AF"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   BackgroundColor="Transparent"
+                                   Focused="OnEntryFocused"
+                                   Unfocused="OnEntryUnfocused"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- CONTRASEÑA -->
+                    <Border BackgroundColor="#1C1C1E"
+                            Stroke="#2F2F32"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="14,4">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Text="🔒"
+                                   FontSize="16"
+                                   VerticalOptions="Center"/>
+                            <Entry x:Name="PasswordEntry"
+                                   Grid.Column="1"
+                                   Placeholder="Contraseña"
+                                   PlaceholderColor="#9CA3AF"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   IsPassword="True"
+                                   BackgroundColor="Transparent"
+                                   Focused="OnEntryFocused"
+                                   Unfocused="OnEntryUnfocused"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- CONFIRMAR -->
+                    <Border BackgroundColor="#1C1C1E"
+                            Stroke="#2F2F32"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="14,4">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Text="✅"
+                                   FontSize="16"
+                                   VerticalOptions="Center"/>
+                            <Entry x:Name="ConfirmPasswordEntry"
+                                   Grid.Column="1"
+                                   Placeholder="Confirmar contraseña"
+                                   PlaceholderColor="#9CA3AF"
+                                   TextColor="White"
+                                   FontSize="14"
+                                   IsPassword="True"
+                                   BackgroundColor="Transparent"
+                                   Focused="OnEntryFocused"
+                                   Unfocused="OnEntryUnfocused"/>
+                        </Grid>
+                    </Border>
+
+                    <!-- CAPTCHA -->
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                        <Border BackgroundColor="#1C1C1E"
+                                Stroke="#2F2F32"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 13"
+                                Padding="13">
+                            <Label x:Name="CaptchaLabel"
+                                   Text="0 + 0 ="
+                                   TextColor="White"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center"/>
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                BackgroundColor="#1C1C1E"
+                                Stroke="#2F2F32"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 13"
+                                Padding="10,0">
+                            <Entry x:Name="CaptchaEntry"
+                                   Placeholder="Resultado"
+                                   PlaceholderColor="#9CA3AF"
+                                   TextColor="White"
+                                   Keyboard="Numeric"
+                                   BackgroundColor="Transparent"
+                                   HorizontalTextAlignment="Center"/>
+                        </Border>
+
+                        <Button Grid.Column="2"
+                                Text="↻"
+                                WidthRequest="48"
+                                HeightRequest="48"
+                                CornerRadius="13"
+                                BackgroundColor="#FFFFFF"
+                                TextColor="Black"
+                                FontAttributes="Bold"
+                                Clicked="OnRefreshCaptchaClicked"/>
                     </Grid>
+
+                    <!-- BOTÓN REGISTRAR -->
+                    <Button x:Name="RegisterButton"
+                            Text="Crear cuenta"
+                            HeightRequest="52"
+                            CornerRadius="15"
+                            BackgroundColor="White"
+                            TextColor="Black"
+                            FontAttributes="Bold"
+                            Clicked="OnRegisterClicked"
+                            Pressed="OnButtonPressed"
+                            Released="OnButtonReleased"/>
+
+                    <!-- LINK REGRESAR -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
+                        <Label Text="¿Ya tienes cuenta?"
+                               TextColor="#9CA3AF"
+                               FontSize="13"/>
+                        <Label Text="Volver al login"
+                               TextColor="White"
+                               FontSize="13"
+                               FontAttributes="Bold">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnBackTextTapped"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <Label x:Name="MessageLabel"
+                           IsVisible="False"
+                           TextColor="#FF453A"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"/>
+
                 </VerticalStackLayout>
-            </Frame>
-
-            <Button Text="REGISTRARME" Clicked="OnRegisterClicked" HeightRequest="52" />
-            <Button Text="Ya tengo cuenta, volver" Clicked="OnBackClicked" Style="{StaticResource SecondaryButtonStyle}" HeightRequest="48" />
-            <Label x:Name="MessageLabel" TextColor="{StaticResource Danger}" IsVisible="False" HorizontalOptions="Center" HorizontalTextAlignment="Center" />
-
-        </VerticalStackLayout>
-    </ScrollView>
+            </Border>
+        </Grid>
+    </Grid>
 </ContentPage>

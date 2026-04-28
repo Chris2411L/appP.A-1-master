@@ -5,6 +5,8 @@ namespace appP.A
 {
     public partial class MainPage : ContentPage
     {
+        private bool _runningHeroAnimation;
+
         public MainPage()
         {
             InitializeComponent();
@@ -14,46 +16,115 @@ namespace appP.A
         {
             base.OnAppearing();
 
-            // 1. Actualizar Texto de Bienvenida
             var user = AuthService.GetCurrentUser();
             WelcomeLabel.Text = string.IsNullOrEmpty(user) ? "¡Bienvenido!" : $"¡Hola, {user}!";
 
-            // 2. Control de botones según si es Admin o no
             bool isAdmin = AppData.IsAdmin;
             AdminPanel.IsVisible = isAdmin;
             ChangeUserButton.IsVisible = !string.IsNullOrEmpty(user) || isAdmin;
 
-            // 3. Sincronizar Stock
-            try { await InventarioService.SincronizarStockAsync(); } catch { }
+            try
+            {
+                await InventarioService.SincronizarStockAsync();
+            }
+            catch { }
 
-            // 4. Animación de entrada sutil
-            this.Opacity = 0;
-            this.TranslationY = 14;
+            MainContent.Opacity = 0;
+            MainContent.TranslationY = 24;
+
+            HeroCard.Opacity = 0;
+            HeroCard.Scale = 0.97;
+
+            QuickActions.Opacity = 0;
+            QuickActions.TranslationY = 18;
+
+            HeroImage.Scale = 1.03;
+
             await Task.WhenAll(
-                this.FadeTo(1, 280, Easing.CubicOut),
-                this.TranslateTo(0, 0, 280, Easing.CubicOut)
+                MainContent.FadeTo(1, 420, Easing.CubicOut),
+                MainContent.TranslateTo(0, 0, 420, Easing.CubicOut),
+                HeroCard.FadeTo(1, 520, Easing.CubicOut),
+                HeroCard.ScaleTo(1, 520, Easing.CubicOut),
+                QuickActions.FadeTo(1, 650, Easing.CubicOut),
+                QuickActions.TranslateTo(0, 0, 650, Easing.CubicOut)
             );
+
+            _runningHeroAnimation = true;
+            _ = AnimateHeroImage();
         }
 
-        // Navegación básica
-        private async void OnVerCategoriasClicked(object sender, EventArgs e) => await Navigation.PushAsync(new CategoriasPage());
-        private async void OnVerDashboardClicked(object sender, EventArgs e) => await Navigation.PushAsync(new DashboardPage());
-        private async void OnVerCarritoClicked(object sender, EventArgs e) => await Navigation.PushAsync(new CarritoPage());
-        private async void OnVerPerfilClicked(object sender, EventArgs e) => await Navigation.PushAsync(new MisComprasPage());
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+            _runningHeroAnimation = false;
+        }
 
-        // Admin
-        private async void OnPanelUsuariosClicked(object sender, EventArgs e) => await Navigation.PushAsync(new UsuariosAdminPage());
-        private async void OnPanelAlmacenClicked(object sender, EventArgs e) => await Navigation.PushAsync(new AlmacenAdminPage());
-        private async void OnPanelOrdenesClicked(object sender, EventArgs e) => await Navigation.PushAsync(new OrdersAdminPage());
+        private async Task AnimateHeroImage()
+        {
+            while (_runningHeroAnimation)
+            {
+                await HeroImage.ScaleTo(1.08, 6000, Easing.SinInOut);
+                await HeroImage.ScaleTo(1.03, 6000, Easing.SinInOut);
+            }
+        }
+
+        private async void OnVerCategoriasClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new CategoriasPage());
+        }
+
+        private async void OnVerDashboardClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new DashboardPage());
+        }
+
+        private async void OnVerCarritoClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new CarritoPage());
+        }
+
+        private async void OnVerPerfilClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new MisComprasPage());
+        }
+
+        private async void OnPanelUsuariosClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new UsuariosAdminPage());
+        }
+
+        private async void OnPanelAlmacenClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new AlmacenAdminPage());
+        }
+
+        private async void OnPanelOrdenesClicked(object sender, EventArgs e)
+        {
+            await Navigation.PushAsync(new OrdersAdminPage());
+        }
 
         private void OnChangeUserClicked(object sender, EventArgs e)
         {
             AuthService.Logout();
             AppData.IsAdmin = false;
-            Application.Current.MainPage = new NavigationPage(new LoginPage());
+            Application.Current!.Windows[0].Page = new NavigationPage(new LoginPage());
         }
 
-        // Si necesitas agregar categorías desde aquí
+        private async void OnCategoriasCardTapped(object sender, TappedEventArgs e)
+        {
+            await Navigation.PushAsync(new CategoriasPage());
+        }
+
+        private async void OnDashboardCardTapped(object sender, TappedEventArgs e)
+        {
+            await Navigation.PushAsync(new DashboardPage());
+        }
+
+        private async void OnPerfilCardTapped(object sender, TappedEventArgs e)
+        {
+            await Navigation.PushAsync(new MisComprasPage());
+        }
+
         private async void OnAddCategoryClicked(object sender, EventArgs e)
         {
             string nombre = await DisplayPromptAsync("Admin", "Nombre de la nueva categoría:");
@@ -64,6 +135,9 @@ namespace appP.A
             }
         }
 
-        private void OnLogoutClicked(object sender, EventArgs e) => OnChangeUserClicked(sender, e);
+        private void OnLogoutClicked(object sender, EventArgs e)
+        {
+            OnChangeUserClicked(sender, e);
+        }
     }
 }

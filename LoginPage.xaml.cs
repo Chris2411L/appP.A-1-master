@@ -1,8 +1,5 @@
-using System;
-using System.Threading.Tasks;
 using appP.A.Models;
 using appP.A.Services;
-using Microsoft.Maui.ApplicationModel;
 
 namespace appP.A
 {
@@ -21,33 +18,39 @@ namespace appP.A
         protected override async void OnAppearing()
         {
             base.OnAppearing();
-            this.Opacity = 0;
-            await this.FadeTo(1, 320, Easing.CubicOut);
+
+            LoginCard.Opacity = 0;
+            LoginCard.TranslationY = 25;
+            HeroImage.Scale = 1.05;
+            LogoIcon.Opacity = 0;
+
+            await Task.WhenAll(
+                LoginCard.FadeTo(1, 500, Easing.CubicOut),
+                LoginCard.TranslateTo(0, 0, 500, Easing.CubicOut),
+                HeroImage.ScaleTo(1.12, 6000, Easing.Linear),
+                LogoIcon.FadeTo(1, 600, Easing.CubicOut)
+            );
+
+            _ = FloatingCardAnimation();
         }
 
-        private async void OnEntryFocused(object sender, FocusEventArgs e)
+        private async Task FloatingCardAnimation()
         {
-            if (sender is Entry entry)
+            while (LoginCard != null)
             {
-                await entry.ScaleTo(1.02, 120, Easing.CubicOut);
-            }
-        }
-
-        private async void OnEntryUnfocused(object sender, FocusEventArgs e)
-        {
-            if (sender is Entry entry)
-            {
-                await entry.ScaleTo(1.0, 120, Easing.CubicOut);
+                await LoginCard.TranslateTo(0, -8, 1800, Easing.SinInOut);
+                await LoginCard.TranslateTo(0, 0, 1800, Easing.SinInOut);
             }
         }
 
         private void GenerateCaptcha()
         {
             Random rnd = new Random();
-            int val1 = rnd.Next(1, 10);
-            int val2 = rnd.Next(1, 10);
-            _captchaResult = val1 + val2;
-            CaptchaLabel.Text = $"{val1} + {val2} =";
+            int a = rnd.Next(1, 10);
+            int b = rnd.Next(1, 10);
+
+            _captchaResult = a + b;
+            CaptchaLabel.Text = $"{a} + {b}";
             CaptchaEntry.Text = string.Empty;
         }
 
@@ -59,54 +62,34 @@ namespace appP.A
         private void ShowMessage(string text)
         {
             MessageLabel.Text = text;
-            MessageFrame.IsVisible = true;
-            MessageFrame.FadeTo(1, 180);
-            // auto hide
-            _ = Task.Run(async () =>
-            {
-                await Task.Delay(3200);
-                await MainThread.InvokeOnMainThreadAsync(async () =>
-                {
-                    await MessageFrame.FadeTo(0, 220);
-                    MessageFrame.IsVisible = false;
-                });
-            });
+            MessageLabel.IsVisible = true;
         }
 
         private async void OnButtonPressed(object sender, EventArgs e)
         {
-            if (sender is Button b)
-            {
-                await b.ScaleTo(0.98, 80, Easing.CubicOut);
-            }
+            await LoginButton.ScaleTo(0.96, 80, Easing.CubicOut);
         }
 
         private async void OnButtonReleased(object sender, EventArgs e)
         {
-            if (sender is Button b)
-            {
-                await b.ScaleTo(1.0, 120, Easing.CubicOut);
-            }
+            await LoginButton.ScaleTo(1, 120, Easing.CubicOut);
         }
 
         private async void OnLoginClicked(object sender, EventArgs e)
         {
-            string user = UsernameEntry.Text ?? string.Empty;
+            string user = UsernameEntry.Text?.Trim() ?? string.Empty;
             string pass = PasswordEntry.Text ?? string.Empty;
-            string captchaInput = CaptchaEntry.Text ?? string.Empty;
-
-            user = user.Trim();
-            captchaInput = captchaInput.Trim();
+            string captcha = CaptchaEntry.Text?.Trim() ?? string.Empty;
 
             if (string.IsNullOrWhiteSpace(user) || string.IsNullOrWhiteSpace(pass))
             {
-                ShowMessage("Por favor, ingresa tus credenciales.");
+                ShowMessage("Ingresa usuario y contraseña.");
                 return;
             }
 
-            if (captchaInput != _captchaResult.ToString())
+            if (captcha != _captchaResult.ToString())
             {
-                ShowMessage("La suma es incorrecta.");
+                ShowMessage("Captcha incorrecto.");
                 GenerateCaptcha();
                 return;
             }
@@ -114,17 +97,16 @@ namespace appP.A
             if (user.Equals(AdminUser, StringComparison.OrdinalIgnoreCase) && pass == AdminPass)
             {
                 AppData.IsAdmin = true;
-                MessagingCenter.Send(this, "AdminModeChanged", true);
-                Application.Current.MainPage = new AppShell();
+                Application.Current!.Windows[0].Page = new AppShell();
                 return;
             }
 
             bool ok = await AuthService.LoginAsync(user, pass);
+
             if (ok)
             {
                 AppData.IsAdmin = false;
-                MessagingCenter.Send(this, "AdminModeChanged", false);
-                Application.Current.MainPage = new AppShell();
+                Application.Current!.Windows[0].Page = new AppShell();
             }
             else
             {
@@ -133,7 +115,7 @@ namespace appP.A
             }
         }
 
-        private async void OnRegisterClicked(object sender, EventArgs e)
+        private async void OnRegisterTapped(object sender, TappedEventArgs e)
         {
             await Navigation.PushAsync(new RegisterPage());
         }

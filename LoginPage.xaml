@@ -2,58 +2,179 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="appP.A.LoginPage"
-             Title="Bienvenido"
-             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+             Title="Login"
+             BackgroundColor="#0A0A0A">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="20" Spacing="20" HorizontalOptions="Center">
-            <!-- Hero -->
-            <Frame Padding="0" CornerRadius="12" BorderColor="Transparent" IsClippedToBounds="True" HasShadow="True" WidthRequest="720">
-                <Grid HeightRequest="140">
-                    <Image Source="bebidas.jpg.jpg" Aspect="AspectFill" />
-                    <BoxView Opacity="0.32" Color="{StaticResource Primary}" />
-                    <HorizontalStackLayout Padding="16" VerticalOptions="Center" HorizontalOptions="Start" Spacing="12">
-                        <Image Source="nontonio.png" HeightRequest="56" WidthRequest="56"/>
-                        <VerticalStackLayout Spacing="2">
-                            <Label Text="NONTONIO" Style="{StaticResource PageTitleStyle}" TextColor="White" />
-                            <Label Text="Inicia sesión para continuar" FontSize="13" TextColor="{StaticResource SecondaryDarkText}" />
-                        </VerticalStackLayout>
-                    </HorizontalStackLayout>
-                </Grid>
-            </Frame>
+    <Grid ColumnDefinitions="*,*" RowDefinitions="*">
 
-            <!-- Card -->
-            <Frame CornerRadius="12" Padding="18" HasShadow="True" BorderColor="{StaticResource Gray200}" BackgroundColor="{StaticResource White}" WidthRequest="720">
+        <!-- LADO IZQUIERDO: IMAGEN -->
+        <Grid Grid.Column="0" x:Name="LeftPanel" IsClippedToBounds="True">
+            <Image x:Name="HeroImage"
+       Source="register_store.jpg"
+       Aspect="AspectFill"/>
+
+            <BoxView Color="#66000000"/>
+
+            <VerticalStackLayout VerticalOptions="Center"
+                                 HorizontalOptions="Center"
+                                 Padding="50"
+                                 Spacing="10">
+                <Label Text="Compra fácil, rápido y moderno"
+                       FontSize="34"
+                       FontAttributes="Bold"
+                       TextColor="White"
+                       HorizontalTextAlignment="Center"/>
+
+                <Label Text="Tu tienda inteligente con estilo premium"
+                       FontSize="16"
+                       TextColor="#DDDDDD"
+                       HorizontalTextAlignment="Center"/>
+            </VerticalStackLayout>
+        </Grid>
+
+        <!-- LADO DERECHO: LOGIN -->
+        <Grid Grid.Column="1" BackgroundColor="#0A0A0A">
+
+            <Border x:Name="LoginCard"
+                    WidthRequest="340"
+                    Padding="30"
+                    BackgroundColor="#111111"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 18"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+
+                <Border.Shadow>
+                    <Shadow Brush="#99000000"
+                            Offset="0,20"
+                            Radius="60"
+                            Opacity="0.8"/>
+                </Border.Shadow>
+
                 <VerticalStackLayout Spacing="14">
-                    <Label Text="Acceso a tu cuenta" Style="{StaticResource SectionTitleStyle}" />
 
-                    <VerticalStackLayout Spacing="10">
-                        <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray200}" BackgroundColor="{StaticResource Secondary}">
-                            <Entry x:Name="UsernameEntry" Placeholder="Nombre de usuario" Keyboard="Text" BackgroundColor="Transparent" Margin="6" Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" TextColor="{StaticResource Gray900}" PlaceholderColor="{StaticResource Gray400}" />
-                        </Border>
+                    <!-- LOGO -->
+                    <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
+                        <Image Source="icono_login.png"
+                               WidthRequest="52"
+                               HeightRequest="52"
+                               x:Name="LogoIcon"/>
 
-                        <Border StrokeShape="RoundRectangle 8" Stroke="{StaticResource Gray200}" BackgroundColor="{StaticResource Secondary}">
-                            <Entry x:Name="PasswordEntry" Placeholder="Contraseña" IsPassword="True" BackgroundColor="Transparent" Margin="6" Focused="OnEntryFocused" Unfocused="OnEntryUnfocused" TextColor="{StaticResource Gray900}" PlaceholderColor="{StaticResource Gray400}" />
-                        </Border>
+                        <Label Text="NONTONIO"
+                               FontSize="24"
+                               FontAttributes="Bold"
+                               TextColor="White"
+                               HorizontalTextAlignment="Center"/>
+                    </VerticalStackLayout>
 
-                        <Label Text="Verificación rápida" FontSize="12" TextColor="{StaticResource Gray600}" />
-                        <Grid ColumnDefinitions="*,Auto,Auto" ColumnSpacing="8">
-                            <Label x:Name="CaptchaLabel" Text="0 + 0 =" VerticalOptions="Center" FontSize="18" FontAttributes="Bold" TextColor="{StaticResource Gray900}" />
-                            <Entry x:Name="CaptchaEntry" Grid.Column="1" Placeholder="?" WidthRequest="70" Keyboard="Numeric" HorizontalTextAlignment="Center" TextColor="{StaticResource Gray900}" />
-                            <Button Grid.Column="2" Text="↻" Clicked="OnRefreshCaptchaClicked" Style="{StaticResource SecondaryButtonStyle}" Padding="10,0" />
+                    <!-- USUARIO -->
+                    <Border BackgroundColor="#1A1A1A"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="12,4">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Text="👤"
+                                   VerticalOptions="Center"
+                                   FontSize="15"/>
+                            <Entry x:Name="UsernameEntry"
+                                   Grid.Column="1"
+                                   Placeholder="Usuario"
+                                   PlaceholderColor="#888888"
+                                   TextColor="White"
+                                   BackgroundColor="Transparent"/>
                         </Grid>
-                    </VerticalStackLayout>
+                    </Border>
 
-                    <VerticalStackLayout Spacing="10">
-                        <Button x:Name="LoginButton" Text="INGRESAR A LA TIENDA" Clicked="OnLoginClicked" HeightRequest="52" FontAttributes="Bold" BackgroundColor="{StaticResource Primary}" TextColor="{StaticResource White}" Pressed="OnButtonPressed" Released="OnButtonReleased" />
-                        <Button Text="Crear una cuenta" Clicked="OnRegisterClicked" Style="{StaticResource SecondaryButtonStyle}" HeightRequest="48" />
-                    </VerticalStackLayout>
+                    <!-- CONTRASEÑA -->
+                    <Border BackgroundColor="#1A1A1A"
+                            StrokeThickness="0"
+                            StrokeShape="RoundRectangle 10"
+                            Padding="12,4">
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                            <Label Text="🔒"
+                                   VerticalOptions="Center"
+                                   FontSize="15"/>
+                            <Entry x:Name="PasswordEntry"
+                                   Grid.Column="1"
+                                   Placeholder="Contraseña"
+                                   PlaceholderColor="#888888"
+                                   TextColor="White"
+                                   IsPassword="True"
+                                   BackgroundColor="Transparent"/>
+                        </Grid>
+                    </Border>
 
-                    <Frame IsVisible="False" x:Name="MessageFrame" Padding="8" CornerRadius="8" BackgroundColor="{StaticResource Danger}" HasShadow="False">
-                        <Label x:Name="MessageLabel" TextColor="{StaticResource White}" HorizontalOptions="Fill" HorizontalTextAlignment="Center" />
-                    </Frame>
+                    <!-- CAPTCHA -->
+                    <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
+                        <Border BackgroundColor="#1A1A1A"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 9"
+                                Padding="12">
+                            <Label x:Name="CaptchaLabel"
+                                   Text="0 + 0"
+                                   TextColor="White"
+                                   FontAttributes="Bold"/>
+                        </Border>
+
+                        <Border Grid.Column="1"
+                                BackgroundColor="#1A1A1A"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 9"
+                                Padding="8,0">
+                            <Entry x:Name="CaptchaEntry"
+                                   Placeholder="Resultado"
+                                   PlaceholderColor="#777777"
+                                   TextColor="White"
+                                   Keyboard="Numeric"
+                                   BackgroundColor="Transparent"
+                                   HorizontalTextAlignment="Center"/>
+                        </Border>
+
+                        <Button Grid.Column="2"
+                                Text="↻"
+                                WidthRequest="42"
+                                HeightRequest="42"
+                                CornerRadius="9"
+                                BackgroundColor="#222222"
+                                TextColor="White"
+                                Clicked="OnRefreshCaptchaClicked"/>
+                    </Grid>
+
+                    <!-- BOTÓN LOGIN -->
+                    <Button x:Name="LoginButton"
+                            Text="Entrar"
+                            HeightRequest="48"
+                            CornerRadius="10"
+                            BackgroundColor="White"
+                            TextColor="Black"
+                            FontAttributes="Bold"
+                            Clicked="OnLoginClicked"
+                            Pressed="OnButtonPressed"
+                            Released="OnButtonReleased"/>
+
+                    <!-- CREAR CUENTA -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Spacing="4">
+                        <Label Text="¿No tienes cuenta?"
+                               TextColor="#888888"
+                               FontSize="13"/>
+                        <Label Text="Crear cuenta"
+                               TextColor="White"
+                               FontAttributes="Bold"
+                               FontSize="13">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnRegisterTapped"/>
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                    <Label x:Name="MessageLabel"
+                           IsVisible="False"
+                           TextColor="#FF453A"
+                           FontSize="13"
+                           HorizontalTextAlignment="Center"/>
+
                 </VerticalStackLayout>
-            </Frame>
-        </VerticalStackLayout>
-    </ScrollView>
+            </Border>
+        </Grid>
+    </Grid>
 </ContentPage>

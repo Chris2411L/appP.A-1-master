@@ -3,76 +3,260 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="appP.A.MainPage"
              Title="NONTONIO"
-             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
-
-    <!-- Cleaner, lighter background for a web-like look -->
-    <ContentPage.Background>
-        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
-            <GradientStop Color="{StaticResource Secondary}" Offset="0" />
-            <GradientStop Color="{StaticResource White}" Offset="1" />
-        </LinearGradientBrush>
-    </ContentPage.Background>
-
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="📊 Dashboard" Clicked="OnVerDashboardClicked" />
-        <ToolbarItem Text="🛒 Carrito" Clicked="OnVerCarritoClicked" />
-        <ToolbarItem Text="👤 Perfil" Clicked="OnVerPerfilClicked" />
-    </ContentPage.ToolbarItems>
+             BackgroundColor="#F6F6F6">
 
     <ScrollView>
-        <VerticalStackLayout Spacing="16" Padding="18,14,18,24">
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="12">
-                <Image Source="nontonio.png" HeightRequest="48" WidthRequest="48" VerticalOptions="Center"/>
-                <VerticalStackLayout Grid.Column="1" Spacing="2">
-                    <Label x:Name="WelcomeLabel" Text="¡Hola!" Style="{StaticResource PageTitleStyle}" HorizontalOptions="Start"/>
-                    <Label Text="Tu tienda rápida y fácil de usar" FontSize="13" TextColor="{StaticResource Gray500}" />
+        <VerticalStackLayout x:Name="MainContent"
+                             Padding="24"
+                             Spacing="22">
+
+            <!-- HEADER -->
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+
+                <Border BackgroundColor="#111111"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 16"
+                        WidthRequest="58"
+                        HeightRequest="58">
+                    <Image Source="nontonio.png"
+                           WidthRequest="38"
+                           HeightRequest="38"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"/>
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                    <Label x:Name="WelcomeLabel"
+                           Text="¡Hola!"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="#111111"/>
+
+                    <Label Text="Compra rápido, simple y elegante"
+                           FontSize="14"
+                           TextColor="#6E6E73"/>
                 </VerticalStackLayout>
-                <SearchBar Grid.Column="2" Placeholder="Buscar productos" HorizontalOptions="End" WidthRequest="220" />
+
+                <Button Grid.Column="2"
+                        x:Name="ChangeUserButton"
+                        Text="Salir"
+                        IsVisible="False"
+                        BackgroundColor="#111111"
+                        TextColor="White"
+                        CornerRadius="16"
+                        HeightRequest="44"
+                        Padding="18,0"
+                        Clicked="OnChangeUserClicked"/>
             </Grid>
 
-            <Frame Padding="18" CornerRadius="12" HasShadow="True" BorderColor="Transparent" BackgroundColor="{StaticResource White}">
-                <Grid ColumnDefinitions="*,Auto" RowDefinitions="Auto,Auto">
-                    <VerticalStackLayout Spacing="4">
-                        <Label Text="¿Qué se te antoja hoy?" FontSize="20" FontFamily="MontserratSemiBold" TextColor="{StaticResource Gray900}" />
-                        <Label Text="Explora nuestras categorías y ofertas seleccionadas" FontSize="13" TextColor="{StaticResource Gray500}" />
+            <!-- HERO CON IMAGEN DE FONDO -->
+            <Border x:Name="HeroCard"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 30"
+                    Padding="0"
+                    HeightRequest="300">
+
+                <Grid>
+
+                    <Image x:Name="HeroImage"
+                           Source="main_store.png"
+                           Aspect="AspectFill"/>
+
+                    <BoxView>
+                        <BoxView.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Color="#AA000000" Offset="0"/>
+                                <GradientStop Color="#66000000" Offset="1"/>
+                            </LinearGradientBrush>
+                        </BoxView.Background>
+                    </BoxView>
+
+                    <VerticalStackLayout Padding="30"
+                                         Spacing="14"
+                                         VerticalOptions="Center">
+
+                        <Label Text="Tu tienda inteligente"
+                               FontSize="34"
+                               FontAttributes="Bold"
+                               TextColor="White"/>
+
+                        <Label Text="Explora productos, controla compras y sigue tus pedidos en una experiencia premium."
+                               FontSize="15"
+                               TextColor="#E5E5E5"
+                               LineHeight="1.25"/>
+
+                        <HorizontalStackLayout Spacing="12" Margin="0,10,0,0">
+
+                            <Button Text="Ver categorías"
+                                    BackgroundColor="White"
+                                    TextColor="#111111"
+                                    CornerRadius="16"
+                                    HeightRequest="50"
+                                    FontAttributes="Bold"
+                                    Padding="22,0"
+                                    Clicked="OnVerCategoriasClicked"/>
+
+                            <Button Text="Carrito"
+                                    BackgroundColor="#232323"
+                                    TextColor="White"
+                                    CornerRadius="16"
+                                    HeightRequest="50"
+                                    FontAttributes="Bold"
+                                    Padding="22,0"
+                                    Clicked="OnVerCarritoClicked"/>
+
+                        </HorizontalStackLayout>
                     </VerticalStackLayout>
-                    <Button Text="Ver categorías" Clicked="OnVerCategoriasClicked" HorizontalOptions="End" VerticalOptions="Center" />
+
                 </Grid>
-            </Frame>
+            </Border>
 
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="12">
-                <Frame Grid.Column="0" Padding="14" BorderColor="{StaticResource Gray200}">
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="🚚 Entrega" Style="{StaticResource SectionTitleStyle}" />
-                        <Label Text="Mismo día en productos seleccionados" FontSize="13" TextColor="{StaticResource Gray500}" />
+            <!-- ACCIONES RÁPIDAS -->
+            <Grid x:Name="QuickActions"
+                  ColumnDefinitions="*,*,*"
+                  ColumnSpacing="14">
+
+                <Border Grid.Column="0"
+                        BackgroundColor="White"
+                        Stroke="#E5E5EA"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="18">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnCategoriasCardTapped"/>
+                    </Border.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="🛍️" FontSize="26"/>
+                        <Label Text="Categorías"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               TextColor="#111111"/>
+                        <Label Text="Explora la tienda"
+                               FontSize="13"
+                               TextColor="#6E6E73"/>
                     </VerticalStackLayout>
-                </Frame>
-                <Frame Grid.Column="1" Padding="14" BorderColor="{StaticResource Gray200}">
-                    <VerticalStackLayout Spacing="6">
-                        <Label Text="💳 Pago" Style="{StaticResource SectionTitleStyle}" />
-                        <Label Text="Opciones seguras y flexibles" FontSize="13" TextColor="{StaticResource Gray500}" />
+                </Border>
+
+                <Border Grid.Column="1"
+                        BackgroundColor="White"
+                        Stroke="#E5E5EA"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="18">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnDashboardCardTapped"/>
+                    </Border.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="📊" FontSize="26"/>
+                        <Label Text="Dashboard"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               TextColor="#111111"/>
+                        <Label Text="Métricas y ventas"
+                               FontSize="13"
+                               TextColor="#6E6E73"/>
                     </VerticalStackLayout>
-                </Frame>
+                </Border>
+
+                <Border Grid.Column="2"
+                        BackgroundColor="White"
+                        Stroke="#E5E5EA"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="18">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPerfilCardTapped"/>
+                    </Border.GestureRecognizers>
+
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="👤" FontSize="26"/>
+                        <Label Text="Perfil"
+                               FontSize="17"
+                               FontAttributes="Bold"
+                               TextColor="#111111"/>
+                        <Label Text="Direcciones y pedidos"
+                               FontSize="13"
+                               TextColor="#6E6E73"/>
+                    </VerticalStackLayout>
+                </Border>
+
             </Grid>
 
-            <HorizontalStackLayout Spacing="10">
-                <Button Text="Comenzar a Comprar" HeightRequest="56" FontSize="16" Clicked="OnVerCategoriasClicked" HorizontalOptions="FillAndExpand" />
-                <Button Text="Ofertas" HeightRequest="56" FontSize="16" BackgroundColor="{StaticResource Secondary}" TextColor="{StaticResource Gray600}" HorizontalOptions="End" />
-            </HorizontalStackLayout>
+            <!-- SERVICIOS -->
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
 
-            <Button x:Name="ChangeUserButton"
-                    Text="Cambiar de Usuario"
-                    HeightRequest="48"
-                    Style="{StaticResource SecondaryButtonStyle}"
-                    Clicked="OnChangeUserClicked"
-                    IsVisible="False" />
+                <Border Grid.Column="0"
+                        BackgroundColor="#111111"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="22">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="🚚 Entrega"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="White"/>
+                        <Label Text="Seguimiento de pedidos con experiencia tipo delivery."
+                               FontSize="14"
+                               TextColor="#D1D1D6"/>
+                    </VerticalStackLayout>
+                </Border>
 
-            <VerticalStackLayout x:Name="AdminPanel" Spacing="10" IsVisible="False">
-                <Label Text="Panel de Administración" HorizontalOptions="Center" TextColor="{StaticResource Gray500}"/>
-                <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
-                    <Button Grid.Column="0" Text="⚙️ Usuarios" BackgroundColor="{StaticResource Danger}" Clicked="OnPanelUsuariosClicked"/>
-                    <Button Grid.Column="1" Text="📦 Almacén" BackgroundColor="{StaticResource Tertiary}" Clicked="OnPanelAlmacenClicked"/>
-                    <Button Grid.Column="0" Text="📩 Órdenes" BackgroundColor="{StaticResource Primary}" Clicked="OnPanelOrdenesClicked"/>
+                <Border Grid.Column="1"
+                        BackgroundColor="#FFFFFF"
+                        Stroke="#E5E5EA"
+                        StrokeThickness="1"
+                        StrokeShape="RoundRectangle 24"
+                        Padding="22">
+                    <VerticalStackLayout Spacing="8">
+                        <Label Text="💳 Pagos"
+                               FontSize="20"
+                               FontAttributes="Bold"
+                               TextColor="#111111"/>
+                        <Label Text="Checkout limpio, rápido y fácil de usar."
+                               FontSize="14"
+                               TextColor="#6E6E73"/>
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+
+            <!-- ADMIN -->
+            <VerticalStackLayout x:Name="AdminPanel"
+                                 Spacing="12"
+                                 IsVisible="False">
+
+                <Label Text="Panel de administración"
+                       FontSize="18"
+                       FontAttributes="Bold"
+                       TextColor="#111111"/>
+
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+
+                    <Button Grid.Column="0"
+                            Text="Usuarios"
+                            BackgroundColor="#111111"
+                            TextColor="White"
+                            CornerRadius="16"
+                            HeightRequest="52"
+                            Clicked="OnPanelUsuariosClicked"/>
+
+                    <Button Grid.Column="1"
+                            Text="Almacén"
+                            BackgroundColor="#111111"
+                            TextColor="White"
+                            CornerRadius="16"
+                            HeightRequest="52"
+                            Clicked="OnPanelAlmacenClicked"/>
+
+                    <Button Grid.Column="2"
+                            Text="Órdenes"
+                            BackgroundColor="#111111"
+                            TextColor="White"
+                            CornerRadius="16"
+                            HeightRequest="52"
+                            Clicked="OnPanelOrdenesClicked"/>
                 </Grid>
             </VerticalStackLayout>
 

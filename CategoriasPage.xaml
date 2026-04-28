@@ -4,34 +4,122 @@
              xmlns:models="clr-namespace:appP.A.Models"
              x:Class="appP.A.CategoriasPage"
              Title="Categorías"
-             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
+             BackgroundColor="#F6F6F6">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="18" Spacing="14">
-            <Label Text="Explora por categorías" Style="{StaticResource PageTitleStyle}"/>
-            <Label Text="Selecciona una categoría para ver productos" FontSize="13" TextColor="{StaticResource Gray500}" />
+    <Grid RowDefinitions="Auto,Auto,Auto,*"
+          Padding="16"
+          RowSpacing="16">
 
-            <CollectionView x:Name="CategoriasList" SelectionMode="Single" SelectionChanged="OnCategoriaSelected">
-                <CollectionView.ItemsLayout>
-                    <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="12" VerticalItemSpacing="12"/>
-                </CollectionView.ItemsLayout>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Categoria">
-                        <Frame HeightRequest="160" Padding="0" CornerRadius="12" HasShadow="True" BorderColor="{StaticResource Gray200}" BackgroundColor="{StaticResource White}">
-                            <Grid>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="Auto" />
-                                </Grid.RowDefinitions>
-                                <Image Source="{Binding Imagen, Converter={StaticResource ImageFallbackConverter}}" Aspect="AspectFill" Grid.Row="0"/>
-                                <VerticalStackLayout Grid.Row="1" Padding="12" BackgroundColor="{StaticResource Secondary}">
-                                    <Label Text="{Binding Nombre}" TextColor="{StaticResource Gray900}" FontAttributes="Bold" FontSize="16" />
-                                </VerticalStackLayout>
-                            </Grid>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
+        <!-- IMAGEN SUPERIOR -->
+        <Border x:Name="TopImageCard"
+                Grid.Row="0"
+                HeightRequest="220"
+                StrokeShape="RoundRectangle 30"
+                StrokeThickness="0">
+
+            <Grid>
+                <Image Source="main_store.jpg"
+                       Aspect="AspectFill"/>
+
+                <BoxView BackgroundColor="#88000000"/>
+
+                <VerticalStackLayout Padding="25"
+                                     VerticalOptions="Center">
+                    <Label Text="Categorías NONTONIO"
+                           FontSize="30"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+
+                    <Label Text="Explora tu tienda de forma premium"
+                           FontSize="14"
+                           TextColor="#EEEEEE"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <!-- HEADER -->
+        <Label Grid.Row="1"
+               Text="Categorías"
+               FontSize="28"
+               FontAttributes="Bold"
+               TextColor="#111"/>
+
+        <!-- 🔥 ADMIN PANEL -->
+        <VerticalStackLayout x:Name="AdminPanel"
+                             Grid.Row="2"
+                             IsVisible="False"
+                             Spacing="10">
+
+            <Label Text="Modo Administrador"
+                   FontAttributes="Bold"
+                   TextColor="#111"
+                   FontSize="16"/>
+
+            <Grid ColumnDefinitions="*,*,*"
+                  ColumnSpacing="10">
+
+                <Button Grid.Column="0"
+                        Text="Agregar"
+                        BackgroundColor="#111"
+                        TextColor="White"
+                        CornerRadius="12"
+                        Clicked="OnAgregarCategoriaClicked"/>
+
+                <Button Grid.Column="1"
+                        Text="Productos"
+                        BackgroundColor="#111"
+                        TextColor="White"
+                        CornerRadius="12"
+                        Clicked="OnGestionarProductosClicked"/>
+
+                <Button Grid.Column="2"
+                        Text="Actualizar"
+                        BackgroundColor="White"
+                        TextColor="#111"
+                        BorderColor="#CCC"
+                        BorderWidth="1"
+                        CornerRadius="12"
+                        Clicked="OnActualizarVistaClicked"/>
+            </Grid>
+
         </VerticalStackLayout>
-    </ScrollView>
+
+        <!-- LISTA -->
+        <CollectionView x:Name="CategoriasList"
+                        Grid.Row="3"
+                        SelectionMode="Single"
+                        SelectionChanged="OnCategoriaSelected">
+
+            <CollectionView.ItemsLayout>
+                <GridItemsLayout Orientation="Vertical" Span="3"/>
+            </CollectionView.ItemsLayout>
+
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="models:Categoria">
+
+                    <Border BackgroundColor="White"
+                            Stroke="#DDD"
+                            StrokeShape="RoundRectangle 20"
+                            Padding="15">
+
+                        <VerticalStackLayout Spacing="10">
+
+                            <Label Text="{Binding Imagen}"
+                                   FontSize="30"
+                                   HorizontalTextAlignment="Center"/>
+
+                            <Label Text="{Binding Nombre}"
+                                   FontAttributes="Bold"
+                                   FontSize="16"
+                                   HorizontalTextAlignment="Center"/>
+
+                        </VerticalStackLayout>
+
+                    </Border>
+
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+    </Grid>
 </ContentPage>

@@ -1,5 +1,6 @@
-﻿using System.IO;
-using Microsoft.Maui.Storage;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace appP.A.Models
 {
@@ -7,138 +8,227 @@ namespace appP.A.Models
     {
         public static List<Categoria> Categorias { get; set; } = new();
         public static Carrito CarritoActual { get; set; } = new Carrito();
-
         public static bool IsAdmin { get; set; } = false;
 
         private static int _nextProductId = 1;
         public static int GetNextProductId() => _nextProductId++;
 
-        static AppData()
+        // 👇 AQUI VA TU FUNCION
+        static string ImagenPorProducto(string categoria, string variante)
         {
-            static string Slug(string s) => (s ?? "").ToLower().Replace(" ", "-")
-                .Replace("á", "a").Replace("é", "e").Replace("í", "i")
-                .Replace("ó", "o").Replace("ú", "u").Replace("ñ", "n");
+            var key = $"{categoria}|{variante}".ToLower();
 
-            static void Llenar(Categoria cat, string prefijo, string[] variantes, int total, double basePrecio, double paso = 1.0)
-            {
-                var rnd = new Random();
-                for (int i = 0; i < total; i++)
-                {
-                    var v = variantes[i % variantes.Length];
-                    var nombre = $"{prefijo} {v}";
-                    var desc = $"Delicioso {prefijo.ToLower()} sabor {v}. Calidad premium para ti.";
-                    var precio = Math.Round(basePrecio + (i % 10) * paso, 2);
-                    var precioAnterior = Math.Round(precio + 5.00, 2);
+            var imagenes = new Dictionary<string, string>
+    {
+        // BEBIDAS
+        ["bebidas|cola"] = "coca cola lata refresco",
+        ["bebidas|naranja"] = "refresco naranja botella",
+        ["bebidas|limón"] = "refresco limon botella",
+        ["bebidas|manzana"] = "jugo manzana botella",
+        ["bebidas|uva"] = "jugo uva botella",
+        ["bebidas|tamarindo"] = "bebida tamarindo",
+        ["bebidas|mango"] = "jugo mango botella",
+        ["bebidas|durazno"] = "jugo durazno botella",
+        ["bebidas|mineral"] = "agua mineral botella",
+        ["bebidas|energética"] = "bebida energetica lata",
+        ["bebidas|té verde"] = "te verde botella",
+        ["bebidas|té negro"] = "te negro botella",
+        ["bebidas|café frío"] = "cafe frio botella",
+        ["bebidas|horchata"] = "agua horchata vaso",
+        ["bebidas|jamaica"] = "agua jamaica vaso",
 
-                    // Construir una query más específica para obtener imágenes alusivas desde Unsplash
-                    string GetSearchTerms(string variante, string categoria)
-                    {
-                        var key = (variante ?? "").ToLowerInvariant();
-                        var map = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
-                        {
-                            // Bebidas
-                            ["cola"] = "cola soda can beverage",
-                            ["naranja"] = "orange soda bottle",
-                            ["limón"] = "lemon soda drink",
-                            ["manzana"] = "apple juice bottle",
-                            ["uva"] = "grape juice drink",
-                            ["tamarindo"] = "tamarind candy drink",
-                            ["mango"] = "mango juice drink",
-                            ["durazno"] = "peach drink",
-                            ["mineral"] = "mineral water bottle",
-                            ["energética"] = "energy drink can",
-                            ["té verde"] = "green tea bottle",
-                            ["té negro"] = "black tea bottle",
-                            ["café frío"] = "iced coffee bottle",
-                            ["horchata"] = "horchata drink",
-                            ["jamaica"] = "hibiscus drink jamaica",
+        // SNACKS
+        ["snacks|sabritas"] = "bolsa papas fritas",
+        ["snacks|doritos"] = "doritos bolsa",
+        ["snacks|ruffles"] = "ruffles papas bolsa",
+        ["snacks|cheetos"] = "cheetos bolsa",
+        ["snacks|takis"] = "takis bolsa",
+        ["snacks|rancheritos"] = "botana rancheritos bolsa",
+        ["snacks|crujitos"] = "crujitos botana bolsa",
+        ["snacks|totis"] = "totis botana",
+        ["snacks|fritos"] = "fritos chips bolsa",
+        ["snacks|churritos"] = "churritos snack",
+        ["snacks|papas adobadas"] = "papas adobadas bolsa",
+        ["snacks|jalapeño"] = "chips jalapeno",
+        ["snacks|queso"] = "chips queso bolsa",
+        ["snacks|limoncito"] = "chips limon bolsa",
+        ["snacks|mix botanero"] = "mix botanero snacks",
 
-                            // Snacks
-                            ["sabritas"] = "potato chips bag",
-                            ["doritos"] = "doritos chips bag",
-                            ["ruffles"] = "ruffles chips",
-                            ["cheetos"] = "cheetos snack",
-                            ["takis"] = "takis chips",
-                            ["totis"] = "snack chips",
-                            ["fritos"] = "fritos chips",
+        // DULCES
+        ["dulces|paleta"] = "paleta dulce",
+        ["dulces|pulparindo"] = "dulce tamarindo pulparindo",
+        ["dulces|panditas"] = "gomitas panditas",
+        ["dulces|mazapán"] = "mazapan dulce",
+        ["dulces|skittles"] = "skittles candy",
+        ["dulces|jolly"] = "jolly rancher candy",
+        ["dulces|halls"] = "halls candy",
+        ["dulces|rockaleta"] = "rockaleta paleta",
+        ["dulces|pelón"] = "pelon pelo rico",
+        ["dulces|lucas"] = "lucas candy",
+        ["dulces|tamborcito"] = "tamborcito dulce",
+        ["dulces|cachetada"] = "cachetada dulce",
+        ["dulces|caramelo"] = "caramelos envueltos",
+        ["dulces|malvavisco"] = "malvaviscos",
+        ["dulces|dulce de leche"] = "dulce de leche candy",
 
-                            // Dulces
-                            ["paleta"] = "lollipop candy",
-                            ["pulparindo"] = "pulparindo candy",
-                            ["panditas"] = "gummy bears candy",
-                            ["skittles"] = "skittles candy",
+        // CHOCOLATES
+        ["chocolates|snickers"] = "snickers chocolate",
+        ["chocolates|kitkat"] = "kitkat chocolate",
+        ["chocolates|crunch"] = "crunch chocolate bar",
+        ["chocolates|kisses"] = "hershey kisses",
+        ["chocolates|carlos v"] = "carlos v chocolate",
+        ["chocolates|abuelita"] = "chocolate abuelita",
+        ["chocolates|milky way"] = "milky way chocolate",
+        ["chocolates|ferrero"] = "ferrero rocher",
+        ["chocolates|bubu lubu"] = "bubu lubu chocolate",
+        ["chocolates|gansito"] = "gansito chocolate",
+        ["chocolates|kinder"] = "kinder chocolate",
+        ["chocolates|amargo 70%"] = "chocolate amargo 70",
+        ["chocolates|crema cacahuate"] = "chocolate crema cacahuate",
+        ["chocolates|avellana"] = "chocolate avellana",
+        ["chocolates|menta"] = "chocolate menta",
 
-                            // Chocolates
-                            ["snickers"] = "snickers chocolate",
-                            ["kitkat"] = "kitkat chocolate",
+        // ENCHILADOS
+        ["enchilados|tamarindo"] = "dulce tamarindo chile",
+        ["enchilados|mango"] = "mango enchilado",
+        ["enchilados|sandía"] = "sandia enchilada",
+        ["enchilados|chamoy"] = "chamoy dulce",
+        ["enchilados|miguelito"] = "miguelito chile polvo",
+        ["enchilados|limón"] = "dulce limon chile",
+        ["enchilados|piña"] = "pina enchilada",
+        ["enchilados|pepino"] = "pepino con chile",
+        ["enchilados|guayaba"] = "guayaba enchilada",
+        ["enchilados|ciruela"] = "ciruela enchilada",
+        ["enchilados|manzana verde"] = "manzana verde enchilada",
+        ["enchilados|durazno"] = "durazno enchilado",
+        ["enchilados|pepino-chile"] = "pepino chile",
+        ["enchilados|piña-chile"] = "pina chile",
+        ["enchilados|chile-limón"] = "chile limon dulce",
 
-                            // Pan y repostería
-                            ["concha"] = "concha pastry",
-                            ["cupcake"] = "cupcake",
-                            ["brownie"] = "brownie",
-                        };
+        // GOMITAS
+        ["gomitas|ositos"] = "gomitas ositos",
+        ["gomitas|aros"] = "gomitas aros",
+        ["gomitas|gusanitos"] = "gomitas gusanos",
+        ["gomitas|frutas"] = "gomitas frutas",
+        ["gomitas|ácidas"] = "gomitas acidas",
+        ["gomitas|corazones"] = "gomitas corazones",
+        ["gomitas|colas"] = "gomitas cola",
+        ["gomitas|surtidas"] = "gomitas surtidas",
+        ["gomitas|sandía"] = "gomitas sandia",
+        ["gomitas|mango"] = "gomitas mango",
+        ["gomitas|arándano"] = "gomitas arandano",
+        ["gomitas|cereza"] = "gomitas cereza",
+        ["gomitas|durazno"] = "gomitas durazno",
+        ["gomitas|piña"] = "gomitas pina",
+        ["gomitas|uva"] = "gomitas uva",
 
-                        if (map.TryGetValue(key, out var term)) return term;
-                        // fallback a una búsqueda por variante + categoría
-                        return string.IsNullOrWhiteSpace(variante) ? categoria : $"{variante} {categoria}";
-                    }
+        // GALLETAS
+        ["galletas|emperador limón"] = "galletas emperador limon",
+        ["galletas|chokis"] = "galletas chokis",
+        ["galletas|marías"] = "galletas marias",
+        ["galletas|oreo"] = "galletas oreo",
+        ["galletas|príncipe"] = "galletas principe",
+        ["galletas|triki trakes"] = "triki trakes galletas",
+        ["galletas|canelitas"] = "galletas canelitas",
+        ["galletas|habaneras"] = "galletas habaneras",
+        ["galletas|animalitos"] = "galletas animalitos",
+        ["galletas|surtido rico"] = "galletas surtido rico",
+        ["galletas|mantequilla"] = "galletas mantequilla",
+        ["galletas|avena"] = "galletas avena",
+        ["galletas|chocolate"] = "galletas chocolate",
+        ["galletas|rellenas"] = "galletas rellenas",
+        ["galletas|vainilla"] = "galletas vainilla",
 
-                    var search = GetSearchTerms(v, cat.Nombre);
-                    string imgUrl = $"https://source.unsplash.com/600x600/?{Uri.EscapeDataString(search)}";
-                    var rating = Math.Round(rnd.NextDouble() * 5, 1);
-                    var prod = new Producto(nombre, desc, precio, precioAnterior, rating, imgUrl, cat.Nombre)
-                    {
-                        Id = _nextProductId++
-                    };
-                    cat.Productos.Add(prod);
-                }
-            }
+        // CHICLES
+        ["chicles|trident"] = "chicles trident",
+        ["chicles|clorets"] = "chicles clorets",
+        ["chicles|bubbaloo"] = "bubbaloo chicle",
+        ["chicles|motita"] = "motita chicle",
+        ["chicles|orbit"] = "orbit gum",
+        ["chicles|doublemint"] = "doublemint gum",
+        ["chicles|bigtime"] = "bigtime gum",
+        ["chicles|drops"] = "chicle drops",
+        ["chicles|menta"] = "chicle menta",
+        ["chicles|hierbabuena"] = "chicle hierbabuena",
+        ["chicles|fresa"] = "chicle fresa",
+        ["chicles|uva"] = "chicle uva",
+        ["chicles|sandía"] = "chicle sandia",
+        ["chicles|mora azul"] = "chicle mora azul",
+        ["chicles|canela"] = "chicle canela",
 
-            // ====== Categorías actualizadas con EMOJIS ======
-            var bebidas = new Categoria("Bebidas", "🥤");
-            var snacks = new Categoria("Snacks", "🍿");
-            var dulces = new Categoria("Dulces", "🍬");
-            var chocolates = new Categoria("Chocolates", "🍫");
-            var enchilados = new Categoria("Enchilados", "🌶️");
-            var gomitas = new Categoria("Gomitas", "🧸");
-            var galletas = new Categoria("Galletas", "🍪");
-            var chicles = new Categoria("Chicles", "🫧");
-            var importados = new Categoria("Importados", "🌍");
-            var panPastelitos = new Categoria("Pan y Pastelitos", "🥐");
-            var reposteria = new Categoria("Repostería", "🍰");
-            var combosOfertas = new Categoria("Combos y Ofertas", "🎁");
+        // IMPORTADOS
+        ["importados|pocky"] = "pocky snack",
+        ["importados|hi-chew"] = "hi chew candy",
+        ["importados|kitkat japón"] = "kitkat japan",
+        ["importados|twix"] = "twix chocolate",
+        ["importados|butterfinger"] = "butterfinger chocolate",
+        ["importados|reese’s"] = "reeses chocolate",
+        ["importados|mentos"] = "mentos candy",
+        ["importados|haribo"] = "haribo gummies",
+        ["importados|toffee"] = "toffee candy",
+        ["importados|turco lokum"] = "turkish delight",
+        ["importados|choco pie"] = "choco pie",
+        ["importados|pepero"] = "pepero snack",
+        ["importados|milkita"] = "milkita candy",
+        ["importados|laffy taffy"] = "laffy taffy",
 
-            var vBebidas = new[] { "Cola", "Naranja", "Limón", "Manzana", "Uva", "Tamarindo", "Mango", "Durazno", "Mineral", "Energética", "Té Verde", "Té Negro", "Café Frío", "Horchata", "Jamaica" };
-            var vSnacks = new[] { "Sabritas", "Doritos", "Ruffles", "Cheetos", "Takis", "Rancheritos", "Crujitos", "Totis", "Fritos", "Churritos", "Papas Adobadas", "Jalapeño", "Queso", "Limoncito", "Mix Botanero" };
-            var vDulces = new[] { "Paleta", "Pulparindo", "Panditas", "Mazapán", "Skittles", "Jolly", "Halls", "Rockaleta", "Pelón", "Lucas", "Tamborcito", "Cachetada", "Caramelo", "Malvavisco", "Dulce de Leche" };
-            var vChoco = new[] { "Snickers", "KitKat", "Crunch", "Kisses", "Carlos V", "Abuelita", "Milky Way", "Ferrero", "Bubu Lubu", "Gansito", "Kinder", "Amargo 70%", "Crema Cacahuate", "Avellana", "Menta" };
-            var vEnchi = new[] { "Tamarindo", "Mango", "Sandía", "Chamoy", "Miguelito", "Limón", "Piña", "Pepino", "Guayaba", "Ciruela", "Manzana Verde", "Durazno", "Pepino-Chile", "Piña-Chile", "Chile-Limón" };
-            var vGomitas = new[] { "Ositos", "Aros", "Gusanitos", "Frutas", "Ácidas", "Corazones", "Colas", "Surtidas", "Sandía", "Mango", "Arándano", "Cereza", "Durazno", "Piña", "Uva" };
-            var vGalletas = new[] { "Emperador Limón", "Chokis", "Marías", "Oreo", "Príncipe", "Triki Trakes", "Canelitas", "Habaneras", "Animalitos", "Surtido Rico", "Mantequilla", "Avena", "Chocolate", "Rellenas", "Vainilla" };
-            var vChicles = new[] { "Trident", "Clorets", "Bubbaloo", "Motita", "Orbit", "Doublemint", "BigTime", "Drops", "Menta", "Hierbabuena", "Fresa", "Uva", "Sandía", "Mora Azul", "Canela" };
-            var vImport = new[] { "Pocky", "Hi-Chew", "KitKat Japón", "Twix", "Butterfinger", "Reese’s", "Mentos", "Haribo", "Toffee", "Turco Lokum", "Choco Pie", "Pepero", "Milkita", "Laffy Taffy" };
-            var vPan = new[] { "Concha", "Mantecadas", "Gansito Pan", "Roles Canela", "Napo", "Magdalena", "Donita", "Panquesito Marmoleado", "Cuernito Dulce", "Oreja", "Pan de Elote", "Berlín", "Panqué Vainilla", "Panqué Choco", "Panqué Nuez" };
-            var vRepost = new[] { "Brownie", "Pay de Queso", "Pay de Limón", "Cheesecake Fresa", "Flan", "Gelatina Mosaico", "Cupcake Vainilla", "Cupcake Choco", "Cupcake RedVelvet", "Alfajor", "Macaron", "Rol de Guayaba", "Rol de Zarzamora", "Tres Leches", "Tiramisú" };
-            var vCombos = new[] { "Combo Escolar", "Combo Fiesta", "Combo Gamer", "Combo Cine", "Combo Oficina", "Combo Viaje", "Combo Dulcero", "Combo Picante", "Combo Kids", "Combo Premium", "Combo Mix", "Combo Para 2", "Combo Familiar", "Combo Ahorro", "Combo Sorpresa" };
+        // PAN
+        ["pan y pastelitos|concha"] = "pan dulce concha",
+        ["pan y pastelitos|mantecadas"] = "mantecadas pan",
+        ["pan y pastelitos|gansito pan"] = "gansito pastelito",
+        ["pan y pastelitos|roles canela"] = "roles de canela",
+        ["pan y pastelitos|napo"] = "napolitano pastelito",
+        ["pan y pastelitos|magdalena"] = "magdalena pan",
+        ["pan y pastelitos|donita"] = "donas pan dulce",
+        ["pan y pastelitos|panquesito marmoleado"] = "panque marmoleado",
+        ["pan y pastelitos|cuernito dulce"] = "cuernito pan dulce",
+        ["pan y pastelitos|oreja"] = "pan dulce oreja",
+        ["pan y pastelitos|pan de elote"] = "pan de elote",
+        ["pan y pastelitos|berlín"] = "berlin pastry",
+        ["pan y pastelitos|panqué vainilla"] = "panque vainilla",
+        ["pan y pastelitos|panqué choco"] = "panque chocolate",
+        ["pan y pastelitos|panqué nuez"] = "panque nuez",
 
-            Llenar(bebidas, "Bebida", vBebidas, total: 18, basePrecio: 14.0, paso: 1.0);
-            Llenar(snacks, "Snack", vSnacks, total: 18, basePrecio: 16.0, paso: 1.0);
-            Llenar(dulces, "Dulce", vDulces, total: 24, basePrecio: 6.0, paso: 0.8);
-            Llenar(chocolates, "Chocolate", vChoco, total: 18, basePrecio: 15.0, paso: 1.2);
-            Llenar(enchilados, "Enchilado", vEnchi, total: 15, basePrecio: 10.0, paso: 1.0);
-            Llenar(gomitas, "Gomitas", vGomitas, total: 20, basePrecio: 12.0, paso: 0.9);
-            Llenar(galletas, "Galletas", vGalletas, total: 16, basePrecio: 12.0, paso: 0.8);
-            Llenar(chicles, "Chicle", vChicles, total: 12, basePrecio: 2.5, paso: 0.5);
-            Llenar(importados, "Dulce Importado", vImport, total: 20, basePrecio: 22.0, paso: 1.5);
-            Llenar(panPastelitos, "Pan", vPan, total: 12, basePrecio: 14.0, paso: 1.0);
-            Llenar(reposteria, "Postre", vRepost, total: 12, basePrecio: 18.0, paso: 1.3);
-            Llenar(combosOfertas, "Pack", vCombos, total: 15, basePrecio: 49.0, paso: 3.0);
+        // REPOSTERIA
+        ["repostería|brownie"] = "brownie postre",
+        ["repostería|pay de queso"] = "pay de queso",
+        ["repostería|pay de limón"] = "pay de limon",
+        ["repostería|cheesecake fresa"] = "cheesecake fresa",
+        ["repostería|flan"] = "flan postre",
+        ["repostería|gelatina mosaico"] = "gelatina mosaico",
+        ["repostería|cupcake vainilla"] = "cupcake vainilla",
+        ["repostería|cupcake choco"] = "cupcake chocolate",
+        ["repostería|cupcake redvelvet"] = "red velvet cupcake",
+        ["repostería|alfajor"] = "alfajor",
+        ["repostería|macaron"] = "macaron",
+        ["repostería|rol de guayaba"] = "rol guayaba",
+        ["repostería|rol de zarzamora"] = "rol zarzamora",
+        ["repostería|tres leches"] = "pastel tres leches",
+        ["repostería|tiramisú"] = "tiramisu",
 
-            Categorias.AddRange(new[]
-            {
-                bebidas, snacks, dulces, chocolates, enchilados, gomitas,
-                galletas, chicles, importados, panPastelitos, reposteria, combosOfertas
-            });
+        // COMBOS
+        ["combos y ofertas|combo escolar"] = "lunch snack combo",
+        ["combos y ofertas|combo fiesta"] = "party snack combo",
+        ["combos y ofertas|combo gamer"] = "gaming snacks",
+        ["combos y ofertas|combo cine"] = "movie snacks popcorn",
+        ["combos y ofertas|combo oficina"] = "office snacks",
+        ["combos y ofertas|combo viaje"] = "travel snacks",
+        ["combos y ofertas|combo dulcero"] = "candy box",
+        ["combos y ofertas|combo picante"] = "spicy snack combo",
+        ["combos y ofertas|combo kids"] = "kids snack box",
+        ["combos y ofertas|combo premium"] = "premium snack box",
+        ["combos y ofertas|combo mix"] = "mixed snacks",
+        ["combos y ofertas|combo para 2"] = "snacks for two",
+        ["combos y ofertas|combo familiar"] = "family snack box",
+        ["combos y ofertas|combo ahorro"] = "discount snack pack",
+        ["combos y ofertas|combo sorpresa"] = "surprise snack box"
+    };
+
+              string query = imagenes.ContainsKey(key)
+        ? imagenes[key]
+        : $"{variante} {categoria} producto";
+
+    return $"https://tse.mm.bing.net/th?q={Uri.EscapeDataString(query)}&w=800&h=800&c=7&rs=1&p=0&o=5&pid=1.7";
         }
     }
 }

@@ -4,48 +4,195 @@
              xmlns:models="clr-namespace:appP.A.Models"
              x:Class="appP.A.ProductosPage"
              Title="Productos"
-             BackgroundColor="{AppThemeBinding Light={StaticResource Gray100}, Dark={StaticResource OffBlack}}">
+             BackgroundColor="#F6F6F6">
 
-    <Grid RowDefinitions="Auto,*, Auto" Padding="12,10">
-        <VerticalStackLayout Grid.Row="0" Spacing="4" Margin="4,0,4,10">
-            <Label Text="Productos disponibles" Style="{StaticResource PageTitleStyle}" HorizontalOptions="Start"/>
-            <Label Text="Añade al carrito con un toque" FontSize="13" TextColor="{StaticResource Gray500}" />
+    <Grid RowDefinitions="Auto,*,Auto" Padding="22">
+
+        <!-- HEADER -->
+        <VerticalStackLayout Grid.Row="0" Spacing="16">
+
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <VerticalStackLayout Spacing="4">
+                    <Label x:Name="CategoriaTitle"
+                           Text="Productos"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="#111111"/>
+
+                    <Label Text="Elige tus productos favoritos y agrégalos al carrito."
+                           FontSize="14"
+                           TextColor="#6E6E73"/>
+                </VerticalStackLayout>
+
+                <Border Grid.Column="1"
+                        BackgroundColor="#111111"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 18"
+                        WidthRequest="58"
+                        HeightRequest="58">
+                    <Label x:Name="CategoriaIcon"
+                           Text="🛒"
+                           FontSize="26"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+                </Border>
+            </Grid>
+
+            <!-- BUSCADOR -->
+            <Border BackgroundColor="White"
+                    Stroke="#E5E5EA"
+                    StrokeThickness="1"
+                    StrokeShape="RoundRectangle 18"
+                    Padding="14,4">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="10">
+                    <Label Text="🔎"
+                           FontSize="17"
+                           VerticalOptions="Center"/>
+                    <Entry x:Name="SearchEntry"
+                           Grid.Column="1"
+                           Placeholder="Buscar producto..."
+                           PlaceholderColor="#8E8E93"
+                           TextColor="#111111"
+                           BackgroundColor="Transparent"
+                           TextChanged="OnSearchTextChanged"/>
+                </Grid>
+            </Border>
         </VerticalStackLayout>
 
-        <CollectionView x:Name="ProductosList" Grid.Row="1" Margin="0,4,0,0">
+        <!-- PRODUCTOS -->
+        <CollectionView x:Name="ProductosList"
+                        Grid.Row="1"
+                        Margin="0,18,0,0">
+
             <CollectionView.ItemsLayout>
-                <GridItemsLayout Orientation="Vertical" Span="2" HorizontalItemSpacing="12" VerticalItemSpacing="12"/>
+                <GridItemsLayout Orientation="Vertical"
+                                 Span="3"
+                                 HorizontalItemSpacing="16"
+                                 VerticalItemSpacing="16"/>
             </CollectionView.ItemsLayout>
+
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="models:Producto">
-                    <Frame Padding="0" CornerRadius="12" HasShadow="True" BorderColor="{StaticResource Gray200}" BackgroundColor="{StaticResource White}">
-                        <VerticalStackLayout Spacing="0">
-                            <Grid HeightRequest="140">
-                                <Image Source="{Binding Imagen, Converter={StaticResource ImageFallbackConverter}}" Aspect="AspectFill"/>
-                                <BoxView BackgroundColor="#80000000" IsVisible="False"/>
+
+                    <Border BackgroundColor="White"
+                            Stroke="#E5E5EA"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 28"
+                            Padding="0"
+                            HeightRequest="320">
+
+                        <Grid RowDefinitions="170,*,Auto">
+
+                            <!-- IMAGEN REAL DEL PRODUCTO -->
+                            <Grid IsClippedToBounds="True">
+                                <Image Source="{Binding Imagen, Converter={StaticResource ImageFallbackConverter}}"
+                                       Aspect="AspectFill"/>
+
+                                <BoxView>
+                                    <BoxView.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                            <GradientStop Color="#00000000" Offset="0"/>
+                                            <GradientStop Color="#33000000" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </BoxView.Background>
+                                </BoxView>
                             </Grid>
-                            <VerticalStackLayout Padding="12" Spacing="6">
-                                <Label Text="{Binding Nombre}" FontSize="15" FontFamily="MontserratSemiBold" TextColor="{StaticResource Gray900}" MaxLines="1"/>
-                                <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
-                                    <Label Text="{Binding Precio, StringFormat='{0:C2}'}" FontSize="16" FontFamily="MontserratSemiBold" TextColor="{StaticResource Primary}"/>
-                                    <Button Text="Añadir" 
-                                            BackgroundColor="{StaticResource Primary}" 
-                                            TextColor="White" 
-                                            FontSize="13"
-                                            HeightRequest="40"
-                                            CornerRadius="8"
-                                            Clicked="OnAgregarAlCarritoClicked" 
-                                            CommandParameter="{Binding .}"/>
-                                </HorizontalStackLayout>
+
+                            <!-- INFO -->
+                            <VerticalStackLayout Grid.Row="1"
+                                                 Padding="16,12,16,6"
+                                                 Spacing="6">
+
+                                <Label Text="{Binding Nombre}"
+                                       FontSize="17"
+                                       FontAttributes="Bold"
+                                       TextColor="#111111"
+                                       MaxLines="2"/>
+
+                                <Label Text="{Binding Descripcion}"
+                                       FontSize="12"
+                                       TextColor="#6E6E73"
+                                       MaxLines="2"/>
+
+                                <Grid ColumnDefinitions="*,Auto" Margin="0,4,0,0">
+                                    <Label Text="{Binding Precio, StringFormat='${0:F2}'}"
+                                           FontSize="20"
+                                           FontAttributes="Bold"
+                                           TextColor="#111111"/>
+
+                                    <Border Grid.Column="1"
+                                            BackgroundColor="#F2F2F7"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 12"
+                                            Padding="10,5">
+                                        <Label Text="{Binding Stock, StringFormat='Stock: {0}'}"
+                                               FontSize="11"
+                                               TextColor="#111111"
+                                               FontAttributes="Bold"/>
+                                    </Border>
+                                </Grid>
                             </VerticalStackLayout>
-                        </VerticalStackLayout>
-                    </Frame>
+
+                            <!-- BOTÓN -->
+                            <Grid Grid.Row="2" Padding="16,0,16,16">
+                                <Button Text="Añadir al carrito"
+                                        HeightRequest="48"
+                                        CornerRadius="16"
+                                        BackgroundColor="#111111"
+                                        TextColor="White"
+                                        FontAttributes="Bold"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnAgregarAlCarritoClicked">
+
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button"
+                                                     Binding="{Binding Stock}"
+                                                     Value="0">
+                                            <Setter Property="Text" Value="Sin stock"/>
+                                            <Setter Property="IsEnabled" Value="False"/>
+                                            <Setter Property="BackgroundColor" Value="#C7C7CC"/>
+                                            <Setter Property="TextColor" Value="#6E6E73"/>
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </Grid>
+
+                        </Grid>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Button Grid.Row="2" Text="🛒 Ver carrito" BackgroundColor="{StaticResource Primary}" TextColor="White" 
-                FontAttributes="Bold" Margin="8,14,8,6" CornerRadius="12" HeightRequest="52" 
-                Clicked="OnVerCarritoClicked"/>
+        <!-- FOOTER -->
+        <Border Grid.Row="2"
+                BackgroundColor="#111111"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 24"
+                Padding="16"
+                Margin="0,16,0,0">
+
+            <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
+                <VerticalStackLayout Spacing="2">
+                    <Label Text="¿Listo para finalizar?"
+                           FontSize="17"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+                    <Label Text="Revisa tu carrito antes de pagar."
+                           FontSize="13"
+                           TextColor="#D1D1D6"/>
+                </VerticalStackLayout>
+
+                <Button Grid.Column="1"
+                        Text="Ver carrito"
+                        BackgroundColor="White"
+                        TextColor="#111111"
+                        CornerRadius="16"
+                        FontAttributes="Bold"
+                        HeightRequest="48"
+                        Padding="22,0"
+                        Clicked="OnVerCarritoClicked"/>
+            </Grid>
+        </Border>
+
     </Grid>
 </ContentPage>
