@@ -1,5 +1,6 @@
 using appP.A.Models;
 using appP.A.Services;
+using Microsoft.Maui.Storage;
 using System.Globalization;
 using System.Text.Json;
 
@@ -9,27 +10,55 @@ namespace appP.A
     {
         private double _total;
         private static readonly HttpClient client = new HttpClient();
-        private List<string> _nombresDir = new List<string>();
+        private List<string> _nombresDir = new();
 
-        public CheckoutPage() { InitializeComponent(); }
+        private double _selectedLat;
+        private double _selectedLon;
+        private bool _manualLocationSelected;
 
-        protected override void OnAppearing()
+        private string _currentDireccion = "";
+
+        public CheckoutPage()
+        {
+            InitializeComponent();
+        }
+
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
+
             Calcular();
             CargarDirecciones();
-            DeliveryDateLabel.Text = DateTime.Now.AddDays(3).ToString("dddd, dd de MMMM").ToUpper();
+
+            DeliveryDateLabel.Text = DateTime.Now.AddDays(3)
+                .ToString("dddd, dd 'de' MMMM", new CultureInfo("es-MX"))
+                .ToUpper();
+
+            CargarMapaInicial();
+
+            CheckoutContent.Opacity = 0;
+            CheckoutContent.TranslationY = 18;
+            PayButton.Opacity = 0;
+
+            await Task.WhenAll(
+                CheckoutContent.FadeTo(1, 350, Easing.CubicOut),
+                CheckoutContent.TranslateTo(0, 0, 350, Easing.CubicOut),
+                PayButton.FadeTo(1, 450, Easing.CubicOut)
+            );
         }
 
         private void CargarDirecciones()
         {
             var user = AuthService.GetCurrentUser() ?? "invitado";
             string lista = Preferences.Get($"lista_direcciones_{user}", "");
+
             if (!string.IsNullOrEmpty(lista))
             {
-                _nombresDir = lista.Split('|').Where(s => !string.IsNullOrEmpty(s)).ToList();
+                _nombresDir = lista.Split('|').Where(s => !string.IsNullOrWhiteSpace(s)).ToList();
                 SavedAddressesPicker.ItemsSource = _nombresDir;
-                if (_nombresDir.Count > 0) SavedAddressesPicker.SelectedIndex = 0;
+
+                if (_nombresDir.Count > 0)
+                    SavedAddressesPicker.SelectedIndex = 0;
             }
         }
 
@@ -38,16 +67,19 @@ namespace appP.A
             if (SavedAddressesPicker.SelectedIndex == -1) return;
 
             var user = AuthService.GetCurrentUser() ?? "invitado";
-            string key = SavedAddressesPicker.SelectedItem.ToString();
+            string key = SavedAddressesPicker.SelectedItem?.ToString() ?? "";
 
             string calle = Preferences.Get($"{user}_{key}_calle", "");
             string ciudad = Preferences.Get($"{user}_{key}_ciu", "");
             string col = Preferences.Get($"{user}_{key}_col", "");
             string num = Preferences.Get($"{user}_{key}_num", "");
 
-            DireccionSeleccionadaLabel.Text = $"{key}: {calle} {num}, {ciudad}";
+            _currentDireccion = $"{calle} {num}, {col}, {ciudad}, México";
+            DireccionSeleccionadaLabel.Text = $"{key}: {_currentDireccion}";
 
-            // Actualizar mapa (solo lectura)
+            _manualLocationSelected = false;
+            MapaPrecisionLabel.Text = "Buscando ubicación aproximada por dirección...";
+
             ActualizarMapa(calle, num, col, ciudad);
         }
 
@@ -56,22 +88,137 @@ namespace appP.A
             try
             {
                 string q = Uri.EscapeDataString($"{calle} {num}, {col}, {ciudad}, Mexico");
+
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add("User-Agent", "NontonioApp");
+
                 var res = await client.GetStringAsync($"https://nominatim.openstreetmap.org/search?format=json&q={q}&limit=1");
+
                 using var doc = JsonDocument.Parse(res);
                 var root = doc.RootElement.EnumerateArray().FirstOrDefault();
+
                 if (root.ValueKind != JsonValueKind.Undefined)
                 {
-                    string lat = root.GetProperty("lat").GetString();
-                    string lon = root.GetProperty("lon").GetString();
-                    double lt = double.Parse(lat, CultureInfo.InvariantCulture);
-                    double ln = double.Parse(lon, CultureInfo.InvariantCulture);
-                    string bbox = $"{(ln - 0.002).ToString(CultureInfo.InvariantCulture)},{(lt - 0.002).ToString(CultureInfo.InvariantCulture)},{(ln + 0.002).ToString(CultureInfo.InvariantCulture)},{(lt + 0.002).ToString(CultureInfo.InvariantCulture)}";
-                    MapView.Source = new UrlWebViewSource { Url = $"https://www.openstreetmap.org/export/embed.html?bbox={bbox}&layer=mapnik&marker={lat},{lon}" };
+                    string? lat = root.GetProperty("lat").GetString();
+                    string? lon = root.GetProperty("lon").GetString();
+
+                    if (double.TryParse(lat, NumberStyles.Any, CultureInfo.InvariantCulture, out double lt) &&
+                        double.TryParse(lon, NumberStyles.Any, CultureInfo.InvariantCulture, out double ln))
+                    {
+                        _selectedLat = lt;
+                        _selectedLon = ln;
+
+                        MapaPrecisionLabel.Text = "Ubicación aproximada encontrada. Puedes tocar el mapa para corregirla.";
+                        CargarMapaInteractivo(_selectedLat, _selectedLon);
+                        return;
+                    }
+                }
+
+                CargarMapaInicial();
+                MapaPrecisionLabel.Text = "No se detectó bien la dirección. Toca el mapa para marcar tu casa.";
+            }
+            catch
+            {
+                CargarMapaInicial();
+                MapaPrecisionLabel.Text = "No se pudo detectar la dirección. Toca el mapa para marcar tu casa.";
+            }
+        }
+
+        private void CargarMapaInicial()
+        {
+            _selectedLat = 19.4326;
+            _selectedLon = -99.1332;
+            CargarMapaInteractivo(_selectedLat, _selectedLon);
+        }
+
+        private void CargarMapaInteractivo(double lat, double lon)
+        {
+            string latTxt = lat.ToString(CultureInfo.InvariantCulture);
+            string lonTxt = lon.ToString(CultureInfo.InvariantCulture);
+
+            string html = $@"
+<!DOCTYPE html>
+<html>
+<head>
+<meta name='viewport' content='width=device-width, initial-scale=1.0'>
+<link rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'/>
+<style>
+html, body, #map {{
+    height:100%;
+    margin:0;
+    padding:0;
+    background:#111;
+}}
+.leaflet-control-attribution {{
+    display:none;
+}}
+</style>
+</head>
+<body>
+<div id='map'></div>
+
+<script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>
+<script>
+var map = L.map('map').setView([{latTxt}, {lonTxt}], 16);
+
+L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
+    maxZoom: 19,
+    subdomains: 'abcd'
+}}).addTo(map);
+
+var marker = L.marker([{latTxt}, {lonTxt}], {{ draggable:true }}).addTo(map);
+
+function send(lat, lon) {{
+    window.location.href = 'nontonio://location?lat=' + lat + '&lon=' + lon;
+}}
+
+map.on('click', function(e) {{
+    marker.setLatLng(e.latlng);
+    send(e.latlng.lat, e.latlng.lng);
+}});
+
+marker.on('dragend', function(e) {{
+    var p = marker.getLatLng();
+    send(p.lat, p.lng);
+}});
+</script>
+</body>
+</html>";
+
+            MapView.Source = new HtmlWebViewSource { Html = html };
+        }
+
+        private void MapView_Navigating(object sender, WebNavigatingEventArgs e)
+        {
+            if (!e.Url.StartsWith("nontonio://location", StringComparison.OrdinalIgnoreCase))
+                return;
+
+            e.Cancel = true;
+
+            try
+            {
+                var uri = new Uri(e.Url);
+                var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+
+                string? latText = query.Get("lat");
+                string? lonText = query.Get("lon");
+
+                if (double.TryParse(latText, NumberStyles.Any, CultureInfo.InvariantCulture, out double lat) &&
+                    double.TryParse(lonText, NumberStyles.Any, CultureInfo.InvariantCulture, out double lon))
+                {
+                    _selectedLat = lat;
+                    _selectedLon = lon;
+                    _manualLocationSelected = true;
+
+                    MapaPrecisionLabel.Text = $"Casa marcada manualmente: {lat:F5}, {lon:F5}";
                 }
             }
             catch { }
+        }
+
+        private void OnCentrarMapaClicked(object sender, EventArgs e)
+        {
+            CargarMapaInteractivo(_selectedLat, _selectedLon);
         }
 
         private void Calcular()
@@ -80,13 +227,14 @@ namespace appP.A
             double iva = sub * 0.16;
             double tar = 15.00;
             double env = sub >= 299 ? 0 : 99.00;
+
             _total = sub + iva + tar + env;
 
-            SubtotalLabel.Text = sub.ToString("C");
-            IvaLabel.Text = iva.ToString("C");
-            TarifaLabel.Text = tar.ToString("C");
-            ShippingLabel.Text = env == 0 ? "GRATIS" : env.ToString("C");
-            TotalLabel.Text = _total.ToString("C");
+            SubtotalLabel.Text = sub.ToString("C", CultureInfo.CurrentCulture);
+            IvaLabel.Text = iva.ToString("C", CultureInfo.CurrentCulture);
+            TarifaLabel.Text = tar.ToString("C", CultureInfo.CurrentCulture);
+            ShippingLabel.Text = env == 0 ? "GRATIS" : env.ToString("C", CultureInfo.CurrentCulture);
+            TotalLabel.Text = _total.ToString("C", CultureInfo.CurrentCulture);
         }
 
         private async void OnGoToProfileClicked(object sender, EventArgs e)
@@ -102,111 +250,72 @@ namespace appP.A
                 return;
             }
 
+            if (!_manualLocationSelected)
+            {
+                bool continuar = await DisplayAlert(
+                    "Ubicación",
+                    "La ubicación fue tomada automáticamente. Si no es exacta, toca el mapa para marcar tu casa.\n\n¿Deseas continuar así?",
+                    "Continuar",
+                    "Corregir");
+
+                if (!continuar)
+                    return;
+            }
+
             var orden = new Orden
             {
                 Usuario = AuthService.GetCurrentUser() ?? "invitado",
                 Direccion = DireccionSeleccionadaLabel.Text,
                 Total = _total,
                 Fecha = DateTime.Now,
-                MetodoPago = PaymentPicker.SelectedItem.ToString(),
-                Detalles = string.Join(", ", AppData.CarritoActual.Productos.Select(p => $"{p.Cantidad}x {p.Nombre}"))
+                MetodoPago = PaymentPicker.SelectedItem?.ToString() ?? "",
+                Detalles = string.Join(", ", AppData.CarritoActual.Productos.Select(p => $"{p.Cantidad}x {p.Nombre}")),
+                DestLat = _selectedLat,
+                DestLon = _selectedLon
             };
 
-            // Intentar geocodificar la dirección para seguimiento (OpenStreetMap Nominatim)
-            try
-            {
-                string q = Uri.EscapeDataString(orden.Direccion + ", Mexico");
-                client.DefaultRequestHeaders.Clear();
-                client.DefaultRequestHeaders.Add("User-Agent", "NontonioApp");
-                var res = await client.GetStringAsync($"https://nominatim.openstreetmap.org/search?format=json&q={q}&limit=1");
-                using var doc = JsonDocument.Parse(res);
-                var root = doc.RootElement.EnumerateArray().FirstOrDefault();
-                if (root.ValueKind != JsonValueKind.Undefined)
-                {
-                    string lat = root.GetProperty("lat").GetString();
-                    string lon = root.GetProperty("lon").GetString();
-                    orden.DestLat = double.Parse(lat, CultureInfo.InvariantCulture);
-                    orden.DestLon = double.Parse(lon, CultureInfo.InvariantCulture);
-                }
-            }
-            catch { }
+            var sucursal = SucursalesService.ObtenerMasCercana(orden.DestLat, orden.DestLon);
 
-            // Inicializar tracking: poner repartidor en una posición cercana (simulada)
-            // Choose nearest branch (sucursal) and set courier starting point relative to branch
-            // Branches across Mexico (approximate coordinates). The nearest branch will be selected.
-            var branches = new List<(double Lat, double Lon, string Name)>
-            {
-                (19.432608, -99.133209, "Sucursal CDMX - Centro"),
-                (20.659698, -103.349609, "Sucursal Guadalajara"),
-                (25.686614, -100.316113, "Sucursal Monterrey"),
-                (19.041297, -98.206200, "Sucursal Puebla"),
-                (32.514946, -117.038247, "Sucursal Tijuana"),
-                (20.967370, -89.592586, "Sucursal Mérida"),
-                (21.161908, -86.851528, "Sucursal Cancún"),
-                (21.122219, -101.677392, "Sucursal León"),
-                (20.588793, -100.389888, "Sucursal Querétaro"),
-                (19.292046, -99.653942, "Sucursal Toluca"),
-                (17.073184, -96.726585, "Sucursal Oaxaca"),
-                (19.173773, -96.134224, "Sucursal Veracruz"),
-                (28.633891, -106.069100, "Sucursal Chihuahua"),
-                (25.548383, -103.411782, "Sucursal Torreón"),
-                (21.882344, -102.282593, "Sucursal Aguascalientes"),
-                (22.156469, -100.985540, "Sucursal San Luis P."),
-                (19.703631, -101.184884, "Sucursal Morelia"),
-                (29.072967, -110.955919, "Sucursal Hermosillo"),
-                (24.809064, -107.394014, "Sucursal Culiacán"),
-                (23.249391, -106.411140, "Sucursal Mazatlán")
-            };
+            orden.BranchLat = sucursal.Lat;
+            orden.BranchLon = sucursal.Lon;
+            orden.BranchName = sucursal.Nombre;
 
-            // Haversine distance to find nearest branch
-            static double Haversine(double lat1, double lon1, double lat2, double lon2)
-            {
-                double R = 6371; // km
-                double dLat = (lat2 - lat1) * Math.PI / 180.0;
-                double dLon = (lon2 - lon1) * Math.PI / 180.0;
-                double a = Math.Sin(dLat/2) * Math.Sin(dLat/2) + Math.Cos(lat1 * Math.PI/180.0) * Math.Cos(lat2 * Math.PI/180.0) * Math.Sin(dLon/2) * Math.Sin(dLon/2);
-                double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1-a));
-                return R * c;
-            }
-
-            var nearest = branches.OrderBy(b => Haversine(orden.DestLat, orden.DestLon, b.Lat, b.Lon)).First();
-
-            // Store branch info in order
-            orden.BranchLat = nearest.Lat;
-            orden.BranchLon = nearest.Lon;
-            orden.BranchName = nearest.Name;
-
-            // Set courier starting position near the branch (small offset)
-            orden.CurrentLat = nearest.Lat + 0.003;
-            orden.CurrentLon = nearest.Lon - 0.003;
+            orden.CurrentLat = sucursal.Lat + 0.003;
+            orden.CurrentLon = sucursal.Lon - 0.003;
             orden.Status = "Preparando";
-            orden.HistoryJson = System.Text.Json.JsonSerializer.Serialize(new List<string> { $"{DateTime.Now:g}: Pedido creado en {nearest.Name}" });
+            orden.HistoryJson = JsonSerializer.Serialize(new List<string>
+            {
+                $"{DateTime.Now:g}: Pedido creado en {sucursal.Nombre}"
+            });
 
-            // Estimate delivery based on straight-line distance (approximate)
-            double degToKm = 111; // rough conversion
-            double dx = (nearest.Lat - orden.DestLat) * degToKm;
-            double dy = (nearest.Lon - orden.DestLon) * degToKm * Math.Cos(orden.DestLat * Math.PI / 180);
+            double degToKm = 111;
+            double dx = (sucursal.Lat - orden.DestLat) * degToKm;
+            double dy = (sucursal.Lon - orden.DestLon) * degToKm * Math.Cos(orden.DestLat * Math.PI / 180);
             double distKm = Math.Sqrt(dx * dx + dy * dy);
-            int etaMinutes = 20 + (int)(distKm * 6); // base 20min + 6 min per km
+
+            int etaMinutes = 20 + (int)(distKm * 6);
             orden.EstimatedDelivery = DateTime.Now.AddMinutes(etaMinutes);
 
             await OrdenesService.GuardarOrdenAsync(orden);
-            await DisplayAlert("Éxito", "¡Tu pedido está en camino!", "Aceptar");
-            // Reducir stock y persistir en inventario/product service
+
             foreach (var p in AppData.CarritoActual.Productos.ToList())
             {
-                // Buscar producto en AppData por Id o nombre
-                var prod = AppData.Categorias.SelectMany(c => c.Productos).FirstOrDefault(x => x.Id == p.Id || x.Nombre == p.Nombre);
+                var prod = AppData.Categorias
+                    .SelectMany(c => c.Productos)
+                    .FirstOrDefault(x => x.Id == p.Id || x.Nombre == p.Nombre);
+
                 if (prod != null)
                 {
                     prod.Stock = Math.Max(0, prod.Stock - p.Cantidad);
-                    // Actualizar en InventarioService y ProductService
+
                     try { await InventarioService.ActualizarStockAsync(prod.Id, prod.Stock); } catch { }
-                    try { await Services.ProductService.UpdateAsync(prod); } catch { }
+                    try { await ProductService.UpdateAsync(prod); } catch { }
                 }
             }
 
             AppData.CarritoActual.Vaciar();
+
+            await DisplayAlert("Éxito", "¡Tu pedido está en camino!", "Aceptar");
             await Navigation.PopToRootAsync();
         }
     }

@@ -1,197 +1,247 @@
 using appP.A.Models;
 using appP.A.Services;
-using System.Collections.ObjectModel;
-using appP.A.Controls;
 using Microsoft.Maui.Graphics;
-using System.Linq;
+using System.Globalization;
 
-namespace appP.A;
-
-public partial class DashboardPage : ContentPage
+namespace appP.A
 {
-    private const double MaxChartWidth = 200;
-
-    public DashboardViewModel ViewModel { get; } = new();
-
-    public DashboardPage()
+    public partial class DashboardPage : ContentPage
     {
-        InitializeComponent();
-        BindingContext = ViewModel;
-    }
+        private List<ChartPoint> _ventasSemana = new();
 
-    private void DistribucionCollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var item = e.CurrentSelection?.FirstOrDefault() as ChartItem;
-        if (_pieDrawable != null)
+        public DashboardPage()
         {
-            _pieDrawable.SelectedLabel = item?.Label;
-            PieChartView.Invalidate();
-        }
-    }
-
-    private void VentasCollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        var item = e.CurrentSelection?.FirstOrDefault() as ChartItem;
-        if (_barsDrawable != null)
-        {
-            _barsDrawable.SelectedLabel = item?.Label;
-            // invalidate bars view
-            BarsChartView.Invalidate();
-        }
-    }
-
-    protected override async void OnAppearing()
-    {
-        base.OnAppearing();
-
-        var usuario = AuthService.GetCurrentUser() ?? "invitado";
-        var ordenes = await OrdenesService.ObtenerOrdenesUsuarioAsync(usuario);
-
-        ViewModel.Cargar(ordenes);
-        // after data is loaded, initialize drawables
-        InitializeCharts();
-    }
-
-    private PieDrawable? _pieDrawable;
-    private BarsDrawable? _barsDrawable;
-
-    void InitializeCharts()
-    {
-        // assign observable collections directly so updates reflect
-        _pieDrawable = new PieDrawable { Items = ViewModel.DistribucionPago };
-        PieChartView.Drawable = _pieDrawable;
-
-        _barsDrawable = new BarsDrawable { Items = ViewModel.VentasSemanales };
-        BarsChartView.Drawable = _barsDrawable;
-        // refresh
-        PieChartView.Invalidate();
-        BarsChartView.Invalidate();
-    }
-
-    public class DashboardViewModel : System.ComponentModel.INotifyPropertyChanged
-    {
-        public int TotalOrdenes { get; private set; }
-        public double IngresosTotales { get; private set; }
-        public double TicketPromedio { get; private set; }
-        public int MetodosActivos { get; private set; }
-
-        public ObservableCollection<ChartItem> VentasSemanales { get; } = new();
-        public ObservableCollection<ChartItem> DistribucionPago { get; } = new();
-        public ObservableCollection<string> RecentOrders { get; } = new();
-
-        public bool IsAdmin { get; private set; }
-        public bool IsClient => !IsAdmin;
-
-        public void Cargar(List<Orden> ordenes)
-        {
-            TotalOrdenes = ordenes.Count;
-            IngresosTotales = ordenes.Sum(x => x.Total);
-            TicketPromedio = TotalOrdenes == 0 ? 0 : IngresosTotales / TotalOrdenes;
-            MetodosActivos = ordenes.Select(x => x.MetodoPago).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().Count();
-
-            OnPropertyChanged(nameof(TotalOrdenes));
-            OnPropertyChanged(nameof(IngresosTotales));
-            OnPropertyChanged(nameof(TicketPromedio));
-            OnPropertyChanged(nameof(MetodosActivos));
-
-            // determine if current user is admin using AppData flag set at login
-            IsAdmin = Models.AppData.IsAdmin;
-            OnPropertyChanged(nameof(IsAdmin));
-            OnPropertyChanged(nameof(IsClient));
-
-            // recent orders for client view
-            RecentOrders.Clear();
-            var recent = ordenes.OrderByDescending(o => o.Fecha).Take(5).Select(o => $"{o.Fecha:dd/MM} — {o.Total:C2}");
-            foreach (var r in recent) RecentOrders.Add(r);
-
-            CargarVentasSemanales(ordenes);
-            CargarDistribucionPago(ordenes);
+            InitializeComponent();
         }
 
-        private void CargarVentasSemanales(List<Orden> ordenes)
+        protected override async void OnAppearing()
         {
-            VentasSemanales.Clear();
+            base.OnAppearing();
 
-            var hoy = DateTime.Today;
-            var puntos = Enumerable.Range(0, 7)
-                .Select(i => hoy.AddDays(-6 + i))
-                .Select(fecha => new
+            DashboardContent.Opacity = 0;
+            DashboardContent.TranslationY = 18;
+
+            if (AppData.IsAdmin)
+                await CargarDashboardAdmin();
+            else
+                await CargarDashboardCliente();
+
+            await Task.WhenAll(
+                DashboardContent.FadeTo(1, 380, Easing.CubicOut),
+                DashboardContent.TranslateTo(0, 0, 380, Easing.CubicOut)
+            );
+        }
+
+        private async Task CargarDashboardAdmin()
+        {
+            AdminPanel.IsVisible = true;
+            ClientPanel.IsVisible = false;
+
+            DashboardTitleLabel.Text = "Dashboard Admin";
+            DashboardSubtitleLabel.Text = "Ventas, pedidos y productos más vendidos.";
+
+            var ordenes = await OrdenesService.ObtenerTodasOrdenesAsync();
+
+            double ventasTotales = ordenes.Sum(o => o.Total);
+            int pedidosHoy = ordenes.Count(o => o.Fecha.Date == DateTime.Today);
+            double ticketPromedio = ordenes.Count == 0 ? 0 : ventasTotales / ordenes.Count;
+
+            VentasTotalesLabel.Text = ventasTotales.ToString("C2", CultureInfo.CurrentCulture);
+            PedidosHoyLabel.Text = pedidosHoy.ToString();
+            TicketPromedioLabel.Text = ticketPromedio.ToString("C2", CultureInfo.CurrentCulture);
+
+            var productos = ObtenerProductosVendidos(ordenes);
+
+            ProductoTopLabel.Text = productos.Count > 0
+                ? productos[0].Nombre
+                : "Sin datos";
+
+            ProductosVendidosList.ItemsSource = productos.Take(8).ToList();
+
+            _ventasSemana = ObtenerVentasSemana(ordenes);
+            SalesChartView.Drawable = new SalesChartDrawable(_ventasSemana);
+            SalesChartView.Invalidate();
+        }
+
+        private async Task CargarDashboardCliente()
+        {
+            AdminPanel.IsVisible = false;
+            ClientPanel.IsVisible = true;
+
+            DashboardTitleLabel.Text = "Mi Dashboard";
+            DashboardSubtitleLabel.Text = "Resumen personal de tus compras.";
+
+            var usuario = AuthService.GetCurrentUser() ?? "invitado";
+            var ordenes = await OrdenesService.ObtenerOrdenesUsuarioAsync(usuario);
+
+            MisPedidosLabel.Text = ordenes.Count.ToString();
+            MiGastoLabel.Text = ordenes.Sum(o => o.Total).ToString("C2", CultureInfo.CurrentCulture);
+
+            RecentOrdersList.ItemsSource = ordenes
+                .OrderByDescending(o => o.Fecha)
+                .Take(5)
+                .ToList();
+        }
+
+        private List<ProductoVendido> ObtenerProductosVendidos(List<Orden> ordenes)
+        {
+            var contador = new Dictionary<string, int>();
+
+            foreach (var orden in ordenes)
+            {
+                if (string.IsNullOrWhiteSpace(orden.Detalles))
+                    continue;
+
+                var partes = orden.Detalles.Split(',', StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var parte in partes)
                 {
-                    Fecha = fecha,
-                    Total = ordenes.Where(o => o.Fecha.Date == fecha).Sum(o => o.Total)
+                    var texto = parte.Trim();
+
+                    int cantidad = 1;
+                    string nombre = texto;
+
+                    int xIndex = texto.IndexOf('x');
+
+                    if (xIndex > 0)
+                    {
+                        string cantidadTexto = texto.Substring(0, xIndex).Trim();
+
+                        if (int.TryParse(cantidadTexto, out int cantidadParseada))
+                            cantidad = cantidadParseada;
+
+                        nombre = texto.Substring(xIndex + 1).Trim();
+                    }
+
+                    if (string.IsNullOrWhiteSpace(nombre))
+                        continue;
+
+                    if (!contador.ContainsKey(nombre))
+                        contador[nombre] = 0;
+
+                    contador[nombre] += cantidad;
+                }
+            }
+
+            return contador
+                .OrderByDescending(x => x.Value)
+                .Select(x => new ProductoVendido
+                {
+                    Nombre = x.Key,
+                    Cantidad = x.Value
                 })
                 .ToList();
-
-            var max = puntos.Max(x => x.Total);
-            if (max <= 0) max = 1;
-
-            foreach (var p in puntos)
-            {
-                VentasSemanales.Add(new ChartItem
-                {
-                    Label = p.Fecha.ToString("ddd dd"),
-                    Valor = p.Total,
-                    Width = (p.Total / max) * MaxChartWidth,
-                    Color = Color.FromArgb("#8A2BE2")
-                });
-            }
         }
 
-        private void CargarDistribucionPago(List<Orden> ordenes)
+        private List<ChartPoint> ObtenerVentasSemana(List<Orden> ordenes)
         {
-            DistribucionPago.Clear();
+            var hoy = DateTime.Today;
+            var lista = new List<ChartPoint>();
 
-            var grupos = ordenes
-                .Where(x => !string.IsNullOrWhiteSpace(x.MetodoPago))
-                .GroupBy(x => x.MetodoPago)
-                .Select(g => new { Metodo = g.Key, Cantidad = g.Count() })
-                .OrderByDescending(x => x.Cantidad)
-                .ToList();
-
-            var total = grupos.Sum(x => x.Cantidad);
-            if (total == 0)
+            for (int i = 6; i >= 0; i--)
             {
-                DistribucionPago.Add(new ChartItem
-                {
-                    Label = "Sin datos",
-                    PorcentajeTexto = "0%",
-                    Width = 0,
-                    Color = Color.FromArgb("#9CA3AF")
-                });
-                return;
-            }
+                var fecha = hoy.AddDays(-i);
 
-            var palette = new[] { "#8A2BE2", "#10B981", "#F59E0B", "#EF4444", "#3B82F6" };
-
-            for (int i = 0; i < grupos.Count; i++)
-            {
-                var p = (double)grupos[i].Cantidad / total;
-                DistribucionPago.Add(new ChartItem
+                lista.Add(new ChartPoint
                 {
-                    Label = grupos[i].Metodo,
-                    Valor = grupos[i].Cantidad,
-                    PorcentajeTexto = $"{Math.Round(p * 100)}%",
-                    Width = p * MaxChartWidth,
-                    Color = Color.FromArgb(palette[i % palette.Length])
+                    Label = fecha.ToString("ddd", new CultureInfo("es-MX")),
+                    Value = ordenes
+                        .Where(o => o.Fecha.Date == fecha)
+                        .Sum(o => o.Total)
                 });
             }
+
+            return lista;
         }
 
-        private void OnPropertyChanged(string propertyName)
+        // IMPORTANTE:
+        // Esta clase se mantiene para que no fallen tus controles antiguos:
+        // BarsDrawable.cs, PieDrawable.cs y RadialBarsDrawable.cs
+        public class ChartItem
         {
-            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
+            public string Label { get; set; } = string.Empty;
+            public double Valor { get; set; }
+            public double Width { get; set; }
+            public string PorcentajeTexto { get; set; } = string.Empty;
+            public Color Color { get; set; } = Colors.Gray;
         }
 
-        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
-    }
+        public class ProductoVendido
+        {
+            public string Nombre { get; set; } = "";
+            public int Cantidad { get; set; }
+        }
 
-    public class ChartItem
-    {
-        public string Label { get; set; } = string.Empty;
-        public double Valor { get; set; }
-        public double Width { get; set; }
-        public string PorcentajeTexto { get; set; } = string.Empty;
-        public Color Color { get; set; } = Colors.Gray;
+        public class ChartPoint
+        {
+            public string Label { get; set; } = "";
+            public double Value { get; set; }
+        }
+
+        public class SalesChartDrawable : IDrawable
+        {
+            private readonly List<ChartPoint> _items;
+
+            public SalesChartDrawable(List<ChartPoint> items)
+            {
+                _items = items;
+            }
+
+            public void Draw(ICanvas canvas, RectF dirtyRect)
+            {
+                canvas.FillColor = Color.FromArgb("#111111");
+                canvas.FillRectangle(dirtyRect);
+
+                if (_items == null || _items.Count == 0)
+                    return;
+
+                float padding = 24;
+                float chartHeight = dirtyRect.Height - 60;
+                float barWidth = (dirtyRect.Width - padding * 2) / _items.Count - 10;
+
+                double max = _items.Max(i => i.Value);
+                if (max <= 0) max = 1;
+
+                canvas.FontSize = 12;
+                canvas.FontColor = Colors.White;
+
+                for (int i = 0; i < _items.Count; i++)
+                {
+                    var item = _items[i];
+
+                    float x = padding + i * (barWidth + 10);
+                    float h = (float)((item.Value / max) * chartHeight);
+                    float y = dirtyRect.Height - 35 - h;
+
+                    canvas.FillColor = Colors.White;
+                    canvas.FillRoundedRectangle(x, y, barWidth, h, 8);
+
+                    canvas.FontColor = Color.FromArgb("#D1D1D6");
+                    canvas.DrawString(
+                        item.Label,
+                        x,
+                        dirtyRect.Height - 26,
+                        barWidth,
+                        20,
+                        HorizontalAlignment.Center,
+                        VerticalAlignment.Center
+                    );
+
+                    if (item.Value > 0)
+                    {
+                        canvas.FontColor = Colors.White;
+                        canvas.DrawString(
+                            item.Value.ToString("C0"),
+                            x - 8,
+                            y - 22,
+                            barWidth + 16,
+                            18,
+                            HorizontalAlignment.Center,
+                            VerticalAlignment.Center
+                        );
+                    }
+                }
+            }
+        }
     }
 }
-

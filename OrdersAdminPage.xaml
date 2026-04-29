@@ -1,27 +1,161 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:appP.A.Models"
              x:Class="appP.A.OrdersAdminPage"
              Title="Órdenes"
-             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+             BackgroundColor="#F6F6F6">
 
-    <StackLayout Padding="12">
-        <Label Text="Órdenes recientes" Style="{StaticResource PageTitleStyle}" />
-        <RefreshView x:Name="OrdersRefreshView" IsRefreshing="False" Refreshing="OnRefreshing">
-            <CollectionView x:Name="OrdersCollection" SelectionMode="Single" SelectionChanged="OnOrderSelected">
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Frame CornerRadius="10" Margin="0,6" Padding="10" BorderColor="{StaticResource Gray200}">
-                            <StackLayout>
-                                <Label Text="{Binding Usuario}" FontAttributes="Bold" />
-                                <Label Text="{Binding Fecha, StringFormat='{0:g}'}" FontSize="12" TextColor="{StaticResource Gray500}" />
-                                <Label Text="{Binding Direccion}" FontSize="12" />
-                                <Label Text="{Binding Total, StringFormat='Total: {0:C2}'}" FontAttributes="Bold" HorizontalOptions="End" />
-                            </StackLayout>
-                        </Frame>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </RefreshView>
-    </StackLayout>
+	<Grid RowDefinitions="Auto,*"
+          Padding="18"
+          RowSpacing="16">
+
+		<Border Grid.Row="0"
+                BackgroundColor="#111111"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 28"
+                Padding="22">
+
+			<Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+
+				<Border BackgroundColor="White"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 22"
+                        WidthRequest="70"
+                        HeightRequest="70">
+
+					<Label Text="📦"
+                           FontSize="34"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+				</Border>
+
+				<VerticalStackLayout Grid.Column="1"
+                                     VerticalOptions="Center"
+                                     Spacing="4">
+
+					<Label Text="Órdenes recientes"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+
+					<Label Text="Revisa compras, pagos, direcciones y detalles de cada pedido."
+                           FontSize="14"
+                           TextColor="#D1D1D6"/>
+				</VerticalStackLayout>
+			</Grid>
+		</Border>
+
+		<RefreshView Grid.Row="1"
+                     x:Name="OrdersRefreshView"
+                     IsRefreshing="False"
+                     Refreshing="OnRefreshing">
+
+			<CollectionView x:Name="OrdersCollection"
+                            SelectionMode="Single"
+                            SelectionChanged="OnOrderSelected">
+
+				<CollectionView.EmptyView>
+					<VerticalStackLayout Padding="30"
+                                         Spacing="12"
+                                         HorizontalOptions="Center"
+                                         VerticalOptions="Center">
+
+						<Label Text="🧾"
+                               FontSize="52"
+                               HorizontalTextAlignment="Center"/>
+
+						<Label Text="No hay órdenes registradas"
+                               FontSize="22"
+                               FontAttributes="Bold"
+                               TextColor="#111111"
+                               HorizontalTextAlignment="Center"/>
+
+						<Label Text="Cuando los clientes compren, aparecerán aquí."
+                               FontSize="14"
+                               TextColor="#6E6E73"
+                               HorizontalTextAlignment="Center"/>
+					</VerticalStackLayout>
+				</CollectionView.EmptyView>
+
+				<CollectionView.ItemTemplate>
+					<DataTemplate x:DataType="models:Orden">
+
+						<Border BackgroundColor="White"
+                                Stroke="#E5E5EA"
+                                StrokeThickness="1"
+                                StrokeShape="RoundRectangle 26"
+                                Padding="18"
+                                Margin="0,6">
+
+							<Grid ColumnDefinitions="Auto,*,Auto"
+                                  ColumnSpacing="14">
+
+								<Border BackgroundColor="#111111"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 20"
+                                        WidthRequest="64"
+                                        HeightRequest="64">
+
+									<Label Text="🛒"
+                                           FontSize="30"
+                                           HorizontalTextAlignment="Center"
+                                           VerticalTextAlignment="Center"/>
+								</Border>
+
+								<VerticalStackLayout Grid.Column="1"
+                                                     Spacing="5"
+                                                     VerticalOptions="Center">
+
+									<Label Text="{Binding Usuario}"
+                                           FontAttributes="Bold"
+                                           FontSize="17"
+                                           TextColor="#111111"/>
+
+									<Label Text="{Binding Fecha, StringFormat='{0:dd MMM yyyy • hh:mm tt}'}"
+                                           FontSize="13"
+                                           TextColor="#6E6E73"/>
+
+									<Label Text="{Binding Direccion}"
+                                           FontSize="13"
+                                           TextColor="#6E6E73"
+                                           MaxLines="2"/>
+
+									<Border BackgroundColor="#F2F2F7"
+                                            StrokeThickness="0"
+                                            StrokeShape="RoundRectangle 14"
+                                            Padding="10,5"
+                                            HorizontalOptions="Start">
+
+										<Label Text="{Binding MetodoPago}"
+                                               FontSize="12"
+                                               FontAttributes="Bold"
+                                               TextColor="#111111"/>
+									</Border>
+								</VerticalStackLayout>
+
+								<VerticalStackLayout Grid.Column="2"
+                                                     VerticalOptions="Center"
+                                                     HorizontalOptions="End"
+                                                     Spacing="6">
+
+									<Label Text="{Binding Total, StringFormat='{0:C2}'}"
+                                           FontSize="21"
+                                           FontAttributes="Bold"
+                                           TextColor="#111111"
+                                           HorizontalTextAlignment="End"/>
+
+									<Label Text="Ver detalles"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#6E6E73"
+                                           HorizontalTextAlignment="End"/>
+								</VerticalStackLayout>
+							</Grid>
+						</Border>
+					</DataTemplate>
+				</CollectionView.ItemTemplate>
+			</CollectionView>
+		</RefreshView>
+	</Grid>
 </ContentPage>

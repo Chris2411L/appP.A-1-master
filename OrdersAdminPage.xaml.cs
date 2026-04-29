@@ -13,9 +13,19 @@ namespace appP.A
         protected override async void OnAppearing()
         {
             base.OnAppearing();
+
             OrdersRefreshView.IsRefreshing = true;
+            OrdersCollection.Opacity = 0;
+            OrdersCollection.TranslationY = 18;
+
             OrdersCollection.ItemsSource = await OrdenesService.ObtenerTodasOrdenesAsync();
+
             OrdersRefreshView.IsRefreshing = false;
+
+            await Task.WhenAll(
+                OrdersCollection.FadeTo(1, 350, Easing.CubicOut),
+                OrdersCollection.TranslateTo(0, 0, 350, Easing.CubicOut)
+            );
         }
 
         private void OnRefreshing(object sender, EventArgs e)
@@ -28,7 +38,17 @@ namespace appP.A
             if (e.CurrentSelection.FirstOrDefault() is Orden o)
             {
                 ((CollectionView)sender).SelectedItem = null;
-                string ticket = $"ID: {o.Id}\nUsuario: {o.Usuario}\nFecha: {o.Fecha:g}\nDirección: {o.Direccion}\nPago: {o.MetodoPago}\nDetalles:\n{o.Detalles.Replace(", ", "\n")}\n\nTOTAL: {o.Total:C2}";
+
+                string ticket =
+                    $"ID: {o.Id}\n" +
+                    $"Usuario: {o.Usuario}\n" +
+                    $"Fecha: {o.Fecha:g}\n" +
+                    $"Dirección: {o.Direccion}\n" +
+                    $"Pago: {o.MetodoPago}\n" +
+                    $"Estado: {o.Status}\n\n" +
+                    $"Detalles:\n{o.Detalles.Replace(", ", "\n")}\n\n" +
+                    $"TOTAL: {o.Total:C2}";
+
                 await DisplayAlert("Detalles de Orden", ticket, "OK");
             }
         }

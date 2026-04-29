@@ -1,27 +1,145 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:appP.A.Models"
              x:Class="appP.A.SeguimientoPage"
              Title="Seguimiento"
-             BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource OffBlack}}">
+             BackgroundColor="#F6F6F6">
 
-    <Grid RowDefinitions="Auto, *" Padding="12">
-        <Label Text="Seguimiento de pedidos" FontAttributes="Bold" FontSize="20" />
-        <CollectionView x:Name="TrackingOrdersList" Grid.Row="1" SelectionMode="Single" SelectionChanged="OnTrackingOrderSelected">
+    <Grid RowDefinitions="Auto,*"
+          Padding="18"
+          RowSpacing="16">
+
+        <!-- HEADER -->
+        <Border Grid.Row="0"
+                BackgroundColor="#111111"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 28"
+                Padding="22">
+
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+
+                <Border BackgroundColor="White"
+                        StrokeThickness="0"
+                        StrokeShape="RoundRectangle 22"
+                        WidthRequest="70"
+                        HeightRequest="70">
+                    <Label Text="🚚"
+                           FontSize="34"
+                           HorizontalTextAlignment="Center"
+                           VerticalTextAlignment="Center"/>
+                </Border>
+
+                <VerticalStackLayout Grid.Column="1"
+                                     VerticalOptions="Center"
+                                     Spacing="4">
+                    <Label Text="Seguimiento de pedidos"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+
+                    <Label Text="Consulta el estado y ubicación de tus entregas."
+                           FontSize="14"
+                           TextColor="#D1D1D6"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <!-- LISTA -->
+        <CollectionView x:Name="TrackingOrdersList"
+                        Grid.Row="1"
+                        SelectionMode="Single"
+                        SelectionChanged="OnTrackingOrderSelected">
+
+            <CollectionView.EmptyView>
+                <VerticalStackLayout Padding="30"
+                                     Spacing="14"
+                                     HorizontalOptions="Center"
+                                     VerticalOptions="Center">
+
+                    <Label Text="📦"
+                           FontSize="48"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Label Text="No tienes pedidos en seguimiento"
+                           FontSize="22"
+                           FontAttributes="Bold"
+                           TextColor="#111111"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Label Text="Cuando realices una compra, aparecerá aquí."
+                           FontSize="14"
+                           TextColor="#6E6E73"
+                           HorizontalTextAlignment="Center"/>
+                </VerticalStackLayout>
+            </CollectionView.EmptyView>
+
             <CollectionView.ItemTemplate>
-                <DataTemplate>
-                    <Frame CornerRadius="12" Padding="12" Margin="6" BorderColor="{StaticResource Gray200}">
-                        <Grid ColumnDefinitions="*, Auto">
-                            <VerticalStackLayout>
-                                <Label Text="{Binding Fecha, StringFormat='{0:g}'}" FontAttributes="Bold" />
-                                <Label Text="{Binding Direccion}" FontSize="12" />
-                                <Label Text="{Binding Status}" FontSize="12" TextColor="{StaticResource Primary}" />
+                <DataTemplate x:DataType="models:Orden">
+
+                    <Border BackgroundColor="White"
+                            Stroke="#E5E5EA"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 26"
+                            Padding="18"
+                            Margin="0,6">
+
+                        <Grid ColumnDefinitions="Auto,*,Auto"
+                              ColumnSpacing="14">
+
+                            <Border BackgroundColor="#111111"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 20"
+                                    WidthRequest="64"
+                                    HeightRequest="64">
+                                <Label Text="📍"
+                                       FontSize="30"
+                                       HorizontalTextAlignment="Center"
+                                       VerticalTextAlignment="Center"/>
+                            </Border>
+
+                            <VerticalStackLayout Grid.Column="1"
+                                                 Spacing="5"
+                                                 VerticalOptions="Center">
+
+                                <Label Text="{Binding Fecha, StringFormat='{0:dd MMM yyyy • hh:mm tt}'}"
+                                       FontAttributes="Bold"
+                                       FontSize="16"
+                                       TextColor="#111111"/>
+
+                                <Label Text="{Binding Direccion}"
+                                       FontSize="13"
+                                       TextColor="#6E6E73"
+                                       MaxLines="2"/>
+
+                                <Border BackgroundColor="#F2F2F7"
+                                        StrokeThickness="0"
+                                        StrokeShape="RoundRectangle 14"
+                                        Padding="10,5"
+                                        HorizontalOptions="Start">
+                                    <Label Text="{Binding Status}"
+                                           FontSize="12"
+                                           FontAttributes="Bold"
+                                           TextColor="#111111"/>
+                                </Border>
                             </VerticalStackLayout>
-                            <Button Text="Ver" Clicked="OnVerTrackingClicked" CommandParameter="{Binding .}" VerticalOptions="Center" />
+
+                            <Button Grid.Column="2"
+                                    Text="Ver"
+                                    BackgroundColor="#111111"
+                                    TextColor="White"
+                                    FontAttributes="Bold"
+                                    CornerRadius="16"
+                                    HeightRequest="46"
+                                    Padding="20,0"
+                                    VerticalOptions="Center"
+                                    Clicked="OnVerTrackingClicked"
+                                    CommandParameter="{Binding .}"/>
                         </Grid>
-                    </Frame>
+                    </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>
+
     </Grid>
 </ContentPage>

@@ -13,7 +13,7 @@ namespace appP.A
         }
 
         protected override async void OnAppearing()
-        {
+        {            
             base.OnAppearing();
 
             RegisterCard.Opacity = 0;
