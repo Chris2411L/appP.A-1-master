@@ -1,5 +1,4 @@
 ﻿using SQLite;
-using System;
 
 namespace appP.A.Models
 {
@@ -11,7 +10,8 @@ namespace appP.A.Models
         [Unique]
         public string Username { get; set; } = string.Empty;
 
-        // Aquí guardaremos la contraseña encriptada por seguridad
         public string PasswordHash { get; set; } = string.Empty;
+
+        public string Rol { get; set; } = "Cliente";
     }
 }

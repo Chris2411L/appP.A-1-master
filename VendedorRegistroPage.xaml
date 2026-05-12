@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="appP.A.VendedorRegistroPage"
+    Title="Registrar Tienda"
+    BackgroundColor="#F6F6F6">
+
+    <ScrollView>
+
+        <VerticalStackLayout Padding="22"
+                             Spacing="18">
+
+            <!-- HEADER -->
+            <Border BackgroundColor="#111111"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 30"
+                    Padding="24">
+
+                <VerticalStackLayout Spacing="10">
+
+                    <Label Text="🏪"
+                           FontSize="54"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Label Text="Registrar tienda"
+                           FontSize="32"
+                           FontAttributes="Bold"
+                           TextColor="White"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Label Text="Configura tu tienda de manera rápida y automática."
+                           FontSize="14"
+                           TextColor="#D1D1D6"
+                           HorizontalTextAlignment="Center"/>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- FOTO -->
+            <Border BackgroundColor="White"
+                    Stroke="#E5E5EA"
+                    StrokeShape="RoundRectangle 26"
+                    Padding="20">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <Label Text="Imagen de tienda"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="#111111"/>
+
+                    <Border StrokeThickness="0"
+                            BackgroundColor="#F2F2F7"
+                            StrokeShape="RoundRectangle 24"
+                            HeightRequest="220">
+
+                        <Grid>
+
+                            <Image x:Name="StoreImage"
+                                   Aspect="AspectFill"
+                                   Source="store_placeholder.png"/>
+
+                            <Button Text="Cambiar foto"
+                                    VerticalOptions="End"
+                                    Margin="14"
+                                    HeightRequest="46"
+                                    BackgroundColor="#111111"
+                                    TextColor="White"
+                                    CornerRadius="18"
+                                    Clicked="OnPickImageClicked"/>
+
+                        </Grid>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- DATOS -->
+            <Border BackgroundColor="White"
+                    Stroke="#E5E5EA"
+                    StrokeShape="RoundRectangle 26"
+                    Padding="20">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <Label Text="Información"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="#111111"/>
+
+                    <Entry x:Name="StoreNameEntry"
+                           Placeholder="Nombre de la tienda"/>
+
+                    <Entry x:Name="PhoneEntry"
+                           Placeholder="Teléfono"
+                           Keyboard="Telephone"/>
+
+                    <Editor x:Name="DescriptionEntry"
+                            HeightRequest="100"
+                            Placeholder="Describe tu tienda"/>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- HORARIO -->
+            <Border BackgroundColor="White"
+                    Stroke="#E5E5EA"
+                    StrokeShape="RoundRectangle 26"
+                    Padding="20">
+
+                <VerticalStackLayout Spacing="16">
+
+                    <Label Text="Horario"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="#111111"/>
+
+                    <Grid ColumnDefinitions="*,*"
+                          ColumnSpacing="12">
+
+                        <Picker x:Name="OpenPicker"
+                                Title="Abre">
+                            <Picker.Items>
+                                <x:String>6:00 AM</x:String>
+                                <x:String>7:00 AM</x:String>
+                                <x:String>8:00 AM</x:String>
+                                <x:String>9:00 AM</x:String>
+                                <x:String>10:00 AM</x:String>
+                            </Picker.Items>
+                        </Picker>
+
+                        <Picker x:Name="ClosePicker"
+                                Grid.Column="1"
+                                Title="Cierra">
+                            <Picker.Items>
+                                <x:String>8:00 PM</x:String>
+                                <x:String>9:00 PM</x:String>
+                                <x:String>10:00 PM</x:String>
+                                <x:String>11:00 PM</x:String>
+                                <x:String>12:00 AM</x:String>
+                            </Picker.Items>
+                        </Picker>
+
+                    </Grid>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- MAPA -->
+            <Border BackgroundColor="White"
+                    Stroke="#E5E5EA"
+                    StrokeShape="RoundRectangle 26"
+                    Padding="18">
+
+                <VerticalStackLayout Spacing="14">
+
+                    <Label Text="Ubicación exacta"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="#111111"/>
+
+                    <Label Text="Toca el mapa para marcar tu tienda."
+                           FontSize="13"
+                           TextColor="#6E6E73"/>
+
+                    <Border StrokeThickness="0"
+                            HeightRequest="320"
+                            StrokeShape="RoundRectangle 22">
+
+                        <WebView x:Name="MapView"
+                                 Navigating="MapView_Navigating"/>
+
+                    </Border>
+
+                </VerticalStackLayout>
+
+            </Border>
+
+            <!-- BOTÓN -->
+            <Button Text="Guardar tienda"
+                    HeightRequest="60"
+                    CornerRadius="22"
+                    FontAttributes="Bold"
+                    FontSize="18"
+                    BackgroundColor="#111111"
+                    TextColor="White"
+                    Clicked="OnSaveClicked"/>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+
+</ContentPage>

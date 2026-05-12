@@ -15,7 +15,6 @@ namespace appP.A
         private double _selectedLat;
         private double _selectedLon;
         private bool _manualLocationSelected;
-
         private string _currentDireccion = "";
 
         public CheckoutPage()
@@ -73,26 +72,28 @@ namespace appP.A
             string ciudad = Preferences.Get($"{user}_{key}_ciu", "");
             string col = Preferences.Get($"{user}_{key}_col", "");
             string num = Preferences.Get($"{user}_{key}_num", "");
+            string cp = Preferences.Get($"{user}_{key}_cp", "");
 
-            _currentDireccion = $"{calle} {num}, {col}, {ciudad}, México";
+            _currentDireccion = $"{calle} {num}, {col}, {cp}, {ciudad}, México";
             DireccionSeleccionadaLabel.Text = $"{key}: {_currentDireccion}";
 
             _manualLocationSelected = false;
-            MapaPrecisionLabel.Text = "Buscando ubicación aproximada por dirección...";
+            MapaPrecisionLabel.Text = "Buscando ubicación exacta por calle, número, colonia, C.P. y ciudad...";
 
-            ActualizarMapa(calle, num, col, ciudad);
+            ActualizarMapa(_currentDireccion);
         }
 
-        private async void ActualizarMapa(string calle, string num, string col, string ciudad)
+        private async void ActualizarMapa(string direccionCompleta)
         {
             try
             {
-                string q = Uri.EscapeDataString($"{calle} {num}, {col}, {ciudad}, Mexico");
+                string q = Uri.EscapeDataString(direccionCompleta);
 
                 client.DefaultRequestHeaders.Clear();
                 client.DefaultRequestHeaders.Add("User-Agent", "NontonioApp");
 
-                var res = await client.GetStringAsync($"https://nominatim.openstreetmap.org/search?format=json&q={q}&limit=1");
+                var res = await client.GetStringAsync(
+                    $"https://nominatim.openstreetmap.org/search?format=json&q={q}&addressdetails=1&limit=1");
 
                 using var doc = JsonDocument.Parse(res);
                 var root = doc.RootElement.EnumerateArray().FirstOrDefault();
@@ -108,19 +109,19 @@ namespace appP.A
                         _selectedLat = lt;
                         _selectedLon = ln;
 
-                        MapaPrecisionLabel.Text = "Ubicación aproximada encontrada. Puedes tocar el mapa para corregirla.";
+                        MapaPrecisionLabel.Text = "Ubicación encontrada. Si no cae exacta, toca tu casa en el mapa.";
                         CargarMapaInteractivo(_selectedLat, _selectedLon);
                         return;
                     }
                 }
 
                 CargarMapaInicial();
-                MapaPrecisionLabel.Text = "No se detectó bien la dirección. Toca el mapa para marcar tu casa.";
+                MapaPrecisionLabel.Text = "No se detectó exacto. Toca el mapa para marcar tu casa.";
             }
             catch
             {
                 CargarMapaInicial();
-                MapaPrecisionLabel.Text = "No se pudo detectar la dirección. Toca el mapa para marcar tu casa.";
+                MapaPrecisionLabel.Text = "No se pudo detectar. Toca el mapa para marcar tu casa.";
             }
         }
 
@@ -149,24 +150,28 @@ html, body, #map {{
     padding:0;
     background:#111;
 }}
-.leaflet-control-attribution {{
-    display:none;
-}}
+.leaflet-control-attribution {{ display:none; }}
 </style>
 </head>
 <body>
 <div id='map'></div>
-
 <script src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js'></script>
 <script>
-var map = L.map('map').setView([{latTxt}, {lonTxt}], 16);
+var map = L.map('map').setView([{latTxt}, {lonTxt}], 18);
 
 L.tileLayer('https://{{s}}.basemaps.cartocdn.com/light_all/{{z}}/{{x}}/{{y}}{{r}}.png', {{
     maxZoom: 19,
     subdomains: 'abcd'
 }}).addTo(map);
 
-var marker = L.marker([{latTxt}, {lonTxt}], {{ draggable:true }}).addTo(map);
+var iconCasa = L.divIcon({{
+    html: '<div style=""font-size:32px;background:white;border:3px solid black;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;"">🏠</div>',
+    className: '',
+    iconSize: [44,44],
+    iconAnchor: [22,22]
+}});
+
+var marker = L.marker([{latTxt}, {lonTxt}], {{ icon: iconCasa, draggable:true }}).addTo(map);
 
 function send(lat, lon) {{
     window.location.href = 'nontonio://location?lat=' + lat + '&lon=' + lon;
@@ -254,7 +259,7 @@ marker.on('dragend', function(e) {{
             {
                 bool continuar = await DisplayAlert(
                     "Ubicación",
-                    "La ubicación fue tomada automáticamente. Si no es exacta, toca el mapa para marcar tu casa.\n\n¿Deseas continuar así?",
+                    "La ubicación fue tomada automáticamente. Para máxima precisión, toca el mapa justo sobre tu casa.\n\n¿Deseas continuar así?",
                     "Continuar",
                     "Corregir");
 
@@ -265,7 +270,7 @@ marker.on('dragend', function(e) {{
             var orden = new Orden
             {
                 Usuario = AuthService.GetCurrentUser() ?? "invitado",
-                Direccion = DireccionSeleccionadaLabel.Text,
+                Direccion = _currentDireccion,
                 Total = _total,
                 Fecha = DateTime.Now,
                 MetodoPago = PaymentPicker.SelectedItem?.ToString() ?? "",
@@ -283,6 +288,7 @@ marker.on('dragend', function(e) {{
             orden.CurrentLat = sucursal.Lat + 0.003;
             orden.CurrentLon = sucursal.Lon - 0.003;
             orden.Status = "Preparando";
+
             orden.HistoryJson = JsonSerializer.Serialize(new List<string>
             {
                 $"{DateTime.Now:g}: Pedido creado en {sucursal.Nombre}"

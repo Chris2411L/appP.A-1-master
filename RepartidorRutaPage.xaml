@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="appP.A.RepartidorRutaPage"
+             Title="Ruta de entrega"
+             BackgroundColor="#F6F6F6">
+
+    <Grid RowDefinitions="Auto,*" Padding="18" RowSpacing="16">
+
+        <Border Grid.Row="0" BackgroundColor="#111111" StrokeThickness="0" StrokeShape="RoundRectangle 28" Padding="20">
+            <VerticalStackLayout Spacing="6">
+                <Label Text="Ruta del pedido" FontSize="26" FontAttributes="Bold" TextColor="White"/>
+                <Label x:Name="InfoRutaLabel" FontSize="14" TextColor="#D1D1D6"/>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Grid.Row="1" BackgroundColor="#111111" StrokeThickness="0" StrokeShape="RoundRectangle 28">
+            <WebView x:Name="RutaWebView"/>
+        </Border>
+
+    </Grid>
+</ContentPage>

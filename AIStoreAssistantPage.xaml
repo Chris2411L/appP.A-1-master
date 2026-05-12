@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="appP.A.AIStoreAssistantPage"
+    BackgroundColor="#070707"
+    Title="NONTONIO AI">
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- HEADER -->
+        <Border BackgroundColor="#111111"
+                Padding="20"
+                StrokeThickness="0">
+
+            <HorizontalStackLayout Spacing="14">
+
+                <Label Text="🤖"
+                       FontSize="42"/>
+
+                <VerticalStackLayout Spacing="2">
+
+                    <Label Text="NONTONIO AI"
+                           FontSize="28"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+
+                    <Label Text="Asistente inteligente de tienda"
+                           TextColor="#AAAAAA"
+                           FontSize="13"/>
+                </VerticalStackLayout>
+            </HorizontalStackLayout>
+        </Border>
+
+        <!-- CHAT -->
+        <ScrollView Grid.Row="1">
+
+            <VerticalStackLayout x:Name="ChatContainer"
+                                 Padding="18"
+                                 Spacing="14">
+            </VerticalStackLayout>
+
+        </ScrollView>
+
+        <!-- INPUT -->
+        <Grid Grid.Row="2"
+              ColumnDefinitions="*,Auto,Auto"
+              Padding="12"
+              ColumnSpacing="10"
+              BackgroundColor="#111111">
+
+            <Border Grid.Column="0"
+                    BackgroundColor="#1C1C1E"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 20"
+                    Padding="14,0">
+
+                <Entry x:Name="MessageEntry"
+                       Placeholder="Pregúntale algo a NONTONIO AI..."
+                       PlaceholderColor="#888"
+                       TextColor="White"
+                       BackgroundColor="Transparent"/>
+            </Border>
+
+            <!-- VOZ -->
+            <Button Grid.Column="1"
+                    Text="🎤"
+                    WidthRequest="54"
+                    HeightRequest="54"
+                    CornerRadius="27"
+                    BackgroundColor="#2C2C2E"
+                    TextColor="White"
+                    Clicked="OnVoiceClicked"/>
+
+            <!-- ENVIAR -->
+            <Button Grid.Column="2"
+                    Text="➤"
+                    WidthRequest="54"
+                    HeightRequest="54"
+                    CornerRadius="27"
+                    BackgroundColor="White"
+                    TextColor="Black"
+                    Clicked="OnSendClicked"/>
+        </Grid>
+    </Grid>
+</ContentPage>

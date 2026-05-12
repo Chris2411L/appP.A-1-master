@@ -7,7 +7,6 @@
 
     <Grid ColumnDefinitions="*,*" RowDefinitions="*">
 
-        <!-- LADO IZQUIERDO: IMAGEN -->
         <Grid Grid.Column="0" IsClippedToBounds="True">
             <Image x:Name="HeroImage"
                    Source="register.jpg"
@@ -19,13 +18,14 @@
                                  HorizontalOptions="Center"
                                  Padding="55"
                                  Spacing="12">
+
                 <Label Text="Crea tu cuenta"
                        FontSize="40"
                        FontAttributes="Bold"
                        TextColor="White"
                        HorizontalTextAlignment="Center"/>
 
-                <Label Text="Únete a NONTONIO y compra tus productos favoritos de forma rápida, moderna y segura."
+                <Label Text="Elige si quieres comprar, repartir o vender dentro de NONTONIO."
                        FontSize="16"
                        TextColor="#D1D5DB"
                        HorizontalTextAlignment="Center"
@@ -33,7 +33,6 @@
             </VerticalStackLayout>
         </Grid>
 
-        <!-- LADO DERECHO: FORMULARIO -->
         <Grid Grid.Column="1" BackgroundColor="#070707">
 
             <Border x:Name="RegisterCard"
@@ -46,16 +45,8 @@
                     HorizontalOptions="Center"
                     VerticalOptions="Center">
 
-                <Border.Shadow>
-                    <Shadow Brush="#99000000"
-                            Offset="0,25"
-                            Radius="70"
-                            Opacity="0.9"/>
-                </Border.Shadow>
+                <VerticalStackLayout Spacing="14">
 
-                <VerticalStackLayout Spacing="15">
-
-                    <!-- LOGO -->
                     <VerticalStackLayout HorizontalOptions="Center" Spacing="8">
                         <Image Source="icono_register.png"
                                WidthRequest="58"
@@ -73,16 +64,14 @@
                                HorizontalTextAlignment="Center"/>
                     </VerticalStackLayout>
 
-                    <!-- USUARIO -->
                     <Border BackgroundColor="#1C1C1E"
                             Stroke="#2F2F32"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 14"
                             Padding="14,4">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <Label Text="👤"
-                                   FontSize="16"
-                                   VerticalOptions="Center"/>
+                            <Label Text="👤" FontSize="16" VerticalOptions="Center"/>
+
                             <Entry x:Name="UsernameEntry"
                                    Grid.Column="1"
                                    Placeholder="Nombre de usuario"
@@ -95,16 +84,14 @@
                         </Grid>
                     </Border>
 
-                    <!-- CONTRASEÑA -->
                     <Border BackgroundColor="#1C1C1E"
                             Stroke="#2F2F32"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 14"
                             Padding="14,4">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <Label Text="🔒"
-                                   FontSize="16"
-                                   VerticalOptions="Center"/>
+                            <Label Text="🔒" FontSize="16" VerticalOptions="Center"/>
+
                             <Entry x:Name="PasswordEntry"
                                    Grid.Column="1"
                                    Placeholder="Contraseña"
@@ -118,16 +105,14 @@
                         </Grid>
                     </Border>
 
-                    <!-- CONFIRMAR -->
                     <Border BackgroundColor="#1C1C1E"
                             Stroke="#2F2F32"
                             StrokeThickness="1"
                             StrokeShape="RoundRectangle 14"
                             Padding="14,4">
                         <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
-                            <Label Text="✅"
-                                   FontSize="16"
-                                   VerticalOptions="Center"/>
+                            <Label Text="✅" FontSize="16" VerticalOptions="Center"/>
+
                             <Entry x:Name="ConfirmPasswordEntry"
                                    Grid.Column="1"
                                    Placeholder="Confirmar contraseña"
@@ -141,7 +126,32 @@
                         </Grid>
                     </Border>
 
-                    <!-- CAPTCHA -->
+                    <Border BackgroundColor="#1C1C1E"
+                            Stroke="#2F2F32"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 14"
+                            Padding="14,0">
+
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Label Text="🧭"
+                                   FontSize="16"
+                                   VerticalOptions="Center"/>
+
+                            <Picker x:Name="RolePicker"
+                                    Grid.Column="1"
+                                    Title="¿Qué quieres ser?"
+                                    TextColor="White"
+                                    TitleColor="#9CA3AF"
+                                    BackgroundColor="Transparent">
+                                <Picker.Items>
+                                    <x:String>Cliente</x:String>
+                                    <x:String>Repartidor</x:String>
+                                    <x:String>Vendedor</x:String>
+                                </Picker.Items>
+                            </Picker>
+                        </Grid>
+                    </Border>
+
                     <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="8">
                         <Border BackgroundColor="#1C1C1E"
                                 Stroke="#2F2F32"
@@ -161,6 +171,7 @@
                                 StrokeThickness="1"
                                 StrokeShape="RoundRectangle 13"
                                 Padding="10,0">
+
                             <Entry x:Name="CaptchaEntry"
                                    Placeholder="Resultado"
                                    PlaceholderColor="#9CA3AF"
@@ -181,7 +192,6 @@
                                 Clicked="OnRefreshCaptchaClicked"/>
                     </Grid>
 
-                    <!-- BOTÓN REGISTRAR -->
                     <Button x:Name="RegisterButton"
                             Text="Crear cuenta"
                             HeightRequest="52"
@@ -193,15 +203,16 @@
                             Pressed="OnButtonPressed"
                             Released="OnButtonReleased"/>
 
-                    <!-- LINK REGRESAR -->
                     <HorizontalStackLayout HorizontalOptions="Center" Spacing="5">
                         <Label Text="¿Ya tienes cuenta?"
                                TextColor="#9CA3AF"
                                FontSize="13"/>
+
                         <Label Text="Volver al login"
                                TextColor="White"
                                FontSize="13"
                                FontAttributes="Bold">
+
                             <Label.GestureRecognizers>
                                 <TapGestureRecognizer Tapped="OnBackTextTapped"/>
                             </Label.GestureRecognizers>

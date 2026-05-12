@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="appP.A.RepartidorRegistroPage"
+             Title="Registro Repartidor"
+             BackgroundColor="#F6F6F6">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="22" Spacing="18">
+
+            <Border BackgroundColor="#111111" StrokeThickness="0" StrokeShape="RoundRectangle 30" Padding="24">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="🏍️ Registro de repartidor" FontSize="30" FontAttributes="Bold" TextColor="White"/>
+                    <Label Text="Completa tus datos para poder recibir pedidos." FontSize="14" TextColor="#D1D1D6"/>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="White" Stroke="#E5E5EA" StrokeThickness="1" StrokeShape="RoundRectangle 28" Padding="20">
+                <VerticalStackLayout Spacing="14">
+
+                    <Image x:Name="FotoPreview"
+                           Source="icono_register.png"
+                           WidthRequest="110"
+                           HeightRequest="110"
+                           Aspect="AspectFill"
+                           HorizontalOptions="Center"/>
+
+                    <Button Text="Seleccionar foto"
+                            BackgroundColor="#111111"
+                            TextColor="White"
+                            CornerRadius="18"
+                            Clicked="OnSeleccionarFotoClicked"/>
+
+                    <Entry x:Name="NombreEntry" Placeholder="Nombre completo"/>
+                    <Entry x:Name="TelefonoEntry" Placeholder="Teléfono" Keyboard="Telephone"/>
+                    <Entry x:Name="PlacasEntry" Placeholder="Placas de moto"/>
+                    <Entry x:Name="IneEntry" Placeholder="INE / Identificación"/>
+                    <Entry x:Name="DomicilioEntry" Placeholder="Domicilio"/>
+
+                    <Button Text="Guardar perfil"
+                            BackgroundColor="#111111"
+                            TextColor="White"
+                            HeightRequest="56"
+                            CornerRadius="20"
+                            FontAttributes="Bold"
+                            Clicked="OnGuardarClicked"/>
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

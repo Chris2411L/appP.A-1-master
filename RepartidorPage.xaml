@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:appP.A.Models"
+             x:Class="appP.A.RepartidorPage"
+             Title="Repartidor"
+             BackgroundColor="#F6F6F6">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="18" RowSpacing="16">
+
+        <Border Grid.Row="0"
+                BackgroundColor="#111111"
+                StrokeThickness="0"
+                StrokeShape="RoundRectangle 28"
+                Padding="20">
+
+            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+
+                <Image x:Name="FotoRepartidor"
+                       Source="icono_register.png"
+                       WidthRequest="72"
+                       HeightRequest="72"
+                       Aspect="AspectFill"/>
+
+                <VerticalStackLayout Grid.Column="1"
+                                     VerticalOptions="Center"
+                                     Spacing="4">
+
+                    <Label x:Name="NombreLabel"
+                           Text="Repartidor"
+                           FontSize="24"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+
+                    <Label x:Name="PlacasLabel"
+                           Text="Placas:"
+                           FontSize="13"
+                           TextColor="#D1D1D6"/>
+
+                    <Label x:Name="TelefonoLabel"
+                           Text="Teléfono:"
+                           FontSize="12"
+                           TextColor="#D1D1D6"/>
+                </VerticalStackLayout>
+
+                <VerticalStackLayout Grid.Column="2"
+                                     VerticalOptions="Center"
+                                     HorizontalOptions="End">
+
+                    <Label x:Name="SaldoLabel"
+                           Text="$0.00"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+
+                    <Label x:Name="ViajesLabel"
+                           Text="0 viajes"
+                           FontSize="12"
+                           TextColor="#D1D1D6"/>
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" RowDefinitions="Auto,*" RowSpacing="10">
+
+            <Label Text="Mapa de pedidos activos"
+                   FontSize="22"
+                   FontAttributes="Bold"
+                   TextColor="#111111"/>
+
+            <Border Grid.Row="1"
+                    BackgroundColor="#111111"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 28">
+
+                <WebView x:Name="MapaPedidosWebView"
+                         Navigating="MapaPedidosWebView_Navigating"/>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2"
+                BackgroundColor="White"
+                Stroke="#E5E5EA"
+                StrokeThickness="1"
+                StrokeShape="RoundRectangle 26"
+                Padding="16">
+
+            <VerticalStackLayout Spacing="10">
+
+                <Label x:Name="PedidoInfoLabel"
+                       Text="Toca un pedido en el mapa para ver detalles y aceptarlo."
+                       FontSize="15"
+                       FontAttributes="Bold"
+                       TextColor="#111111"/>
+
+                <Label x:Name="PedidoDetalleLabel"
+                       Text="🏠 Casa del cliente • 🏪 Tienda • 🏍️ Tú"
+                       FontSize="13"
+                       TextColor="#6E6E73"/>
+
+                <Grid ColumnDefinitions="*,*"
+                      ColumnSpacing="10">
+
+                    <Button x:Name="VerRutaButton"
+                            Text="Ver ruta"
+                            IsVisible="False"
+                            BackgroundColor="#111111"
+                            TextColor="White"
+                            CornerRadius="16"
+                            HeightRequest="48"
+                            FontAttributes="Bold"
+                            Clicked="OnVerRutaSeleccionadaClicked"/>
+
+                    <Button x:Name="EntregadoButton"
+                            Grid.Column="1"
+                            Text="Simulando..."
+                            IsVisible="False"
+                            BackgroundColor="#F2F2F7"
+                            TextColor="#111111"
+                            CornerRadius="16"
+                            HeightRequest="48"
+                            FontAttributes="Bold"
+                            IsEnabled="False"/>
+                </Grid>
+
+            </VerticalStackLayout>
+        </Border>
+
+    </Grid>
+</ContentPage>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    x:Class="appP.A.VendedorDashboardPage"
+    BackgroundColor="#F6F6F6">
+
+    <ScrollView>
+
+        <VerticalStackLayout Padding="20" Spacing="18">
+
+            <Border BackgroundColor="#111"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 28"
+                    Padding="22">
+
+                <VerticalStackLayout>
+
+                    <Label x:Name="StoreNameLabel"
+                           FontSize="30"
+                           FontAttributes="Bold"
+                           TextColor="White"/>
+
+                    <Label x:Name="StoreAddressLabel"
+                           TextColor="#D1D1D6"/>
+
+                </VerticalStackLayout>
+            </Border>
+
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="14">
+
+                <Border Grid.Column="0"
+                        BackgroundColor="White"
+                        Stroke="#E5E5EA"
+                        Padding="18"
+                        StrokeShape="RoundRectangle 24">
+
+                    <VerticalStackLayout>
+
+                        <Label Text="Ganancias"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+
+                        <Label x:Name="EarningsLabel"
+                               FontSize="28"
+                               FontAttributes="Bold"/>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+                <Border Grid.Column="1"
+                        BackgroundColor="White"
+                        Stroke="#E5E5EA"
+                        Padding="18"
+                        StrokeShape="RoundRectangle 24">
+
+                    <VerticalStackLayout>
+
+                        <Label Text="Pedidos"
+                               FontSize="18"
+                               FontAttributes="Bold"/>
+
+                        <Label x:Name="OrdersLabel"
+                               FontSize="28"
+                               FontAttributes="Bold"/>
+
+                    </VerticalStackLayout>
+
+                </Border>
+
+            </Grid>
+
+            <Button Text="Administrar inventario"
+                    BackgroundColor="#111"
+                    TextColor="White"
+                    HeightRequest="56"
+                    CornerRadius="18"
+                    Clicked="OnInventoryClicked"/>
+
+            <Button Text="Ver órdenes"
+                    BackgroundColor="#111"
+                    TextColor="White"
+                    HeightRequest="56"
+                    CornerRadius="18"
+                    Clicked="OnOrdersClicked"/>
+
+            <Button Text="Cerrar sesión"
+                    BackgroundColor="#FF3B30"
+                    TextColor="White"
+                    HeightRequest="56"
+                    CornerRadius="18"
+                    Clicked="OnLogoutClicked"/>
+
+        </VerticalStackLayout>
+
+    </ScrollView>
+</ContentPage>

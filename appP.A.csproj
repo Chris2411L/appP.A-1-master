@@ -35,8 +35,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Maui" Version="9.1.0" />
 		<PackageReference Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="9.0.0" />
+		<PackageReference Include="Plugin.Maui.Audio" Version="4.0.0" />
 		<PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
 		<PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.6" />
 	</ItemGroup>
@@ -60,6 +62,12 @@
 		<Compile Update="MisComprasPage.xaml.cs">
 			<DependentUpon>MisComprasPage.xaml</DependentUpon>
 		</Compile>
+		<Compile Update="RepartidorRutaPage.xaml.cs">
+		  <DependentUpon>RepartidorRutaPage.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="RepartidorPage.xaml.cs">
+		  <DependentUpon>RepartidorPage.xaml</DependentUpon>
+		</Compile>
 		<Compile Update="ProductosPage.xaml.cs">
 			<DependentUpon>ProductosPage.xaml</DependentUpon>
 		</Compile>
@@ -72,12 +80,21 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<MauiXaml Update="AIStoreAssistantPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="AlmacenAdminPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="CarritoPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="CategoriasPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="CheckoutPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="LoginPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="MisComprasPage.xaml" Generator="MSBuild:Compile" />
+		<MauiXaml Update="RepartidorRutaPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
+		<MauiXaml Update="RepartidorPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="OrdersAdminPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
@@ -86,6 +103,9 @@
 		</MauiXaml>
 		<MauiXaml Update="ProductosPage.xaml" Generator="MSBuild:Compile" />
 		<MauiXaml Update="RegisterPage.xaml" Generator="MSBuild:Compile" />
+		<MauiXaml Update="RepartidorRegistroPage.xaml">
+		  <Generator>MSBuild:Compile</Generator>
+		</MauiXaml>
 		<MauiXaml Update="SeguimientoPage.xaml">
 		  <Generator>MSBuild:Compile</Generator>
 		</MauiXaml>
@@ -94,6 +114,12 @@
 
   <ItemGroup>
 	<MauiXaml Update="hboardPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</MauiXaml>
+	<MauiXaml Update="VendedorDashboardPage.xaml">
+	  <Generator>MSBuild:Compile</Generator>
+	</MauiXaml>
+	<MauiXaml Update="VendedorRegistroPage.xaml">
 	  <Generator>MSBuild:Compile</Generator>
 	</MauiXaml>
   </ItemGroup>

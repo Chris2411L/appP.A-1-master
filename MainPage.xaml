@@ -6,18 +6,26 @@
              BackgroundColor="#F6F6F6">
 
     <ScrollView>
+
         <VerticalStackLayout x:Name="MainContent"
                              Padding="24"
                              Spacing="22">
 
             <!-- HEADER -->
-            <Grid ColumnDefinitions="Auto,*,Auto" ColumnSpacing="14">
+            <Grid ColumnDefinitions="Auto,*,Auto"
+                  ColumnSpacing="14">
 
-                <Border BackgroundColor="#111111"
+                <Border x:Name="LogoSecretButton"
+                        BackgroundColor="#111111"
                         StrokeThickness="0"
                         StrokeShape="RoundRectangle 16"
                         WidthRequest="58"
                         HeightRequest="58">
+
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnLogoSecretTapped"/>
+                    </Border.GestureRecognizers>
+
                     <Image Source="nontonio.png"
                            WidthRequest="38"
                            HeightRequest="38"
@@ -25,7 +33,10 @@
                            VerticalOptions="Center"/>
                 </Border>
 
-                <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                <VerticalStackLayout Grid.Column="1"
+                                     Spacing="2"
+                                     VerticalOptions="Center">
+
                     <Label x:Name="WelcomeLabel"
                            Text="¡Hola!"
                            FontSize="28"
@@ -49,7 +60,7 @@
                         Clicked="OnChangeUserClicked"/>
             </Grid>
 
-            <!-- HERO CON IMAGEN DE FONDO -->
+            <!-- HERO -->
             <Border x:Name="HeroCard"
                     StrokeThickness="0"
                     StrokeShape="RoundRectangle 30"
@@ -64,9 +75,14 @@
 
                     <BoxView>
                         <BoxView.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#AA000000" Offset="0"/>
-                                <GradientStop Color="#66000000" Offset="1"/>
+                            <LinearGradientBrush StartPoint="0,0"
+                                                 EndPoint="1,1">
+
+                                <GradientStop Color="#AA000000"
+                                              Offset="0"/>
+
+                                <GradientStop Color="#66000000"
+                                              Offset="1"/>
                             </LinearGradientBrush>
                         </BoxView.Background>
                     </BoxView>
@@ -85,7 +101,8 @@
                                TextColor="#E5E5E5"
                                LineHeight="1.25"/>
 
-                        <HorizontalStackLayout Spacing="12" Margin="0,10,0,0">
+                        <HorizontalStackLayout Spacing="12"
+                                               Margin="0,10,0,0">
 
                             <Button Text="Ver categorías"
                                     BackgroundColor="White"
@@ -104,99 +121,118 @@
                                     FontAttributes="Bold"
                                     Padding="22,0"
                                     Clicked="OnVerCarritoClicked"/>
-
                         </HorizontalStackLayout>
                     </VerticalStackLayout>
-
                 </Grid>
             </Border>
 
-            <!-- ACCIONES RÁPIDAS -->
+            <!-- QUICK ACTIONS -->
             <Grid x:Name="QuickActions"
                   ColumnDefinitions="*,*,*"
                   ColumnSpacing="14">
 
+                <!-- CATEGORÍAS -->
                 <Border Grid.Column="0"
                         BackgroundColor="White"
                         Stroke="#E5E5EA"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 24"
                         Padding="18">
+
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnCategoriasCardTapped"/>
                     </Border.GestureRecognizers>
 
                     <VerticalStackLayout Spacing="8">
-                        <Label Text="🛍️" FontSize="26"/>
+
+                        <Label Text="🛍️"
+                               FontSize="26"/>
+
                         <Label Text="Categorías"
                                FontSize="17"
                                FontAttributes="Bold"
                                TextColor="#111111"/>
+
                         <Label Text="Explora la tienda"
                                FontSize="13"
                                TextColor="#6E6E73"/>
                     </VerticalStackLayout>
                 </Border>
 
+                <!-- DASHBOARD -->
                 <Border Grid.Column="1"
                         BackgroundColor="White"
                         Stroke="#E5E5EA"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 24"
                         Padding="18">
+
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnDashboardCardTapped"/>
                     </Border.GestureRecognizers>
 
                     <VerticalStackLayout Spacing="8">
-                        <Label Text="📊" FontSize="26"/>
+
+                        <Label Text="📊"
+                               FontSize="26"/>
+
                         <Label Text="Dashboard"
                                FontSize="17"
                                FontAttributes="Bold"
                                TextColor="#111111"/>
+
                         <Label Text="Métricas y ventas"
                                FontSize="13"
                                TextColor="#6E6E73"/>
                     </VerticalStackLayout>
                 </Border>
 
+                <!-- PERFIL -->
                 <Border Grid.Column="2"
                         BackgroundColor="White"
                         Stroke="#E5E5EA"
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 24"
                         Padding="18">
+
                     <Border.GestureRecognizers>
                         <TapGestureRecognizer Tapped="OnPerfilCardTapped"/>
                     </Border.GestureRecognizers>
 
                     <VerticalStackLayout Spacing="8">
-                        <Label Text="👤" FontSize="26"/>
+
+                        <Label Text="👤"
+                               FontSize="26"/>
+
                         <Label Text="Perfil"
                                FontSize="17"
                                FontAttributes="Bold"
                                TextColor="#111111"/>
+
                         <Label Text="Direcciones y pedidos"
                                FontSize="13"
                                TextColor="#6E6E73"/>
                     </VerticalStackLayout>
                 </Border>
-
             </Grid>
 
-            <!-- SERVICIOS -->
-            <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+            <!-- INFO -->
+            <Grid ColumnDefinitions="*,*"
+                  ColumnSpacing="14">
 
                 <Border Grid.Column="0"
                         BackgroundColor="#111111"
                         StrokeThickness="0"
                         StrokeShape="RoundRectangle 24"
                         Padding="22">
+
                     <VerticalStackLayout Spacing="8">
+
                         <Label Text="🚚 Entrega"
                                FontSize="20"
                                FontAttributes="Bold"
                                TextColor="White"/>
+
                         <Label Text="Seguimiento de pedidos con experiencia tipo delivery."
                                FontSize="14"
                                TextColor="#D1D1D6"/>
@@ -209,20 +245,22 @@
                         StrokeThickness="1"
                         StrokeShape="RoundRectangle 24"
                         Padding="22">
+
                     <VerticalStackLayout Spacing="8">
+
                         <Label Text="💳 Pagos"
                                FontSize="20"
                                FontAttributes="Bold"
                                TextColor="#111111"/>
+
                         <Label Text="Checkout limpio, rápido y fácil de usar."
                                FontSize="14"
                                TextColor="#6E6E73"/>
                     </VerticalStackLayout>
                 </Border>
-
             </Grid>
 
-            <!-- ADMIN -->
+            <!-- PANEL VENDEDOR -->
             <VerticalStackLayout x:Name="AdminPanel"
                                  Spacing="12"
                                  IsVisible="False">
@@ -232,7 +270,8 @@
                        FontAttributes="Bold"
                        TextColor="#111111"/>
 
-                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12">
+                <Grid ColumnDefinitions="*,*,*"
+                      ColumnSpacing="12">
 
                     <Button Grid.Column="0"
                             Text="Usuarios"
@@ -259,6 +298,19 @@
                             Clicked="OnPanelOrdenesClicked"/>
                 </Grid>
             </VerticalStackLayout>
+
+            <!-- BOTÓN IA -->
+            <Button x:Name="AIButton"
+                    Text="🤖"
+                    WidthRequest="74"
+                    HeightRequest="74"
+                    CornerRadius="37"
+                    BackgroundColor="#111111"
+                    TextColor="White"
+                    FontSize="30"
+                    HorizontalOptions="End"
+                    Margin="0,10,6,20"
+                    Clicked="OnAIButtonClicked"/>
 
         </VerticalStackLayout>
     </ScrollView>
