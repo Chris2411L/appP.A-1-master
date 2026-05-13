@@ -1,164 +1,244 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:models="clr-namespace:appP.A.Models"
-             x:Class="appP.A.CarritoPage"
-             Title="Mi Carrito"
-             BackgroundColor="#F6F6F6">
 
-    <Grid RowDefinitions="Auto,*,Auto"
-          Padding="18"
-          RowSpacing="16">
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:models="clr-namespace:appP.A.Models"
+    x:Class="appP.A.CarritoPage"
+    Title="Mi Carrito"
+    BackgroundColor="#F6F6F6">
+
+    <Grid
+        Padding="20"
+        RowDefinitions="Auto,*,Auto">
 
         <!-- HEADER -->
-        <Grid x:Name="HeaderPanel"
-              Grid.Row="0"
-              ColumnDefinitions="*,Auto">
+
+        <Grid
+            Grid.Row="0"
+            ColumnDefinitions="*,Auto">
 
             <VerticalStackLayout>
-                <Label Text="Mi carrito"
-                       FontSize="30"
-                       FontAttributes="Bold"
-                       TextColor="#111"/>
-                <Label Text="Revisa tus productos"
-                       FontSize="14"
-                       TextColor="#6E6E73"/>
+
+                <Label
+                    Text="Mi carrito"
+                    FontSize="32"
+                    FontAttributes="Bold"
+                    TextColor="#111111"/>
+
+                <Label
+                    Text="Revisa tus productos"
+                    FontSize="15"
+                    TextColor="#6E6E73"/>
+
             </VerticalStackLayout>
 
-            <Button Grid.Column="1"
-                    Text="Vaciar"
-                    BackgroundColor="#111"
-                    TextColor="White"
-                    CornerRadius="14"
-                    Clicked="OnVaciarClicked"/>
+            <Button
+                Grid.Column="1"
+                Text="Vaciar"
+                HeightRequest="54"
+                Padding="18,0"
+                CornerRadius="18"
+                BackgroundColor="#111111"
+                TextColor="White"
+                Clicked="OnClearCartClicked"/>
+
         </Grid>
 
-        <!-- VACÍO -->
-        <VerticalStackLayout x:Name="EmptyState"
-                             Grid.Row="1"
-                             IsVisible="False"
-                             Spacing="10"
-                             VerticalOptions="Center"
-                             HorizontalOptions="Center">
-
-            <Label Text="🛒" FontSize="40"/>
-            <Label Text="Tu carrito está vacío"
-                   FontSize="20"
-                   FontAttributes="Bold"/>
-            <Button Text="Ir a comprar"
-                    Clicked="OnSeguirComprandoClicked"/>
-        </VerticalStackLayout>
-
         <!-- LISTA -->
-        <CollectionView x:Name="ItemsList"
-                        Grid.Row="1"
-                        ItemsSource="{Binding Productos}"
-                        SelectionMode="None">
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Producto">
+        <Grid Grid.Row="1">
 
-                    <Frame CornerRadius="20"
-                           Padding="10"
-                           Margin="0,5"
-                           BackgroundColor="White"
-                           BorderColor="#DDD">
+            <!-- EMPTY -->
 
-                        <Grid ColumnDefinitions="Auto,*,Auto">
+            <VerticalStackLayout
+                x:Name="EmptyState"
+                VerticalOptions="Center"
+                HorizontalOptions="Center"
+                Spacing="12">
 
-                            <!-- IMAGEN -->
-                            <Frame WidthRequest="80"
-                                   HeightRequest="80"
-                                   Padding="0"
-                                   CornerRadius="15"
-                                   BackgroundColor="#EEE"
-                                   HasShadow="False">
+                <Label
+                    Text="🛒"
+                    FontSize="60"
+                    HorizontalTextAlignment="Center"/>
 
-                                <Image Source="{Binding Imagen}"
-                                       Aspect="AspectFill"/>
-                            </Frame>
+                <Label
+                    Text="Tu carrito está vacío"
+                    FontSize="18"
+                    FontAttributes="Bold"
+                    HorizontalTextAlignment="Center"/>
 
-                            <!-- INFO -->
-                            <VerticalStackLayout Grid.Column="1"
-                                                 Margin="10,0"
-                                                 VerticalOptions="Center">
+                <Button
+                    Text="Ir a comprar"
+                    WidthRequest="190"
+                    HeightRequest="48"
+                    CornerRadius="16"
+                    BackgroundColor="#004E5A"
+                    TextColor="White"
+                    Clicked="OnGoShoppingClicked"/>
 
-                                <Label Text="{Binding Nombre}"
-                                       FontAttributes="Bold"/>
-
-                                <Label Text="{Binding Precio, StringFormat='${0:F2}'}"
-                                       TextColor="Green"/>
-
-                                <Label Text="{Binding Subtotal, StringFormat='Subtotal: ${0:F2}'}"
-                                       FontAttributes="Bold"/>
-                            </VerticalStackLayout>
-
-                            <!-- CONTROLES -->
-                            <VerticalStackLayout Grid.Column="2"
-                                                 VerticalOptions="Center">
-
-                                <HorizontalStackLayout>
-
-                                    <Button Text="-"
-                                            WidthRequest="35"
-                                            HeightRequest="35"
-                                            CommandParameter="{Binding .}"
-                                            Clicked="OnReducirCantidadClicked"/>
-
-                                    <Label Text="{Binding Cantidad}"
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="Center"
-                                           Margin="5,0"/>
-
-                                    <Button Text="+"
-                                            WidthRequest="35"
-                                            HeightRequest="35"
-                                            CommandParameter="{Binding .}"
-                                            Clicked="OnAumentarCantidadClicked"/>
-                                </HorizontalStackLayout>
-
-                                <Button Text="Quitar"
-                                        FontSize="12"
-                                        TextColor="Red"
-                                        BackgroundColor="Transparent"
-                                        CommandParameter="{Binding .}"
-                                        Clicked="OnEliminarProductoClicked"/>
-                            </VerticalStackLayout>
-
-                        </Grid>
-                    </Frame>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
-        </CollectionView>
-
-        <!-- TOTAL -->
-        <Frame x:Name="SummaryPanel"
-               Grid.Row="2"
-               Padding="15"
-               CornerRadius="20"
-               BackgroundColor="#111">
-
-            <VerticalStackLayout>
-
-                <Label Text="Total"
-                       TextColor="#AAA"/>
-
-                <Label Text="{Binding Total, StringFormat='${0:F2}'}"
-                       FontSize="22"
-                       FontAttributes="Bold"
-                       TextColor="White"/>
-
-                <Button Text="Finalizar compra"
-                        BackgroundColor="White"
-                        TextColor="#111"
-                        Clicked="OnCheckoutClicked"/>
-
-                <Button Text="Seguir comprando"
-                        BackgroundColor="Transparent"
-                        TextColor="White"
-                        Clicked="OnSeguirComprandoClicked"/>
             </VerticalStackLayout>
-        </Frame>
+
+            <!-- ITEMS -->
+
+            <CollectionView
+                x:Name="CartItemsView"
+                SelectionMode="None">
+
+                <CollectionView.ItemTemplate>
+
+                    <DataTemplate
+                        x:DataType="models:Producto">
+
+                        <Border
+                            Margin="0,8"
+                            Padding="14"
+                            BackgroundColor="White"
+                            Stroke="#E5E5EA"
+                            StrokeThickness="1"
+                            StrokeShape="RoundRectangle 24">
+
+                            <Grid
+                                ColumnDefinitions="90,*,Auto"
+                                ColumnSpacing="14">
+
+                                <!-- IMAGE -->
+
+                                <Border
+                                    BackgroundColor="#F2F2F7"
+                                    StrokeThickness="0"
+                                    StrokeShape="RoundRectangle 20"
+                                    WidthRequest="85"
+                                    HeightRequest="85">
+
+                                    <Image
+                                        Source="{Binding Imagen}"
+                                        Aspect="AspectFill"/>
+
+                                </Border>
+
+                                <!-- INFO -->
+
+                                <VerticalStackLayout
+                                    Grid.Column="1"
+                                    Spacing="5">
+
+                                    <Label
+                                        Text="{Binding Nombre}"
+                                        FontSize="17"
+                                        FontAttributes="Bold"
+                                        TextColor="#111111"/>
+
+                                    <Label
+                                        Text="{Binding Categoria}"
+                                        FontSize="13"
+                                        TextColor="#6E6E73"/>
+
+                                    <Label
+                                        Text="{Binding Precio, StringFormat='${0:F2}'}"
+                                        FontSize="16"
+                                        FontAttributes="Bold"
+                                        TextColor="#111111"/>
+
+                                </VerticalStackLayout>
+
+                                <!-- CONTROLES -->
+
+                                <VerticalStackLayout
+                                    Grid.Column="2"
+                                    VerticalOptions="Center"
+                                    Spacing="8">
+
+                                    <Button
+                                        Text="+"
+                                        WidthRequest="42"
+                                        HeightRequest="42"
+                                        CornerRadius="21"
+                                        BackgroundColor="#111111"
+                                        TextColor="White"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnAddClicked"/>
+
+                                    <Button
+                                        Text="-"
+                                        WidthRequest="42"
+                                        HeightRequest="42"
+                                        CornerRadius="21"
+                                        BackgroundColor="#FF3B30"
+                                        TextColor="White"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnRemoveClicked"/>
+
+                                    <Button
+                                        Text="X"
+                                        WidthRequest="42"
+                                        HeightRequest="42"
+                                        CornerRadius="21"
+                                        BackgroundColor="#8E8E93"
+                                        TextColor="White"
+                                        CommandParameter="{Binding .}"
+                                        Clicked="OnDeleteClicked"/>
+
+                                </VerticalStackLayout>
+
+                            </Grid>
+
+                        </Border>
+
+                    </DataTemplate>
+
+                </CollectionView.ItemTemplate>
+
+            </CollectionView>
+
+        </Grid>
+
+        <!-- FOOTER -->
+
+        <Border
+            Grid.Row="2"
+            Margin="0,14,0,0"
+            Padding="18"
+            BackgroundColor="White"
+            Stroke="#E5E5EA"
+            StrokeThickness="1"
+            StrokeShape="RoundRectangle 26">
+
+            <VerticalStackLayout
+                Spacing="14">
+
+                <Grid ColumnDefinitions="*,Auto">
+
+                    <Label
+                        Text="TOTAL"
+                        FontSize="15"
+                        FontAttributes="Bold"
+                        TextColor="#6E6E73"/>
+
+                    <Label
+                        x:Name="TotalLabel"
+                        Grid.Column="1"
+                        Text="$0.00"
+                        FontSize="28"
+                        FontAttributes="Bold"
+                        TextColor="#111111"/>
+
+                </Grid>
+
+                <Button
+                    Text="Continuar compra"
+                    HeightRequest="56"
+                    CornerRadius="18"
+                    FontAttributes="Bold"
+                    FontSize="17"
+                    BackgroundColor="#111111"
+                    TextColor="White"
+                    Clicked="OnCheckoutClicked"/>
+
+            </VerticalStackLayout>
+
+        </Border>
 
     </Grid>
+
 </ContentPage>

@@ -1,26 +1,31 @@
 using appP.A.Services;
 using Microsoft.Maui.Controls.Shapes;
+using Microsoft.Maui.Media;
 
 namespace appP.A;
 
 public partial class AIStoreAssistantPage : ContentPage
 {
+    private bool _voiceEnabled = true;
+
     public AIStoreAssistantPage()
     {
         InitializeComponent();
 
         AddAIMessage(
-            "Hola 👋 soy NONTONIO AI.\n" +
-            "Puedo ayudarte a encontrar productos, promociones y recomendaciones."
-        );
+            "🤖 Hola, soy NONTONIO AI.\n\n" +
+            "Puedo ayudarte a comprar, recomendar comida, crear combos y conversar contigo 😎");
     }
 
     // =====================================
     // ENVIAR MENSAJE
     // =====================================
-    private async void OnSendClicked(object sender, EventArgs e)
+    private async void OnSendClicked(
+        object sender,
+        EventArgs e)
     {
-        string text = MessageEntry.Text?.Trim() ?? "";
+        string text =
+            MessageEntry.Text?.Trim() ?? "";
 
         if (string.IsNullOrWhiteSpace(text))
             return;
@@ -29,30 +34,78 @@ public partial class AIStoreAssistantPage : ContentPage
 
         MessageEntry.Text = "";
 
-        await Task.Delay(500);
+        AddAIMessage("⏳ Pensando...");
 
-        string respuesta =
-            NontonioAIService.GetResponse(text);
+        string response =
+            await GeminiAIService
+            .SendMessage(text);
 
-        AddAIMessage(respuesta);
+        ChatContainer.RemoveAt(
+            ChatContainer.Count - 1);
+
+        AddAIMessage(response);
+
+        // VOZ
+        if (_voiceEnabled)
+        {
+            try
+            {
+                await TextToSpeech.Default
+                    .SpeakAsync(response);
+            }
+            catch
+            {
+            }
+        }
     }
 
     // =====================================
-    // MENSAJE USUARIO
+    // ACTIVAR / DESACTIVAR VOZ
+    // =====================================
+    private async void OnToggleVoiceClicked(
+        object sender,
+        EventArgs e)
+    {
+        _voiceEnabled = !_voiceEnabled;
+
+        VoiceToggleButton.Text =
+            _voiceEnabled ? "🔊" : "🔇";
+
+        await DisplayAlert(
+            "NONTONIO AI",
+
+            _voiceEnabled
+                ? "Voz activada"
+                : "Voz desactivada",
+
+            "OK");
+    }
+
+    // =====================================
+    // USER MESSAGE
     // =====================================
     private void AddUserMessage(string text)
     {
         var frame = new Border
         {
-            BackgroundColor = Color.FromArgb("#2563EB"),
+            BackgroundColor =
+                Color.FromArgb("#2563EB"),
+
             StrokeThickness = 0,
+
             Padding = 14,
-            StrokeShape = new RoundRectangle
-            {
-                CornerRadius = new CornerRadius(20)
-            },
-            HorizontalOptions = LayoutOptions.End,
+
+            HorizontalOptions =
+                LayoutOptions.End,
+
             MaximumWidthRequest = 320,
+
+            StrokeShape =
+                new RoundRectangle
+                {
+                    CornerRadius =
+                        new CornerRadius(20)
+                },
 
             Content = new Label
             {
@@ -66,21 +119,30 @@ public partial class AIStoreAssistantPage : ContentPage
     }
 
     // =====================================
-    // MENSAJE IA
+    // AI MESSAGE
     // =====================================
     private void AddAIMessage(string text)
     {
         var frame = new Border
         {
-            BackgroundColor = Color.FromArgb("#1C1C1E"),
+            BackgroundColor =
+                Color.FromArgb("#1C1C1E"),
+
             StrokeThickness = 0,
+
             Padding = 14,
-            StrokeShape = new RoundRectangle
-            {
-                CornerRadius = new CornerRadius(20)
-            },
-            HorizontalOptions = LayoutOptions.Start,
+
+            HorizontalOptions =
+                LayoutOptions.Start,
+
             MaximumWidthRequest = 320,
+
+            StrokeShape =
+                new RoundRectangle
+                {
+                    CornerRadius =
+                        new CornerRadius(20)
+                },
 
             Content = new Label
             {
@@ -91,16 +153,5 @@ public partial class AIStoreAssistantPage : ContentPage
         };
 
         ChatContainer.Children.Add(frame);
-    }
-
-    // =====================================
-    // VOZ
-    // =====================================
-    private async void OnVoiceClicked(object sender, EventArgs e)
-    {
-        await DisplayAlert(
-            "Próximamente",
-            "Aquí irá reconocimiento de voz.",
-            "OK");
     }
 }
